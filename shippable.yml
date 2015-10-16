@@ -10,7 +10,10 @@ before_install:
     - export PATH=${PATH}:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
     - wget http://dl-ssl.google.com/android/repository/google_apis-19_r16.zip
     - unzip google_apis-19_r16.zip
-    - mv google_apis-2258983-mac-x86 $ANDROID_HOME/add-ons/google_apis-19
+    - mv google_apis-2258983-mac-x86 $ANDROID_HOME/add-ons/addon-google_apis-google-19-1
+    - wget http://dl-ssl.google.com/android/repository/android-19_r03.zip
+    - unzip android-19_r03.zip
+    - mv android-4.4.2 $ANDROID_HOME/platforms/android-19
     - chmod +x gradlew
 install:
     - ./gradlew clean assemble

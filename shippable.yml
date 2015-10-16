@@ -6,8 +6,8 @@ before_install:
     - sudo apt-get install -u lib32stdc++6 lib32z1
     - wget http://dl.google.com/android/android-sdk_r23.0.2-linux.tgz
     - tar -xvzf android-sdk_r23.0.2-linux.tgz
-    - ls -l
-    - export ANDROID_HOME=${PATH}/android-sdk-linux
+    - export ANDROID_HOME=${HOME}/android-sdk-linux
+    - export PATH=${PATH}:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
     - chmod +x gradlew
 install:
     - ./gradlew clean assemble

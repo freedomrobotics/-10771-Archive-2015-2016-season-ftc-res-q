@@ -18,4 +18,4 @@ before_script:
 script:
     - ./gradlew check
 after_script:
-    - cp -r build/test-results/* shippable/testresults/
+    - cp -r build/outputs/* shippable/testresults/

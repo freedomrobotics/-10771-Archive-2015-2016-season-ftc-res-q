@@ -1,9 +1,24 @@
 apply plugin: 'com.android.application'
 
+gradle.allprojects {
+    ext.buildVersionCode = { version ->
+        def majorMinorBuild = version.tokenize(".")
+        def vCode = 0;
+        def powerOfTen = 1;
+        majorMinorBuild.reverse().eachWithIndex() { obj, i -> (vCode += (obj.toInteger() * powerOfTen)); powerOfTen *= 1000; }
+
+        logger.info("Build version code [" + vCode + "] from version name [" + version + "].")
+
+        return vCode;
+    }
+}
+
 android {
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 19
+        versionCode buildVersionCode(artifact_version)
+        versionName artifact_version
     }
     compileSdkVersion 'Google Inc.:Google APIs:19'
     buildToolsVersion '21.1.2'

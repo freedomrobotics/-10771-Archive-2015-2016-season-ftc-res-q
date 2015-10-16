@@ -8,6 +8,9 @@ before_install:
     - tar -xvzf android-sdk_r23.0.2-linux.tgz -C ${HOME}
     - export ANDROID_HOME=${HOME}/android-sdk-linux
     - export PATH=${PATH}:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
+    - wget http://dl-ssl.google.com/android/repository/google_apis-19_r16.zip
+    - unzip google_apis-19_r16.zip
+    - mv google_apis-2258983-mac-x86 $ANDROID_HOME/add-ons/google_apis-19
     - chmod +x gradlew
 install:
     - ./gradlew clean assemble

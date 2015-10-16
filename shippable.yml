@@ -9,7 +9,7 @@ before_install:
     - export ANDROID_HOME=${HOME}/android-sdk-linux
     - export PATH=${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools
     - android list sdk --all
-    - echo yes | android update sdk -u -a -t 8,29,112 --force
+    - echo yes | android update sdk -u -a -t 8,29,113 --force
 install:
     - chmod +x gradlew
     - ./gradlew clean assemble

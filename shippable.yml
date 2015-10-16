@@ -15,10 +15,8 @@ before_install:
     - unzip android-19_r03.zip
     - mv android-4.4.2 ${ANDROID_HOME}/platforms/android-19
     - chmod +x gradlew
-    - ls -R /path | awk '
-/:$/&&f{s=$0;f=0}
-/:$/&&!f{sub(/:$/,"");s=$0;f=1;next}
-NF&&f{ print s"/"$0 }'
+    - cd $ANDROID_HOME
+    - find . -print | sed 's;[^/]*/;|___;g;s;___|; |;g'
 install:
     - ./gradlew clean assemble
 before_script:

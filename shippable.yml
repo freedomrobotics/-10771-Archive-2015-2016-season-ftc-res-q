@@ -8,15 +8,8 @@ before_install:
     - tar -xvzf android-sdk_r23.0.2-linux.tgz -C ${HOME}
     - export ANDROID_HOME=${HOME}/android-sdk-linux
     - export PATH=${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools
-    - wget http://dl-ssl.google.com/android/repository/google_apis-19_r16.zip
-    - unzip google_apis-19_r16.zip
-    - mv google_apis-2258983-mac-x86 ${ANDROID_HOME}/add-ons/addon-google_apis-google-19-1
-    - wget http://dl-ssl.google.com/android/repository/android-19_r03.zip
-    - unzip android-19_r03.zip
-    - mv android-4.4.2 ${ANDROID_HOME}/platforms/android-19
-    - chmod +x gradlew
-    - cd $ANDROID_HOME
-    - find . -print | sed 's;[^/]*/;|___;g;s;___|; |;g'
+    - android list sdk --all
+    - android update sdk -u -a -t 8,29,104
 install:
     - ./gradlew clean assemble
 before_script:

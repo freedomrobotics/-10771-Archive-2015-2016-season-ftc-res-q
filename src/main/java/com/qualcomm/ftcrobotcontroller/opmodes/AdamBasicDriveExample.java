@@ -22,7 +22,7 @@ import com.qualcomm.robotcore.util.Range;
  * the press of another button (right trigger), the robot will make a complete circle or square
  * to the left or right, depending on which horizontal direction the left joystick (circle) or
  * right joystick (square) is moved to within a second. If both joysticks are activated at the
- * same moment, the action is canceled and the robot will move back an inch.
+ * same moment, the action is canceled and the robot will move back a bit.
  */
 public class AdamBasicDriveExample extends OpMode{
 
@@ -47,27 +47,48 @@ public class AdamBasicDriveExample extends OpMode{
     private DcMotor rightMotor; // The way I name them is a mix of naming schemes, which you'll see sooner or later.
     private int driveMode;      // Refer to top. Drive modes are in the order written.
 
+    private double currentVel;  // Current Velocity. Used for calculations with acceleration.
+    private double leftVel;     // Velocity of left wheel. Used for calculations with acceleration.
+    private double rightVel;    // Velocity of right wheel. Used for calculations with acceleration.
+    private double maxVel;      // Max Velocity. Calculated in the program.
+
+    private long lastTime;      // The time at the last time check (using System.currentTimeMillis())
+    private long changeTime;    // The change in time (in millis) from last time check
+
+    private boolean LTpressed;  // Flags to avoid the pressing of a button twice.
+    private boolean RTpressed;  // TODO: 10/26/2015 Find a better method, if possible
+
 
     // The below are "flags" that I like to use to make code easier to change in many areas
     // Normally I would set these before I would even declare the variables.
     private static final boolean motorLeftReverse = false;  // All the "gibberish" before the "flag" name
     private static final boolean motorRightReverse = true;  // is to make sure the variable can't change
 
-    private static final boolean curvedJoystickMap = true; // This flag changes the joystick mapping between linear and squared
+    private static final boolean curvedJoystickMap = true;  // This flag changes the joystick mapping between linear and squared
 
 
-    // Variables that affect the behavior of the program (can be static final or not, doesn't matter too much)
-    private float wheelDiameter = 4;        // Wheel size in inches (I know it's annoying, but we live in the US)
-    private float motorPowerRotation = .8f; // This is about how much power the motor needs to make one rotation. Differs per robot.
-    private float buttonAccel = 1.2f;       // Set in m/s^2. For use with the three digital drives
+    // Variables that affect the behavior of the program (can be static final or not, doesn't matter too much, but it should be done for optimization)
+    private static final float wheelDiameter = 4;       // Wheel size in inches (I know it's annoying, but we live in the US)
+    private static final float motorPowerRotation = .8f;// This is about how much power the motor needs to make one rotation per second.
+        // Differs per robot. I could have implemented the use of a rotary encoder and a calibration
+        // function, but I would need to do some experimenting first.
+    private static final float buttonFAccel = 1.2f;     // Set in m/s^2. For use with the three digital drives. Forwards Acceleration
+    private static final float buttonFDecel = 1.2f;     // Set in m/s^2. For use with the three digital drives. Forwards Deceleration
+    private static final float buttonBAccel = 1.2f;     // Set in m/s^2. For use with the three digital drives. Backwards Acceleration
+    private static final float buttonBDecel = 1.2f;     // Set in m/s^2. For use with the three digital drives. Backwards Deceleration
+    private static final float steeringPower = .8f;     // Multiplied by the current velocity of the robot while in digital drive to adjust steering
         // Notice the f in 1.2f, f is used to show that it's a float, not a double. Java automatically
         // interprets a.b as a double (64-bit floating point number), which is more precise than a
         // float (32-bit floating point number). To denote a float, write add an f.
 
+    private static final float trigThreshold = .7f;     // When to say that the analogue triggers are pressed
+    private static final float stickThreshold = .3f;    // When to say that a joystick is one way or the other for autoCircle()
+
+    //This one might change, so it's not static final.
     private float maxMotorSpeed = 1;    // Set on a floating scale of 0 < x <= 1. If out of range, will default to .8/
 
-    private float circleRadius = 1;     // Radius of circle and square for automatic circle/square in meters
-    private float maxCircleSpeed = .8f; // This*maxMotorSpeed = maximum speed the robot will go when doing the circle
+    private static final float circleRadius = 1;     // Radius of circle and square for automatic circle/square in meters
+    private static final float maxCircleSpeed = .8f; // This*maxMotorSpeed = maximum speed the robot will go when doing the circle
 
 
     // Have you ever worked with Arduino before?
@@ -104,11 +125,19 @@ public class AdamBasicDriveExample extends OpMode{
             maxMotorSpeed = .8f;                                    // Default Motor Speed
         }
 
-        driveMode = 0;  //Default Mode: Tank Drive
+        driveMode = 0;                          // Default Mode: Tank Drive
+        currentVel = leftVel = rightVel = 0;    // Initial Velocity (obviously!)
+        LTpressed = RTpressed = false;          // Neither of the triggers are started pressed.
+        // TODO: 10/22/2015 Explain comment
+        maxVel = ((double)maxMotorSpeed/(double)motorPowerRotation)*wheelDiameter*0.0254*Math.PI;
+        lastTime = System.currentTimeMillis();
     }
 
     @Override
     public void loop(){
+        changeTime = System.currentTimeMillis()-lastTime;
+        lastTime += changeTime;
+
         // Read the values from the first gamepad joysticks.
         float leftStickY = -gamepad1.left_stick_y;      // The SDK already maps the gamepads to
         float leftStickX = gamepad1.left_stick_x;       // two variables, gamepad1 and gamepad2.
@@ -128,7 +157,7 @@ public class AdamBasicDriveExample extends OpMode{
         }
 
         // Check the driveMode to see how to drive the robot. Could use if statements, or switch cases.
-        switch(driveMode){
+        switch(driveMode) {
             // Check for Tank Drive
             case 0:
                 mapToMotor(leftStickY, leftMotor);      // Call to the one line function that maps
@@ -149,15 +178,188 @@ public class AdamBasicDriveExample extends OpMode{
                 // robot move to the right when the joystick is at the bottom left.
                 break;
 
-            // YAY Racing Game Style! (not very good...)
+            // YAY Racing Game Style! (not very good...) // TODO: 10/24/2015 Comments for whole digital section
             case 2:
-                // TODO: 10/17/2015 Actually add the digital drives...
+                // TODO: 10/26/2015 See if the if statements can be optimized
+                if (gamepad1.a && currentVel + buttonFAccel <= maxVel) {
+                    currentVel += buttonFAccel * (1000 / changeTime);
+                }
+                if (gamepad1.b && currentVel - buttonBAccel >= -maxVel) {
+                    currentVel -= buttonBAccel * (1000 / changeTime);
+                }
+                if (!gamepad1.a && !gamepad1.b && currentVel > 0) {
+                    currentVel -= buttonFDecel * (1000 / changeTime);
+                    if (currentVel < 0) {
+                        currentVel = 0;
+                    }
+                }
+                if (!gamepad1.a && !gamepad1.b && currentVel < 0) {
+                    currentVel += buttonBDecel * (1000 / changeTime);
+                    if (currentVel > 0) {
+                        currentVel = 0;
+                    }
+                }
+                leftVel = Math.copySign(Math.abs(currentVel) + leftStickX * steeringPower, currentVel);
+                rightVel = Math.copySign(Math.abs(currentVel) - leftStickX * steeringPower, currentVel);
+                velToMotor(leftVel, leftMotor);
+                velToMotor(rightVel, rightMotor);
+                // TODO: 10/24/2015 Explain flaws in this code section and how to improve them
+                break;
+
+            // Digital Tank...
+            case 3:
+                //Right side
+                if (gamepad1.y && rightVel + buttonFAccel <= maxVel) {
+                    rightVel += buttonFAccel * (1000 / changeTime);
+                }
+                if (gamepad1.a && rightVel - buttonBAccel >= -maxVel) {
+                    rightVel -= buttonBAccel * (1000 / changeTime);
+                }
+                if (!gamepad1.y && !gamepad1.a && rightVel > 0) {
+                    rightVel -= buttonFDecel * (1000 / changeTime);
+                    if (rightVel < 0) {
+                        rightVel = 0;
+                    }
+                }
+                if (!gamepad1.y && !gamepad1.a && rightVel < 0) {
+                    rightVel += buttonBDecel * (1000 / changeTime);
+                    if (rightVel > 0) {
+                        rightVel = 0;
+                    }
+                }
+                //Left Side
+                if (gamepad1.dpad_up && leftVel + buttonFAccel <= maxVel) {
+                    leftVel += buttonFAccel * (1000 / changeTime);
+                }
+                if (gamepad1.dpad_down && leftVel - buttonBAccel >= -maxVel) {
+                    leftVel -= buttonBAccel * (1000 / changeTime);
+                }
+                if (!gamepad1.dpad_up && !gamepad1.dpad_down && leftVel > 0) {
+                    leftVel -= buttonFDecel * (1000 / changeTime);
+                    if (leftVel < 0) {
+                        leftVel = 0;
+                    }
+                }
+                if (!gamepad1.dpad_up && !gamepad1.dpad_down && leftVel < 0) {
+                    leftVel += buttonBDecel * (1000 / changeTime);
+                    if (leftVel > 0) {
+                        leftVel = 0;
+                    }
+                }
+                currentVel = (leftVel + rightVel) / 2;
+                velToMotor(leftVel, leftMotor);
+                velToMotor(rightVel, rightMotor);
+                break;
+
+            // Digital Arcade... (YOU WILL HATE DRIVING THIS) (And it may not work perfectly... My head isn't always 100% accurate)
+            case 4:
+                // using the dpad
+                if (gamepad1.dpad_up && currentVel + buttonFAccel <= maxVel) {
+                    currentVel += buttonFAccel * (1000 / changeTime);
+                }
+                if (gamepad1.dpad_down && currentVel - buttonBAccel >= -maxVel) {
+                    currentVel -= buttonBAccel * (1000 / changeTime);
+                }
+                if (!gamepad1.dpad_up && !gamepad1.dpad_down && currentVel > 0) {
+                    currentVel -= buttonFDecel * (1000 / changeTime);
+                    if (currentVel < 0) {
+                        currentVel = 0;
+                    }
+                }
+                if (!gamepad1.dpad_up && !gamepad1.dpad_down && currentVel < 0) {
+                    currentVel += buttonBDecel * (1000 / changeTime);
+                    if (currentVel > 0) {
+                        currentVel = 0;
+                    }
+                }
+                if (gamepad1.dpad_left && leftVel + buttonFAccel <= maxVel && currentVel > 0) {
+                    rightVel += buttonFAccel * (1000 / changeTime);
+                    leftVel -= buttonFAccel * (1000 / changeTime);
+                }
+                if (gamepad1.dpad_right && rightVel + buttonFAccel <= maxVel && currentVel > 0) {
+                    leftVel += buttonFAccel * (1000 / changeTime);
+                    rightVel -= buttonFAccel * (1000 / changeTime);
+                }
+                if (!gamepad1.dpad_left && !gamepad1.dpad_right && leftVel < rightVel && currentVel > 0) {
+                    leftVel += buttonFAccel * (1000 / changeTime);
+                    rightVel -= buttonFAccel * (1000 / changeTime);
+                    if (leftVel > rightVel) {
+                        leftVel = rightVel = (leftVel + rightVel) / 2;
+                    }
+                }
+                if (!gamepad1.dpad_left && !gamepad1.dpad_right && leftVel > rightVel && currentVel > 0) {
+                    rightVel += buttonFAccel * (1000 / changeTime);
+                    leftVel -= buttonFAccel * (1000 / changeTime);
+                    if (leftVel < rightVel) {
+                        leftVel = rightVel = (leftVel + rightVel) / 2;
+                    }
+                }
+                if (gamepad1.dpad_left && leftVel + buttonFAccel <= maxVel && currentVel < 0) {
+                    rightVel -= buttonFAccel * (1000 / changeTime);
+                    leftVel += buttonFAccel * (1000 / changeTime);
+                }
+                if (gamepad1.dpad_right && rightVel + buttonFAccel <= maxVel && currentVel < 0) {
+                    leftVel -= buttonFAccel * (1000 / changeTime);
+                    rightVel += buttonFAccel * (1000 / changeTime);
+                }
+                if (!gamepad1.dpad_left && !gamepad1.dpad_right && leftVel < rightVel && currentVel < 0) {
+                    leftVel -= buttonFAccel * (1000 / changeTime);
+                    rightVel += buttonFAccel * (1000 / changeTime);
+                    if (leftVel > rightVel) {
+                        leftVel = rightVel = (leftVel + rightVel) / 2;
+                    }
+                }
+                if (!gamepad1.dpad_left && !gamepad1.dpad_right && leftVel > rightVel && currentVel < 0) {
+                    rightVel -= buttonFAccel * (1000 / changeTime);
+                    leftVel += buttonFAccel * (1000 / changeTime);
+                    if (leftVel < rightVel) {
+                        leftVel = rightVel = (leftVel + rightVel) / 2;
+                    }
+                }
+                double difference = currentVel - ((leftVel + rightVel) / 2);
+                leftVel += difference;
+                rightVel += difference;
+                velToMotor(leftVel, leftMotor);
+                velToMotor(rightVel, rightMotor);
+                break;
+            default:
+                driveMode = 0;
+                break;
         }
 
-        //autoCircle();
-        // TODO: 10/17/2015 create the autoCircle function
+        // TODO: 10/26/2015 COMMENTS COMMENTS COMMENTS
+        if (gamepad1.left_trigger > trigThreshold && !LTpressed) {
+            LTpressed = true;
+            driveMode++;
+        }
+        else if (gamepad1.left_trigger < (trigThreshold-.1f) && LTpressed){
+            LTpressed = false;
+        }
+
+        if (gamepad1.right_trigger > trigThreshold && !RTpressed) {
+            RTpressed = true;
+            while (lastTime > System.currentTimeMillis()-1000){
+                if (Math.abs(gamepad1.left_stick_x) > stickThreshold && Math.abs(gamepad1.right_stick_x) > stickThreshold){
+                    mapToMotor(.5f, leftMotor);
+                    mapToMotor(.5f,rightMotor);
+                    break;
+                } else if (Math.abs(gamepad1.left_stick_x) > stickThreshold){
+                    if (gamepad1.left_stick_x < 0) autoCircle(true,true);
+                    if (gamepad1.left_stick_x > 0) autoCircle(true,false);
+                    break;
+                } else if (Math.abs(gamepad1.right_stick_x) > stickThreshold){
+                    if (gamepad1.right_stick_x < 0) autoCircle(false,true);
+                    if (gamepad1.right_stick_x > 0) autoCircle(false,false);
+                    break;
+                }
+            }
+        }
+        else if (gamepad1.right_trigger < (trigThreshold-.1f) && RTpressed){
+            RTpressed = false;
+        }
     }
 
+    // TODO: 10/17/2015 create the autoCircle function
     // It's private so that it isn't accessible outside of this class.
     // circle tells the class if it's making a circle of a square, and left tells
     // it to turn left or right. Remember that Java is case-sensitive.
@@ -175,5 +377,18 @@ public class AdamBasicDriveExample extends OpMode{
         // Simple mathematical formula for mapping. Expanded to be easier to read. Didn't feel like
         // looking for a native Java function. Edit: DANG IT THERE IS A SCALE FUNCTION, don't care.
         motor.setPower(((double)throttle - (-1) ) / ( (1) - (-1) ) * ( (maxMotorSpeed) - (-maxMotorSpeed) ) + -maxMotorSpeed);
+    }
+
+    // Another function to convert the meters per second calculated in the main function to the
+    // power that the motor requires to move to that speed as defined around the flags. Reason
+    // behind doing this is because we have the processing power and working with more standard
+    // units is soo much easier. Do not use this on the final robot as we will probably have
+    // rotary encoders and that allows for a much more consistent measurements.
+    // At this point, it might have been more effective to just create a map function or look for
+    // one because it's basically the same as mapToMotor, but OH WELL.
+    // TODO: 10/22/2015 Elaborate
+    private void velToMotor(double velocity, DcMotor motor){
+        Range.clip(velocity, -maxVel, maxVel);
+        motor.setPower((velocity - (-maxVel)) / ((maxVel) - (-maxVel)) * ((maxVel) - (-maxVel)) + -maxVel);
     }
 }

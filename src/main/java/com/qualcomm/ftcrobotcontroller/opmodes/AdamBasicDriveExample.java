@@ -4,6 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
 
+import java.sql.Driver;
+
 /**
  * Created by Adam Li on 10/16/2015.
  * The class is structured to be easy to follow and is heavily annotated. It's designed to
@@ -326,6 +328,9 @@ public class AdamBasicDriveExample extends OpMode{
                 driveMode = 0;
                 break;
         }
+        if (driveMode != 2 && driveMode != 3 && driveMode != 4){
+            currentVel = leftVel = rightVel = 0;
+        }
 
         // TODO: 10/26/2015 COMMENTS COMMENTS COMMENTS
         if (gamepad1.left_trigger > trigThreshold && !LTpressed) {
@@ -337,6 +342,11 @@ public class AdamBasicDriveExample extends OpMode{
         }
 
         if (gamepad1.right_trigger > trigThreshold && !RTpressed) {
+            if (currentVel != 0){
+                currentVel = leftVel = rightVel = 0;
+                mapToMotor(0, leftMotor);
+                mapToMotor(0, rightMotor);
+            }
             RTpressed = true;
             while (lastTime > System.currentTimeMillis()-1000){
                 if (Math.abs(gamepad1.left_stick_x) > stickThreshold && Math.abs(gamepad1.right_stick_x) > stickThreshold){
@@ -364,6 +374,15 @@ public class AdamBasicDriveExample extends OpMode{
     // circle tells the class if it's making a circle of a square, and left tells
     // it to turn left or right. Remember that Java is case-sensitive.
     private void autoCircle(boolean circle, boolean left){
+        double speed = maxCircleSpeed*maxMotorSpeed*maxVel;
+        double distance, distanceTraveled = 0;
+        if (circle){
+            distance = 2 * Math.PI * circleRadius;
+            while (distance )
+        }
+        else{
+
+        }
 
     }
 

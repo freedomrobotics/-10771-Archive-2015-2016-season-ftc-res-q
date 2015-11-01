@@ -4,8 +4,6 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
 
-import java.sql.Driver;
-
 /**
  * Created by Adam Li on 10/16/2015.
  * The class is structured to be easy to follow and is heavily annotated. It's designed to
@@ -89,8 +87,9 @@ public class AdamBasicDriveExample extends OpMode{
     //This one might change, so it's not static final.
     private float maxMotorSpeed = 1;    // Set on a floating scale of 0 < x <= 1. If out of range, will default to .8/
 
-    private static final float circleRadius = 1;     // Radius of circle and square for automatic circle/square in meters
-    private static final float maxCircleSpeed = .8f; // This*maxMotorSpeed = maximum speed the robot will go when doing the circle
+    private static final float circleRadius = 1;        // Radius of circle and square for automatic circle/square in meters
+    private static final float maxCircleSpeed = .8f;    // This*maxMotorSpeed = maximum speed the robot will go when doing the circle
+    private static final float robotWidth = 50;         // Distance between the centers of the wheels across the robot.
 
 
     // Have you ever worked with Arduino before?
@@ -349,17 +348,17 @@ public class AdamBasicDriveExample extends OpMode{
             }
             RTpressed = true;
             while (lastTime > System.currentTimeMillis()-1000){
-                if (Math.abs(gamepad1.left_stick_x) > stickThreshold && Math.abs(gamepad1.right_stick_x) > stickThreshold){
+                if (Math.abs(leftStickX) > stickThreshold && Math.abs(rightStickX) > stickThreshold){
                     mapToMotor(.5f, leftMotor);
                     mapToMotor(.5f,rightMotor);
                     break;
-                } else if (Math.abs(gamepad1.left_stick_x) > stickThreshold){
-                    if (gamepad1.left_stick_x < 0) autoCircle(true,true);
-                    if (gamepad1.left_stick_x > 0) autoCircle(true,false);
+                } else if (Math.abs(leftStickX) > stickThreshold){
+                    if (leftStickX < 0) autoCircle(true,true);
+                    if (leftStickX > 0) autoCircle(true,false);
                     break;
-                } else if (Math.abs(gamepad1.right_stick_x) > stickThreshold){
-                    if (gamepad1.right_stick_x < 0) autoCircle(false,true);
-                    if (gamepad1.right_stick_x > 0) autoCircle(false,false);
+                } else if (Math.abs(rightStickX) > stickThreshold){
+                    if (rightStickX < 0) autoCircle(false,true);
+                    if (rightStickX > 0) autoCircle(false,false);
                     break;
                 }
             }
@@ -369,21 +368,64 @@ public class AdamBasicDriveExample extends OpMode{
         }
     }
 
-    // TODO: 10/17/2015 create the autoCircle function
     // It's private so that it isn't accessible outside of this class.
     // circle tells the class if it's making a circle of a square, and left tells
     // it to turn left or right. Remember that Java is case-sensitive.
+    // TODO: 11/1/2015 Add acceleration abilities and comments
     private void autoCircle(boolean circle, boolean left){
         double speed = maxCircleSpeed*maxMotorSpeed*maxVel;
         double distance, distanceTraveled = 0;
         if (circle){
             distance = 2 * Math.PI * circleRadius;
-            while (distance )
+            changeTime = System.currentTimeMillis()-lastTime;
+            lastTime += changeTime;
+            if (left) {
+                velToMotor(speed, leftMotor);
+                velToMotor((2 * Math.PI * (circleRadius + robotWidth / 100)) / (distance / speed), rightMotor);
+            }else {
+                velToMotor((2 * Math.PI * (circleRadius + robotWidth / 100)) / (distance / speed), leftMotor);
+                velToMotor(speed, rightMotor);
+            }
+            while (distance > distanceTraveled){
+                changeTime = System.currentTimeMillis()-lastTime;
+                lastTime += changeTime;
+                distanceTraveled += speed*(1000/changeTime);
+            }
+            mapToMotor(0, leftMotor);
+            mapToMotor(0, rightMotor);
         }
-        else{
-
+        else {
+            distance = Math.PI * robotWidth / 4;        //distance for the outer wheel to make for a 90 degree turn in this case
+            for (int x = 0; x < 8; x++){
+                changeTime = System.currentTimeMillis()-lastTime;
+                lastTime += changeTime;
+                velToMotor(speed, leftMotor);
+                velToMotor(speed, rightMotor);
+                while (circleRadius > distanceTraveled) {
+                    changeTime = System.currentTimeMillis() - lastTime;
+                    lastTime += changeTime;
+                    distanceTraveled += speed * (1000 / changeTime);
+                }
+                distanceTraveled = 0;
+                if (x % 2 == 0){
+                    changeTime = System.currentTimeMillis() - lastTime;
+                    lastTime += changeTime;
+                    if (left) {
+                        mapToMotor(0, leftMotor);
+                    }else {
+                        mapToMotor(0, rightMotor);
+                    }
+                    while (distance > distanceTraveled) {
+                        changeTime = System.currentTimeMillis() - lastTime;
+                        lastTime += changeTime;
+                        distanceTraveled += speed * (1000 / changeTime);
+                    }
+                    distanceTraveled = 0;
+                }
+            }
+            mapToMotor(0, leftMotor);
+            mapToMotor(0, rightMotor);
         }
-
     }
 
     // A simple function to map values on a scale of -1 to 1 to whatever the maxMotorSpeed was set to.
@@ -392,7 +434,7 @@ public class AdamBasicDriveExample extends OpMode{
     // have pointers. Instead everything is a reference, and the JVM makes the decisions for us.
     private void mapToMotor(float throttle, DcMotor motor){
         // This makes sure to avoid an out of range error by limiting it.
-        Range.clip(throttle, -1, 1);
+        throttle = Range.clip(throttle, -1, 1);
         // Simple mathematical formula for mapping. Expanded to be easier to read. Didn't feel like
         // looking for a native Java function. Edit: DANG IT THERE IS A SCALE FUNCTION, don't care.
         motor.setPower(((double)throttle - (-1) ) / ( (1) - (-1) ) * ( (maxMotorSpeed) - (-maxMotorSpeed) ) + -maxMotorSpeed);
@@ -407,7 +449,7 @@ public class AdamBasicDriveExample extends OpMode{
     // one because it's basically the same as mapToMotor, but OH WELL.
     // TODO: 10/22/2015 Elaborate
     private void velToMotor(double velocity, DcMotor motor){
-        Range.clip(velocity, -maxVel, maxVel);
+        velocity = Range.clip(velocity, -maxVel, maxVel);
         motor.setPower((velocity - (-maxVel)) / ((maxVel) - (-maxVel)) * ((maxVel) - (-maxVel)) + -maxVel);
     }
 }

@@ -54,7 +54,7 @@ public class FtcOpModeRegister implements OpModeRegister {
      *
      * If two or more op modes are registered with the same name, the app will display an error.
      */
-     /*
+
     manager.register("NullOp", NullOp.class);
 
     manager.register("MatrixK9TeleOp", MatrixK9TeleOp.class);
@@ -64,7 +64,7 @@ public class FtcOpModeRegister implements OpModeRegister {
 
     //Adam's Basic Drive Example! (check class file AdamBasicDriveExample within the same package)
     manager.register ("Adam Drive Example", AdamBasicDriveExample.class);
-*/
+
     /*
      * Uncomment any of the following lines if you want to register an op mode.
      */

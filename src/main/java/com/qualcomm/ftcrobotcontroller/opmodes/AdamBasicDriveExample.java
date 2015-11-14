@@ -61,8 +61,8 @@ public class AdamBasicDriveExample extends OpMode{
 
     // The below are "flags" that I like to use to make code easier to change in many areas
     // Normally I would set these before I would even declare the variables.
-    private static final boolean motorLeftReverse = true;  // All the "gibberish" before the "flag" name
-    private static final boolean motorRightReverse = false;  // is to make sure the variable can't change
+    private static final boolean motorLeftReverse = false;  // All the "gibberish" before the "flag" name
+    private static final boolean motorRightReverse = true;  // is to make sure the variable can't change
 
     private static final boolean curvedJoystickMap = true;  // This flag changes the joystick mapping between linear and squared
 

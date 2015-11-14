@@ -67,6 +67,7 @@ public class FtcOpModeRegister implements OpModeRegister {
 
     //Joel's Custom OP
     manager.register("XBOX", JoelCustomOp.class);
+    //manager.register("Search Around", JoelAutonomousLinOp.class);
     //Example Op Modes(to be removed later)
     manager.register("Forward", ExampleDriveForward.class);
     /*

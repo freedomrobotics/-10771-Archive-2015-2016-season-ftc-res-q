@@ -6,8 +6,11 @@ import com.qualcomm.robotcore.util.Range;
 
 /**
  * Created by joelv on 11/14/2015.
+ * This OpMode is customized to work to configure the controller to work
+ * like an X-Box controller settings
  */
-//Custom OP that runs like an Xbox race controller
+
+//Custom OPmode class that runs like an Xbox race controller
 public class JoelCustomOp extends OpMode {
 
     public JoelCustomOp(){
@@ -31,22 +34,27 @@ public class JoelCustomOp extends OpMode {
     }
     @Override
     public void loop(){
+
         //Acceleration triggers
         forward = gamepad1.right_trigger;       //RT for forward
         reverse = gamepad1.left_trigger;        //LT for backward
         y = forward - reverse;                  //Y is the acceleration forward/back
+
         //Turning Left and Right
         x = gamepad1.left_stick_x;              //Left Stick for turning
                                                 //X accounts for change in direction
         //Assigns values to motors
         LeftPower = y + x;
         RightPower = y - x;
+
         //In case values go over 1 or -1
         LeftPower = Range.clip(LeftPower, -1, 1);
         RightPower = Range.clip(RightPower, -1, 1);
+
         //Run the motors
         leftMotor.setPower(LeftPower);
         rightMotor.setPower(RightPower);
+
     }
 
 }

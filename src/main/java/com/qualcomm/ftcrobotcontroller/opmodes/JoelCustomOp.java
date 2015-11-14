@@ -28,8 +28,8 @@ public class JoelCustomOp extends OpMode {
 
     @Override
     public void init(){
-        leftMotor = hardwareMap.dcMotor.get("left_motor");
-        rightMotor = hardwareMap.dcMotor.get("right_motor");
+        leftMotor = hardwareMap.dcMotor.get("left_drive");
+        rightMotor = hardwareMap.dcMotor.get("right_drive");
         rightMotor.setDirection(DcMotor.Direction.REVERSE);
     }
     @Override

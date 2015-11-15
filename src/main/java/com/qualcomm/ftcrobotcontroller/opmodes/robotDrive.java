@@ -1,7 +1,7 @@
 package com.qualcomm.ftcrobotcontroller.opmodes;
 
-import com.qualcomm.ftcrobotcontroller.opmodes.lePamplemousse.core.InitComp;
-import com.qualcomm.ftcrobotcontroller.opmodes.lePamplemousse.core.StartValues;
+import com.qualcomm.ftcrobotcontroller.opmodes.lePamplemousse.Core.InitComp;
+import com.qualcomm.ftcrobotcontroller.opmodes.lePamplemousse.Core.StartValues;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 /**
@@ -9,9 +9,9 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
  *
  * The core robot framework. This file should rarely be edited.
  */
-public class RobotDrive extends OpMode{
+public class robotDrive extends OpMode{
 
-    public RobotDrive(){
+    public robotDrive(){
         //Constructor
     }
 

@@ -1,7 +1,7 @@
 package com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse;
 
 /**
- * Created by Adam Li on 11/14/2015.
+ * XML class used for manipulating the configuration files
  */
 public class XML {
 }

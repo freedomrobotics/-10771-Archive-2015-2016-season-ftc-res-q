@@ -1,25 +1,34 @@
 package com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.config;
 
 /**
- * Created by Adam Li on 11/14/2015.
+ * Abstract class to use to define what each other class should do
+ * or to share a value across them such as the filepath (which is not right)
  */
-public interface Config {
+public abstract class Config {
+
+    public String filePath = "/";
 
     /**
      * Read the values from the configuration file.
      * Should run create if it fails.
      */
-    void read();
+    public void read(){
+
+    }
 
     /**
      * Create a configuration using the default/current values.
      * If a configuration file exists, it should be replaced
      */
-    void create();
+    public void create(){
+
+    }
 
     /**
      * Verify the retrieved values.
      * If there is an error, use default values.
      */
-    void verify();
+    public void verify(){
+
+    }
 }

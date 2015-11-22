@@ -5,14 +5,11 @@ import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.core.StartValues;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 /**
- * Le Pamplemousse DRIVE!
- *
- * The core robot framework. This file should rarely be edited.
- * This is the regular drive
+ * Autonomous OpMode created separately for two reasons, easier to setup and faster to run
  */
-public class RobotDrive extends OpMode{
+public class RobotAuto extends OpMode {
 
-    public RobotDrive(){
+    public RobotAuto(){
         //Constructor
     }
 

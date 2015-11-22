@@ -1,9 +1,9 @@
 package com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.config;
 
 /**
- * Created by Adam Li on 11/14/2015.
+ * Configuration fie accessor for a Variables Config File
  */
-public class Variables implements Config{
+public class Variables extends Config{
     @Override
     public void read() {
 

@@ -1,7 +1,7 @@
 package com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.core;
 
 /**
- * Created by Adam Li on 11/14/2015.
+ * Create the actual references to the components based on the configuration
  */
 public class InitComp {
 

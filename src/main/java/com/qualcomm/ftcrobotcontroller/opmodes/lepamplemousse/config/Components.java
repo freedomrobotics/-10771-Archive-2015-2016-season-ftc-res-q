@@ -1,9 +1,9 @@
 package com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.config;
 
 /**
- * Created by Adam Li on 11/14/2015.
+ * Components file accessor for the everything
  */
-public class Components implements Config {
+public class Components extends Config {
     @Override
     public void read() {
 

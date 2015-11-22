@@ -1,7 +1,8 @@
 package com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.core.sensors.camera;
 
 /**
- * Created by Adam Li on 11/22/2015.
+ * Accepts one or two arguments to determine a grid the camera should average the
+ * colors for and return.
  */
 public class ColorGrid {
 }

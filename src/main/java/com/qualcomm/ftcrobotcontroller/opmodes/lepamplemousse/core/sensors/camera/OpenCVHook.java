@@ -1,7 +1,7 @@
 package com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.core.sensors.camera;
 
 /**
- * Created by Adam Li on 11/22/2015.
+ * Hook class for OpenCV functions if we decide to use it
  */
 public class OpenCVHook {
 }

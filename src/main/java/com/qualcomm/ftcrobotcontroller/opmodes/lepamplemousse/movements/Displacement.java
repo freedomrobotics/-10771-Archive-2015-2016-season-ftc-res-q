@@ -17,7 +17,7 @@ public class Displacement {
     private float rightPower = 0f;
 
     enum DIRECTION{
-    RIGHT, LEFT;
+    RIGHT, LEFT
     }
 
     public void forward(){

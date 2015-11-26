@@ -1,6 +1,7 @@
-package com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.vars;
+package com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.components;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 /**
  * Core variables with generic names to be aliased later. Since all of the
@@ -10,5 +11,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
  */
 public class Core {
     public static DcMotor motor[];
-    //TODO: Check out the project design file for different robot parts
+    public static Servo servo[];
+    // TODO: 11/26/2015 Add All the components
 }

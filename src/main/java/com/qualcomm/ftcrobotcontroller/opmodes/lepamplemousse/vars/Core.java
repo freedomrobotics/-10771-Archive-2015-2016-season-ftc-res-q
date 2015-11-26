@@ -10,6 +10,5 @@ import com.qualcomm.robotcore.hardware.DcMotor;
  */
 public class Core {
     public static DcMotor motor[];
-
-
+    //TODO: Check out the project design file for different robot parts
 }

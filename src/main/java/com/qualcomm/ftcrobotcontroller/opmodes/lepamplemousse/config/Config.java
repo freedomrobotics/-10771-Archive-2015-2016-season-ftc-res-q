@@ -6,7 +6,7 @@ package com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.config;
  */
 public abstract class Config {
 
-    public String filePath = "/";
+    public String filePath = Static.filePath;
 
     /**
      * Read the values from the configuration file.

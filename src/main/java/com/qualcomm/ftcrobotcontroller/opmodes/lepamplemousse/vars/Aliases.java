@@ -1,7 +1,5 @@
 package com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.vars;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
-
 /**
  * This file either provides a more descriptive or useful alias, or it
  * creates a Java list or hashmap with names from the configuration files

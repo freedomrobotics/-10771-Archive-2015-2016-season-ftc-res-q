@@ -7,6 +7,9 @@ import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.vars.Static;
 import com.qualcomm.robotcore.robocol.Telemetry;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * Abstract class to use to define what each other class should do
@@ -17,24 +20,24 @@ public abstract class Config {
     /**
      * The location of the coded location of the config files
      */
-    File configDirectory = new File(Environment.getExternalStorageDirectory().toString() + Static.configPath);
-    /**
-     * Flag for whether the config file folder exists or not
-     */
-    // TODO: 11/27/2015 Move to dynamic 
-    static boolean configDirExists = true;
+    protected File configDirectory = new File(Environment.getExternalStorageDirectory().toString() + Static.configPath);
+    // flag
     private boolean configDirCheck = false;
+    protected boolean writable = false;
 
     /**
      * Debuggable Constructor
      * @param telemetry Telemetry output for Debug
      */
     public Config(Telemetry telemetry){
+        writable = Environment.getExternalStorageDirectory().canWrite();
         // If this hasn't been done yet, or reset has been called, run the folder check
         if (!configDirCheck || Dynamic.reset) {
+            Dynamic.configDirExists = true;
+            //region Debug block
             // If debug is enabled, verbose output
             if (Static.Debug) {
-                if (Environment.getExternalStorageDirectory().canWrite()) {
+                if (writable) {
                     telemetry.addData("FS-Write", "enabled");
                 } else {
                     telemetry.addData("FS-Write", "not enabled");
@@ -42,34 +45,35 @@ public abstract class Config {
                 if (configDirectory.exists()) {
                     telemetry.addData("ConfigDir", "exists");
                 } else {
-                    telemetry.addData("ConfigDir", "does not exist... creating..");
+                    telemetry.addData("ConfigDir", "does not exist... creating...");
                     if (configDirectory.mkdirs()) {
                         telemetry.addData("ConfigDir", "created successfully");
                     } else {
                         telemetry.addData("ConfigDir", "failed to create... using defaults");
-                        configDirExists = false;
+                        Dynamic.configDirExists = false;
                     }
                 }
             }
+            // endregion
             // Runs if debug is not enabled
-            dirCheck();
+            else dirCheck();
         }
         //Small flag to prevent debug spamming and prevent redundant checks
         configDirCheck = true;
-        init();
     }
 
     /**
      * Non-debuggable constructor
      */
     public Config(){
+        writable = Environment.getExternalStorageDirectory().canWrite();
         // If this hasn't been done yet, or reset has been called, run the folder check
         if (!configDirCheck || Dynamic.reset) {
+            Dynamic.configDirExists = true;
             dirCheck();
         }
         //Small flag to prevent debug spamming and prevent redundant checks
         configDirCheck = true;
-        init();
     }
 
     //Just to save lines
@@ -77,36 +81,104 @@ public abstract class Config {
         // Shortened logic to check and create the folder. If it can write and the folder
         // doesn't exist, it will try to create it, marking it as not existing if it fails.
         // If it doesn't exist and write can't happen, it's marked as not existing.
-        if (!configDirectory.exists() && Environment.getExternalStorageDirectory().canWrite()) {
+        if (!configDirectory.exists() && writable) {
             if (!configDirectory.mkdirs()) {
-                configDirExists = false;
+                Dynamic.configDirExists = false;
             }
         }else if (!configDirectory.exists()){
-            configDirExists = false;
+            Dynamic.configDirExists = false;
         }
     }
 
     /**
-     * Identifies and locates the file and such
+     * Simple function to copy a default file to the config directory
+     * @param fileName The name of the config file to copy.
+     * @return Whether or not the file was created successfully.
      */
-    public abstract void init();
+    public boolean createDefaults(String fileName){
+        try
+        {
+            InputStream in = getClass().getResourceAsStream("/defaults/"+fileName);
+            OutputStream out = new FileOutputStream(new File(configDirectory, fileName));
+
+            byte[] buffer = new byte[1024];
+            int readlen;
+            while ((readlen = in.read(buffer)) != -1)
+            {
+                out.write(buffer, 0, readlen);
+            }
+            in.close();
+            out.flush();
+            out.close();
+
+            return true;
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    /**
+     * Identifies and locates the file and such.
+     * Run it within the constructor
+     */
+    protected abstract void init();
 
     /**
      * Read the values from the configuration file.
-     * Should run create if it fails.
+     * Should run and pass the value from verify and load.
+     * @return True if file loaded; false if defaults loaded.
      */
-    public abstract void read();
+    public abstract boolean read();
 
     /**
-     * Create a configuration using the default/current values.
-     * If a configuration file exists, it should be replaced.
-     * Read should be run after.
+     * Creates a configuration using the default values.
+     * If a configuration file exists, it will be replaced.
+     * Will not load the values after.
+     * @return Creation state.
      */
-    public abstract void create();
+    public boolean create(){
+        return create(false);
+    }
 
     /**
-     * Verify the retrieved values. Should run after read.
-     * If there is an error, use default values.
+     * Creates a configuration using the default values.
+     * If a configuration file exists, it will be replaced.
+     * @param loadAfter Whether or not to verify and load the file after replacing
+     * @return Creation state.
      */
-    public abstract void verify();
+    public abstract boolean create(boolean loadAfter);
+
+    /**
+     * Verify the retrieved values. True if verified, false if not.
+     * Will not load file after verification.
+     * @retun Verify state
+     */
+    public boolean verify(){
+        return verify(false);
+    }
+
+    /**
+     * Verify the retrieved values. True if verified, false if not.
+     * @param loadAfter Whether or not to load values after verification.
+     * @retun Verify state
+     */
+    public abstract boolean verify(boolean loadAfter);
+
+    /**
+     * Loads the file.
+     * @return Loaded successfully or not
+     */
+    public boolean load(){
+        return load(false);
+    }
+
+    /**
+     * Loads values.
+     * @param loadDefault Whether to load from defaults or file.
+     * @return Loaded successfully or not
+     */
+    public abstract boolean load(boolean loadDefault);
 }

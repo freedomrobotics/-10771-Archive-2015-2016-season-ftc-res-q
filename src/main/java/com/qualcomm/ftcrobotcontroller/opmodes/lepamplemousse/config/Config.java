@@ -98,8 +98,12 @@ public abstract class Config {
     public boolean createDefaults(String fileName){
         try
         {
+            File configFile = new File(configDirectory, fileName);
+            if (!configFile.createNewFile()){
+                return false;
+            }
             InputStream in = getClass().getResourceAsStream("/defaults/"+fileName);
-            OutputStream out = new FileOutputStream(new File(configDirectory, fileName));
+            OutputStream out = new FileOutputStream(configFile, false);
 
             byte[] buffer = new byte[1024];
             int readlen;
@@ -120,6 +124,7 @@ public abstract class Config {
         return false;
     }
 
+    // TODO: 11/28/2015 Change some of the compound functions to use enumerations instead of assuming true
     /**
      * Identifies and locates the file and such.
      * Run it within the constructor
@@ -140,32 +145,35 @@ public abstract class Config {
      * @return Creation state.
      */
     public boolean create(){
-        return create(false);
+        return create(true, false);
     }
 
     /**
-     * Creates a configuration using the default values.
+     * Creates a configuration using the default or stored values.
      * If a configuration file exists, it will be replaced.
+     * Will not load the values after.
+     * @param useDefaults Whether or not to load the defaults
+     * @return Creation state.
+     */
+    public boolean create(boolean useDefaults){
+        return create(useDefaults, false);
+    }
+
+    /**
+     * Creates a configuration using the default or stored values.
+     * If a configuration file exists, it will be replaced.
+     * @param useDefaults Whether or not to load the defaults
      * @param loadAfter Whether or not to verify and load the file after replacing
      * @return Creation state.
      */
-    public abstract boolean create(boolean loadAfter);
+    public abstract boolean create(boolean useDefaults, boolean loadAfter);
 
     /**
      * Verify the retrieved values. True if verified, false if not.
-     * Will not load file after verification.
-     * @retun Verify state
+     * Will replace bad values with defaults
+     * @return Verify state
      */
-    public boolean verify(){
-        return verify(false);
-    }
-
-    /**
-     * Verify the retrieved values. True if verified, false if not.
-     * @param loadAfter Whether or not to load values after verification.
-     * @retun Verify state
-     */
-    public abstract boolean verify(boolean loadAfter);
+    public abstract boolean verify();
 
     /**
      * Loads the file.
@@ -181,4 +189,18 @@ public abstract class Config {
      * @return Loaded successfully or not
      */
     public abstract boolean load(boolean loadDefault);
+
+    /**
+     * Retrieves the object associated with the string
+     * @param key The string to search and retrieve the object from
+     * @return The object mapped to the string
+     */
+    public abstract Object retrieve(String key);
+
+    /**
+     * Stores or replaces the object associated with the string
+     * @param key The string to search and store the object to
+     * @param object The Object to store
+     */
+    public abstract boolean store(String key, Object object);
 }

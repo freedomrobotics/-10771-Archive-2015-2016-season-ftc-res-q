@@ -4,10 +4,20 @@ import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.vars.Dynamic;
 import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.vars.Static;
 import com.qualcomm.robotcore.robocol.Telemetry;
 
+import org.yaml.snakeyaml.Yaml;
+
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Map;
 
 /**
  * Components file accessor for the everything
+ * todo simplify and make some more merges with config.java
+ * todo improve
  */
 public class Components extends Config {
 
@@ -19,6 +29,10 @@ public class Components extends Config {
     private boolean fileExists = true;
     // variable for telemetry
     private Telemetry telemetry = null;
+    // The YAML object.
+    private Yaml yaml = new Yaml();
+    // An object to string map.
+    private Map<String, Object> data = null;
 
     /**
      * Debuggable Constructor
@@ -93,30 +107,73 @@ public class Components extends Config {
      */
     @Override
     public boolean read() {
+        if (load()){
+            if (!verify()){
+                load(true);
+                return false;
+            }
+            return true;
+        }
+        load(true);
         return false;
     }
 
     /**
-     * Creates the configuration using the default values.
+     * Creates the configuration using the default or stored values.
      * If the configuration file exists, it will be replaced.
      *
+     * @param useDefaults Whether or not to load the defaults
      * @param loadAfter Whether or not to verify and load the file after replacing
      * @return Creation state.
      */
     @Override
-    public boolean create(boolean loadAfter) {
+    public boolean create(boolean useDefaults, boolean loadAfter) {
+        if (useDefaults){
+            boolean result = createDefaults(fileName);
+            if (Static.Debug && telemetry != null) {
+                if (result) {
+                    telemetry.addData("CreatedCompConfFile", "default created");
+                    fileExists = true;
+                }else{
+                    telemetry.addData("CreatedCompConfFile", "failed to create default");
+                }
+            }
+            if (!loadAfter){
+                return result;
+            }else if (!result) {
+                return false;
+            }else{
+                // BAD BAD BAD. IT DOES NOT TELL YOU HOW THE VERIFY AND LOAD EVEN WENT.
+                load();
+                verify();
+                return true;
+            }
+        }else{
+            try {
+                FileWriter configWrite = new FileWriter(configFile);
+                configWrite.write(yaml.dump(data));
+                configWrite.flush();
+                configWrite.close();
+                if (Static.Debug && telemetry != null) telemetry.addData("CreatedCompConfFile", "created successfully");
+                fileExists = true;
+            } catch (IOException e) {
+                e.printStackTrace();
+                if (Static.Debug && telemetry != null) telemetry.addData("CreatedCompConfFile", "failed to create");
+            }
+        }
         return false;
     }
 
     /**
-     * Verify the retrieved values. True if verified, false if not.
+     * Verify the stored values. True if verified, false if not.
+     * Will replace bad values with defaults
      *
-     * @param loadAfter Whether or not to load values after verification.
-     * @retun Verify state
+     * @return Verify state
      */
     @Override
-    public boolean verify(boolean loadAfter) {
-        return false;
+    public boolean verify() {
+        // TODO: 11/28/2015 Add a range checker
+        return true;
     }
 
     /**
@@ -127,6 +184,65 @@ public class Components extends Config {
      */
     @Override
     public boolean load(boolean loadDefault) {
+        InputStream config;
+        data = null;
+        if (loadDefault) {
+            config = getClass().getResourceAsStream("/defaults/"+fileName);
+            if (Static.Debug && telemetry != null) telemetry.addData("LoadCompConfFile", "default selected");
+        }
+        else if (fileExists){
+            try {
+                config = new FileInputStream(configFile);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                if (Static.Debug && telemetry != null) telemetry.addData("LoadCompConfFile", "file failed to load");
+                return false;
+            }
+            if (Static.Debug && telemetry != null) telemetry.addData("LoadCompConfFile", "file selected");
+        }
+        else{
+            return false;
+        }
+        if (config != null) {
+            data = (Map<String, Object>) yaml.load(config);
+            if (Static.Debug && telemetry != null) telemetry.addData("LoadCompConfFile", "failed to load");
+            if (data != null){
+                if (Static.Debug && telemetry != null) telemetry.addData("LoadCompConfFile", "loaded");
+                return true;
+            }
+        }
         return false;
     }
+
+    //region Getters and Setters
+
+    /**
+     * Retrieves the object associated with the string
+     *
+     * @param key The string to search and retrieve the object from
+     * @return The object mapped to the string
+     */
+    @Override
+    public Object retrieve(String key) {
+        if (data != null){
+            return data.get(key);
+        }
+        return null;
+    }
+
+    /**
+     * Stores or replaces the object associated with the string
+     *
+     * @param key    The string to search and store the object to
+     * @param object The Object to store
+     */
+    @Override
+    public boolean store(String key, Object object) {
+        if (data != null){
+            data.put(key, object);
+        }
+        return false;
+    }
+
+    //endregion
 }

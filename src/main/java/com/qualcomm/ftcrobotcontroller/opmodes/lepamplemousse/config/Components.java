@@ -143,9 +143,20 @@ public class Components extends Config {
             }else if (!result) {
                 return false;
             }else{
-                // BAD BAD BAD. IT DOES NOT TELL YOU HOW THE VERIFY AND LOAD EVEN WENT.
-                load();
-                verify();
+                if (load()){
+                    if(verify()){
+                        telemetry.addData("LoadedVarConFile", "default loaded");
+                    }
+                    else{
+                        telemetry.addData("LoadedVarConFile", "failed to verify");
+                        return false;
+                    }
+
+                }
+                else {
+                    telemetry.addData("LoadedVarConFile", "failed to load");
+                    return false;
+                }
                 return true;
             }
         }else{

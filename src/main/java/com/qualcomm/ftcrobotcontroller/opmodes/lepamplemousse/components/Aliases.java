@@ -1,6 +1,7 @@
 package com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.components;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.LightSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import java.util.HashMap;
@@ -14,7 +15,7 @@ import java.util.Map;
  */
 public class Aliases {
     /**
-     * Moor Map. Values from the Components config file can be used to
+     * Motor Map. Values from the Components config file can be used to
      * create an alias reference any motor. Retrieve using ~.motorMap.get("name");
      * Set using ~.motorMap.put("name", motor);
      */
@@ -26,4 +27,12 @@ public class Aliases {
      * Set using ~.servoMap.put("name", servo);
      */
     public static Map<String, Servo> servoMap = new HashMap<String, Servo>();
+
+    /**
+     * Light Sensor Map. Values from Components config file can be used to
+     * create an alias reference any light sensor.  Retrieve using ~.lightSensor.get("name");
+     * Set using ~.motorMap.put("name", light sensor);
+     */
+    public static Map<String, LightSensor> lightSensorMap = new HashMap<String, LightSensor>();
+
 }

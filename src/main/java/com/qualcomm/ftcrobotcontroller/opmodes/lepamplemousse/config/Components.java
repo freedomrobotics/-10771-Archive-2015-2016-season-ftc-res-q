@@ -149,13 +149,10 @@ public class Components extends Config {
                     }
                     else{
                         telemetry.addData("LoadedVarConFile", "failed to verify");
-                        return false;
                     }
-
                 }
                 else {
                     telemetry.addData("LoadedVarConFile", "failed to load");
-                    return false;
                 }
                 return true;
             }

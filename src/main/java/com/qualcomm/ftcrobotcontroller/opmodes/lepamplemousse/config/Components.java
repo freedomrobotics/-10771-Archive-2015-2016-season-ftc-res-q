@@ -1,6 +1,7 @@
 package com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.config;
 
 import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.vars.Dynamic;
+import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.vars.ReturnValues;
 import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.vars.Static;
 import com.qualcomm.robotcore.robocol.Telemetry;
 
@@ -124,12 +125,13 @@ public class Components extends Config {
      *
      * @param useDefaults Whether or not to load the defaults
      * @param loadAfter Whether or not to verify and load the file after replacing
-     * @return Creation state.
+     * @return Success Value based on the ReturnValues enumeration
      */
     @Override
-    public boolean create(boolean useDefaults, boolean loadAfter) {
+    public ReturnValues create(boolean useDefaults, boolean loadAfter) {
+        boolean result;
         if (useDefaults){
-            boolean result = createDefaults(fileName);
+            result = createDefaults(fileName);
             if (Static.Debug && telemetry != null) {
                 if (result) {
                     telemetry.addData("CreatedCompConfFile", "default created");
@@ -138,31 +140,6 @@ public class Components extends Config {
                     telemetry.addData("CreatedCompConfFile", "failed to create default");
                 }
             }
-            if (!loadAfter){
-                return result;
-            }else if (!result) {
-                return false;
-            }else{ //todo fix and improve the loadafter=true statements by making it work with debug=true&&teletry!=null
-                   //todo make methods return enumeration return values(separate from return value of create)
-                if (load()){
-                    if(verify()){
-                        telemetry.addData("LoadedCompConFile", "default loaded");
-                    }
-                    else{
-                        telemetry.addData("LoadedCompConFile", "failed to verify");
-                    }
-                }
-                else {
-                    if (load(true)){
-                        if (verify())
-                        telemetry.addData("LoadedCompConFile", "default selected");
-                    }
-                    else {
-                        telemetry.addData("LoadedCompConFile", "failed to load");
-                    }
-                }
-                return true;
-            }
         }else{
             try {
                 FileWriter configWrite = new FileWriter(configFile);
@@ -170,13 +147,33 @@ public class Components extends Config {
                 configWrite.flush();
                 configWrite.close();
                 if (Static.Debug && telemetry != null) telemetry.addData("CreatedCompConfFile", "created successfully");
-                fileExists = true;
+                result = fileExists = true;
             } catch (IOException e) {
                 e.printStackTrace();
                 if (Static.Debug && telemetry != null) telemetry.addData("CreatedCompConfFile", "failed to create");
+                result = false;
             }
         }
-        return false;
+        if (!loadAfter){
+            return (result) ? ReturnValues.SUCCESS : ReturnValues.FAIL;     // Look up Ternary operator if you don't understand
+        }else if (!result) {
+            return ReturnValues.FAIL;
+        }else{
+            if (load()){
+                if(verify()){
+                    if (Static.Debug && telemetry != null) telemetry.addData("LoadedCompConFile", "default loaded");
+                    return ReturnValues.SUCCESS;
+                }
+                else {
+                    if (Static.Debug && telemetry != null) telemetry.addData("LoadedCompConFile", "failed to verify");
+                    return ReturnValues.UNABLE_TO_VERIFY;
+                }
+            }
+            else {
+                if (Static.Debug && telemetry != null) telemetry.addData("LoadedCompConFile", "failed to load");
+                return ReturnValues.UNABLE_TO_LOAD;
+            }
+        }
     }
 
     /**

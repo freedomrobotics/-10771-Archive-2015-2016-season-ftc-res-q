@@ -3,6 +3,7 @@ package com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.config;
 import android.os.Environment;
 
 import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.vars.Dynamic;
+import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.vars.ReturnValues;
 import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.vars.Static;
 import com.qualcomm.robotcore.robocol.Telemetry;
 
@@ -145,18 +146,18 @@ public abstract class Config {
      * @return Creation state.
      */
     public boolean create(){
-        return create(true, false);
+        return create(true, false).equals(ReturnValues.SUCCESS);
     }
 
     /**
      * Creates a configuration using the default or stored values.
      * If a configuration file exists, it will be replaced.
      * Will not load the values after.
-     * @param useDefaults Whether or not to load the defaults
+     * @param useDefaults Whether or not to create the defaults
      * @return Creation state.
      */
     public boolean create(boolean useDefaults){
-        return create(useDefaults, false);
+        return create(useDefaults, false).equals(ReturnValues.SUCCESS);
     }
 
     /**
@@ -164,9 +165,9 @@ public abstract class Config {
      * If a configuration file exists, it will be replaced.
      * @param useDefaults Whether or not to load the defaults
      * @param loadAfter Whether or not to verify and load the file after replacing
-     * @return Creation state.
+     * @return Success Value based on the ReturnValues enumeration
      */
-    public abstract boolean create(boolean useDefaults, boolean loadAfter);
+    public abstract ReturnValues create(boolean useDefaults, boolean loadAfter);
 
     /**
      * Verify the retrieved values. True if verified, false if not.

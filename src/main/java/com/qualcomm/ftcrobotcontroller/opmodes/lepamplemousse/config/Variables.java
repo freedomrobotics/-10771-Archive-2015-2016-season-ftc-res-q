@@ -1,6 +1,7 @@
 package com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.config;
 
 import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.vars.Dynamic;
+import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.vars.ReturnValues;
 import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.vars.Static;
 import com.qualcomm.robotcore.robocol.Telemetry;
 
@@ -123,12 +124,13 @@ public class Variables extends Config{
      *
      * @param useDefaults Whether or not to load the defaults
      * @param loadAfter Whether or not to load the file and verify after replacing
-     * @return Creation state.
+     * @return Success Value based on the ReturnValues enumeration
      */
     @Override
-    public boolean create(boolean useDefaults, boolean loadAfter) {
+    public ReturnValues create(boolean useDefaults, boolean loadAfter) {
+        boolean result;
         if (useDefaults){
-            boolean result = createDefaults(fileName);
+            result = createDefaults(fileName);
             if (Static.Debug && telemetry != null) {
                 if (result) {
                     telemetry.addData("CreatedVarConfFile", "default created");
@@ -137,29 +139,6 @@ public class Variables extends Config{
                     telemetry.addData("CreatedVarConfFile", "failed to create default");
                 }
             }
-            if (!loadAfter){
-                return result;
-            }else if (!result) {
-                return false;
-            }else{
-                // todo 12/1/2015 see Components.java lines 145 and 146
-                if (Static.Debug && telemetry != null){
-                    if (load()){
-                        if(verify()){
-                            telemetry.addData("LoadedVarConFile", "default loaded");
-                        }
-                        else {
-                            telemetry.addData("LoadedVarConFile", "failed to verify");
-                            return false;
-                        }
-                    }
-                    else {
-                        telemetry.addData("LoadedVarConFile", "failed to load");
-                        return false;
-                    }
-                }
-                return true;
-            }
         }else{
             try {
                 FileWriter configWrite = new FileWriter(configFile);
@@ -167,13 +146,33 @@ public class Variables extends Config{
                 configWrite.flush();
                 configWrite.close();
                 if (Static.Debug && telemetry != null) telemetry.addData("CreatedVarConfFile", "created successfully");
-                fileExists = true;
+                result = fileExists = true;
             } catch (IOException e) {
                 e.printStackTrace();
                 if (Static.Debug && telemetry != null) telemetry.addData("CreatedVarConfFile", "failed to create");
+                result = false;
             }
         }
-        return false;
+        if (!loadAfter){
+            return (result) ? ReturnValues.SUCCESS : ReturnValues.FAIL;     // Look up Ternary operator if you don't understand
+        }else if (!result) {
+            return ReturnValues.FAIL;
+        }else{
+            if (load()){
+                if(verify()){
+                    if (Static.Debug && telemetry != null) telemetry.addData("LoadedVarConFile", "default loaded");
+                    return ReturnValues.SUCCESS;
+                }
+                else {
+                    if (Static.Debug && telemetry != null) telemetry.addData("LoadedVarConFile", "failed to verify");
+                    return ReturnValues.UNABLE_TO_VERIFY;
+                }
+            }
+            else {
+                if (Static.Debug && telemetry != null) telemetry.addData("LoadedVarConFile", "failed to load");
+                return ReturnValues.UNABLE_TO_LOAD;
+            }
+        }
     }
 
     /**

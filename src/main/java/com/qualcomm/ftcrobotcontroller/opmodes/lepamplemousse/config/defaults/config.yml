@@ -1,0 +1,16 @@
+# Component Configuration File
+
+# Motors
+dc_motors:
+  motor1:
+    map_name: drive_left
+    alias:
+      - left_motor
+      - left_drive
+      - motor_left
+  motor2:
+    map_name: drive_right
+    alias:
+      - right_motor
+      - right_drive
+      - motor_right

@@ -1,0 +1,13 @@
+# settings.yml
+# Use this to define changeable values such as max_power.
+
+# The drivetrain's settings.
+drivetrain:
+  motor_wheel_ratio: 2.5
+  max_power: 1
+
+
+# Encoder pulses per full revolution http://ftcforum.usfirst.org/archive/index.php/t-5189.html
+encoder:
+  output_pulses: 1120
+  encoder_pulses: 28

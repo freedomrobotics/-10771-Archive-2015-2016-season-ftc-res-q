@@ -142,20 +142,21 @@ public class Variables extends Config{
             }else if (!result) {
                 return false;
             }else{
-                // TODO: Loading file after statements need fixing.(Consult Adam)
-                if (load()){
-                    if(verify()){
-                        telemetry.addData("LoadedVarConFile", "default loaded");
+                // todo 12/1/2015 see Components.java lines 145 and 146
+                if (Static.Debug && telemetry != null){
+                    if (load()){
+                        if(verify()){
+                            telemetry.addData("LoadedVarConFile", "default loaded");
+                        }
+                        else {
+                            telemetry.addData("LoadedVarConFile", "failed to verify");
+                            return false;
+                        }
                     }
-                    else{
-                        telemetry.addData("LoadedVarConFile", "failed to verify");
+                    else {
+                        telemetry.addData("LoadedVarConFile", "failed to load");
                         return false;
                     }
-
-                }
-                else {
-                    telemetry.addData("LoadedVarConFile", "failed to load");
-                    return false;
                 }
                 return true;
             }

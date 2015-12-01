@@ -142,17 +142,24 @@ public class Components extends Config {
                 return result;
             }else if (!result) {
                 return false;
-            }else{
+            }else{ //todo fix and improve the loadafter=true statements by making it work with debug=true&&teletry!=null
+                   //todo make methods return enumeration return values(separate from return value of create)
                 if (load()){
                     if(verify()){
-                        telemetry.addData("LoadedVarConFile", "default loaded");
+                        telemetry.addData("LoadedCompConFile", "default loaded");
                     }
                     else{
-                        telemetry.addData("LoadedVarConFile", "failed to verify");
+                        telemetry.addData("LoadedCompConFile", "failed to verify");
                     }
                 }
                 else {
-                    telemetry.addData("LoadedVarConFile", "failed to load");
+                    if (load(true)){
+                        if (verify())
+                        telemetry.addData("LoadedCompConFile", "default selected");
+                    }
+                    else {
+                        telemetry.addData("LoadedCompConFile", "failed to load");
+                    }
                 }
                 return true;
             }

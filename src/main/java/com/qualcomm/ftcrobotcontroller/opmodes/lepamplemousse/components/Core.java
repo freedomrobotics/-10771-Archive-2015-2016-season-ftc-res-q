@@ -1,6 +1,7 @@
 package com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.components;
 
-import com.qualcomm.hardware.AdafruitI2cColorSensor;
+import android.hardware.Camera;
+import com.qualcomm.hardware.*;
 import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.robocol.Telemetry;
 
@@ -14,18 +15,58 @@ public class Core {
     public static DcMotor motor[];
     public static Servo servo[];
     public static Telemetry telemetry;
-    public static LightSensor lightSensor;
-    public static TouchSensor touchSensor;
-    public static ColorSensor colorSensor;
-    public static AdafruitI2cColorSensor Example1; //I don't know, felt like adding AdaFruit
-    public static GyroSensor gyroSensor;
-    public static AccelerationSensor accelerationSensor;
-    // TODO: 11/26/2015 Add All the components
-    /* All declared objects are abstract
-       There are two implementations:
-            ModernRoboticsI2c
-            HiTechnicNxt
-     */
-    // TODO: 11/30/2015 Determine which is included in our kit
 
+    //Sensors todo initialize objects for sensors(Device Interface Modules and Port Numbers required)
+
+    //Touch Sensors todo 12/1/2015 Determine correct class for touch sensor
+    public static ModernRoboticsDigitalTouchSensor ModRobTouchSensor;
+    public static HiTechnicNxtTouchSensor nxtTouchSensor;
+    //Light Sensors
+    public static ModernRoboticsAnalogOpticalDistanceSensor ModRobODS;
+    public static HiTechnicNxtLightSensor nxtLightSensor;
+    //Color Sensors
+    public static AdafruitI2cColorSensor AdaFruitColorSensor;
+    public static ModernRoboticsI2cColorSensor ModRobColorSensor;
+    public static HiTechnicNxtColorSensor nxtColorSensor;
+    //IR Seeker Sensors
+    public static ModernRoboticsI2cIrSeekerSensorV3 ModRobirSeeker;
+    public static HiTechnicNxtIrSeekerSensor nxtIRSeeker;
+    //Gyrometers
+    public static ModernRoboticsI2cGyro ModRobGyro;
+    public static HiTechnicNxtGyroSensor NXTgyro;
+    //Accelerometers todo 12/1/2015 Determine future use of accelerometer
+    public static HiTechnicNxtAccelerationSensor nxtAccelerometer;
+    //Camera(possibly)
+    public static Camera camera;
+
+    //Controllers todo: 12/1/2015 Declare all controllers
+    /**
+     * @param serial number, robot usb device, event loop manager
+     * The module for sensors
+     */
+    ModernRoboticsUsbDeviceInterfaceModule ModRobDeviceMod;
+    ModernRoboticsUsbLegacyModule ModRobLegacy;
+    ModernRoboticsUsbDcMotorController ModRobMotorControl;
+    ModernRoboticsUsbServoController ModRobServoControl;
+    /*Controllers and modules needed:
+        Legacy Module
+        Device Interface Module
+        Motor controller
+        Servo Controller
+        ...bution Module(Didn't know what it was)
+     */
+    //TODO: 12/1/2015 Move this to a new file
+    //Robot parts to be used
+    TouchSensor mainTouchSensor = ModRobTouchSensor;
+    LightSensor mainLightSensor = ModRobODS;
+    ColorSensor mainColorSensor = AdaFruitColorSensor;
+    IrSeekerSensor mainIRSeeker = ModRobirSeeker;
+    GyroSensor mainGyro = ModRobGyro;
+    AccelerationSensor mainAccelerometer = nxtAccelerometer;
+
+    /*TODO: Determine whether and which controller classes to include
+      TODO: Put more comments and documentations
+      TODO: Make variables to use for robot configuration inputs(serial numbers, port numbers, etc.)
+      TODO: Make class file reusable for any robot of any model
+     */
 }

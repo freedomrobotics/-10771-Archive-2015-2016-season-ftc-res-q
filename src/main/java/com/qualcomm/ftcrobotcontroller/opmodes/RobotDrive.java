@@ -1,5 +1,7 @@
 package com.qualcomm.ftcrobotcontroller.opmodes;
 
+import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.config.Components;
+import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.config.Variables;
 import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.core.InitComp;
 import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.core.StartValues;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -18,15 +20,15 @@ public class RobotDrive extends OpMode{
 
     @Override
     public void init(){
-        //initializer
-        InitComp.Run();
-
     }
 
     @Override
     public void start(){
-        //set default values
-        StartValues.Run();
+        Components components = new Components(telemetry);
+        Variables variables = new Variables(telemetry);
+
+        components.load();
+        variables.load();
     }
 
     @Override

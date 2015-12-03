@@ -199,8 +199,14 @@ public class Components extends Config {
         InputStream config;
         data = null;
         if (loadDefault) {
-            config = getClass().getResourceAsStream("/defaults/"+fileName);
-            if (Static.Debug && telemetry != null) telemetry.addData("LoadCompConfFile", "default selected");
+            try {
+                config = Dynamic.globalAssets.open(fileName);
+                if (Static.Debug && telemetry != null) telemetry.addData("LoadCompConfFile", "default selected");
+            } catch (IOException e) {
+                if (Static.Debug && telemetry != null) telemetry.addData("LoadCompConfFile", "failed to load default");
+                e.printStackTrace();
+                return false;
+            }
         }
         else if (fileExists){
             try {

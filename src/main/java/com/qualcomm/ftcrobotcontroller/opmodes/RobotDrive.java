@@ -29,6 +29,9 @@ public class RobotDrive extends OpMode{
 
         components.load();
         variables.load();
+        telemetry.addData("dc_motor_load_test", components.retrieve("dc_motors"));
+        telemetry.addData("drivetrain_load_test", variables.retrieve("drivetrain"));
+        telemetry.addData("encoder_load_test", variables.retrieve("encoder"));
     }
 
     @Override

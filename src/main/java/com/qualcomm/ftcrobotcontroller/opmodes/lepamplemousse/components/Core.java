@@ -1,8 +1,31 @@
 package com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.components;
 
 import android.hardware.Camera;
-import com.qualcomm.hardware.*;
-import com.qualcomm.robotcore.hardware.*;
+
+import com.qualcomm.hardware.AdafruitI2cColorSensor;
+import com.qualcomm.hardware.HiTechnicNxtAccelerationSensor;
+import com.qualcomm.hardware.HiTechnicNxtColorSensor;
+import com.qualcomm.hardware.HiTechnicNxtGyroSensor;
+import com.qualcomm.hardware.HiTechnicNxtIrSeekerSensor;
+import com.qualcomm.hardware.HiTechnicNxtLightSensor;
+import com.qualcomm.hardware.HiTechnicNxtTouchSensor;
+import com.qualcomm.hardware.ModernRoboticsAnalogOpticalDistanceSensor;
+import com.qualcomm.hardware.ModernRoboticsDigitalTouchSensor;
+import com.qualcomm.hardware.ModernRoboticsI2cColorSensor;
+import com.qualcomm.hardware.ModernRoboticsI2cGyro;
+import com.qualcomm.hardware.ModernRoboticsI2cIrSeekerSensorV3;
+import com.qualcomm.hardware.ModernRoboticsUsbDcMotorController;
+import com.qualcomm.hardware.ModernRoboticsUsbDeviceInterfaceModule;
+import com.qualcomm.hardware.ModernRoboticsUsbLegacyModule;
+import com.qualcomm.hardware.ModernRoboticsUsbServoController;
+import com.qualcomm.robotcore.hardware.AccelerationSensor;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.GyroSensor;
+import com.qualcomm.robotcore.hardware.IrSeekerSensor;
+import com.qualcomm.robotcore.hardware.LightSensor;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.robocol.Telemetry;
 
 /**

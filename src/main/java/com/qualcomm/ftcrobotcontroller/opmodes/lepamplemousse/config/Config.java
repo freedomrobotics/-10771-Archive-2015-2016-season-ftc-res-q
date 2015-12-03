@@ -100,10 +100,10 @@ public abstract class Config {
         try
         {
             File configFile = new File(configDirectory, fileName);
-            if (!configFile.createNewFile()){
+            if (!configFile.isFile() && !configFile.createNewFile()){
                 return false;
             }
-            InputStream in = getClass().getResourceAsStream("/defaults/"+fileName);
+            InputStream in = Dynamic.globalAssets.open(fileName);
             OutputStream out = new FileOutputStream(configFile, false);
 
             byte[] buffer = new byte[1024];

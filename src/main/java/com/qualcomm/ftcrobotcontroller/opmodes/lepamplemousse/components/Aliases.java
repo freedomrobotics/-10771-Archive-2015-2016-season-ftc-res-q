@@ -35,4 +35,6 @@ public class Aliases {
      */
     public static Map<String, LightSensor> lightSensorMap = new HashMap<String, LightSensor>();
 
+    //TODO: Finish mappings for all devices
+
 }

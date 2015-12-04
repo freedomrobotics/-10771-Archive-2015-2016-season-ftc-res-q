@@ -19,6 +19,7 @@ import java.util.Map;
  * Components file accessor for the everything
  * todo simplify and make some more merges with config.java
  * todo improve
+ * todo make more standalone for plug and play capability into config app
  */
 public class Components extends Config {
 

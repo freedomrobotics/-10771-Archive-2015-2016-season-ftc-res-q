@@ -4,7 +4,7 @@
 # The drivetrain's settings.
 drivetrain:
   motor_wheel_ratio: 2.5
-  max_power: 1
+  motor_max_power: 1
 
 
 # Encoder pulses per full revolution http://ftcforum.usfirst.org/archive/index.php/t-5189.html

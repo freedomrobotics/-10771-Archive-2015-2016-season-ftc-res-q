@@ -2,15 +2,17 @@
 
 # Motors
 dc_motors:
-  motor1:
-    map_name: drive_left
+  motor1: true
+    hardware_map_name: drive_left
     alias:
       - left_motor
       - left_drive
       - motor_left
-  motor2:
-    map_name: drive_right
+  motor2: true
+    hardware_map_name: drive_right
     alias:
       - right_motor
       - right_drive
       - motor_right
+  motor3: false
+  motor4: false

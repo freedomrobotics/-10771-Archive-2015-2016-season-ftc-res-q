@@ -42,6 +42,7 @@ public class Variables extends Config{
     public Variables(Telemetry telemetry){
         //Calling the superclass' (Config.class) constructor.
         super(telemetry);
+        this.telemetry = telemetry;
         init();
     }
 
@@ -198,8 +199,14 @@ public class Variables extends Config{
         InputStream config;
         data = null;
         if (loadDefault) {
-            config = getClass().getResourceAsStream("/defaults/"+fileName);
-            if (Static.Debug && telemetry != null) telemetry.addData("LoadVarConfFile", "default selected");
+            try {
+                config = Dynamic.globalAssets.open(fileName);
+                if (Static.Debug && telemetry != null) telemetry.addData("LoadVarConfFile", "default selected");
+            } catch (IOException e) {
+                if (Static.Debug && telemetry != null) telemetry.addData("LoadVarConfFile", "failed to load default");
+                e.printStackTrace();
+                return false;
+            }
         }
         else if (fileExists){
             try {

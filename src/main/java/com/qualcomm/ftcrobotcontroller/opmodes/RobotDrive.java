@@ -19,7 +19,7 @@ public class RobotDrive extends OpMode{
     @Override
     public void init(){
         //initializer
-        InitComp.Run();
+        InitComp initComp = new InitComp(hardwareMap, telemetry);
 
     }
 
@@ -27,6 +27,7 @@ public class RobotDrive extends OpMode{
     public void start(){
         //set default values
         StartValues.Run();
+
     }
 
     @Override

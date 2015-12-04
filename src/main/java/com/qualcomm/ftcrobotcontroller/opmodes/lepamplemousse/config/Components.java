@@ -19,6 +19,7 @@ import java.util.Map;
  * Components file accessor for the everything
  * todo simplify and make some more merges with config.java
  * todo improve
+ * todo make more standalone for plug and play capability into config app
  */
 public class Components extends Config {
 
@@ -199,8 +200,14 @@ public class Components extends Config {
         InputStream config;
         data = null;
         if (loadDefault) {
-            config = getClass().getResourceAsStream("/defaults/"+fileName);
-            if (Static.Debug && telemetry != null) telemetry.addData("LoadCompConfFile", "default selected");
+            try {
+                config = Dynamic.globalAssets.open(fileName);
+                if (Static.Debug && telemetry != null) telemetry.addData("LoadCompConfFile", "default selected");
+            } catch (IOException e) {
+                if (Static.Debug && telemetry != null) telemetry.addData("LoadCompConfFile", "failed to load default");
+                e.printStackTrace();
+                return false;
+            }
         }
         else if (fileExists){
             try {

@@ -16,7 +16,7 @@ public class ConfigVars {
     static final int moduleNumber = 4;
     static final int motorNumber = 2;
     static final int servoNumber = 2;
-    public final int touchSensorNum = 1;
+    static final int touchSensorNum = 1;
     static final int lightSensorNum = 1;
     static final int irSensorNum = 1;
     static final int gyroNum = 1;

@@ -16,3 +16,19 @@ dc_motors:
       - motor_right
   motor3: false
   motor4: false
+
+# Servo
+
+# Touch Sensors
+
+# Light Sensors
+
+# Color Sensors
+
+# IR Seeker Sensors
+
+# Gyrometers
+
+# Accelermoters
+
+# Camera

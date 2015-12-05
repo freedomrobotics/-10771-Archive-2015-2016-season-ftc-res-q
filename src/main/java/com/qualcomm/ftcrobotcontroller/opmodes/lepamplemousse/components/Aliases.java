@@ -1,5 +1,16 @@
 package com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.components;
 
+import android.hardware.Camera;
+
+import com.qualcomm.robotcore.hardware.AccelerationSensor;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.GyroSensor;
+import com.qualcomm.robotcore.hardware.IrSeekerSensor;
+import com.qualcomm.robotcore.hardware.LightSensor;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,7 +30,7 @@ public class Aliases {
      * Set using ~.motorMap.put("name", motor);
      * Cleared using ~.motorMap.clear("name");
      */
-    public static Map<String, Object> motorMap = new HashMap<String, Object>();
+    public static Map<String, DcMotor> motorMap = new HashMap<String, DcMotor>();
 
     /**
      * Servo Map. Values from the Components config file can be used to
@@ -27,7 +38,7 @@ public class Aliases {
      * Set using ~.servoMap.put("name", servo);
      * Cleared using ~.servoMap.clear("name");
      */
-    public static Map<String, Object> servoMap = new HashMap<String, Object>();
+    public static Map<String, Servo> servoMap = new HashMap<String, Servo>();
 
     /**
      * Touch Sensor Map. Values from Components config file can be used to
@@ -35,7 +46,7 @@ public class Aliases {
      * Set using ~.touchSensorMap.put("name", light sensor);
      * Cleared using ~.touchSensorMap.clear("name");
      */
-    public static Map<String, Object> touchSensorMap = new HashMap<String, Object>();
+    public static Map<String, TouchSensor> touchSensorMap = new HashMap<String, TouchSensor>();
 
     /**
      * Light Sensor Map. Values from Components config file can be used to
@@ -43,7 +54,7 @@ public class Aliases {
      * Set using ~.lightSensorMap.put("name", light sensor);
      * Cleared using ~.lightSensorMap.clear("name");
      */
-    public static Map<String, Object> lightSensorMap = new HashMap<String, Object>();
+    public static Map<String, LightSensor> lightSensorMap = new HashMap<String, LightSensor>();
 
     /**
      * Color Sensor Map. Values from Components config file can be used to
@@ -51,7 +62,7 @@ public class Aliases {
      * Set using ~.colorSensorMap.put("name", light sensor);
      * Cleared using ~.colorSensorMap.clear("name");
      */
-    public static Map<String, Object> colorSensorMap = new HashMap<String, Object>();
+    public static Map<String, ColorSensor> colorSensorMap = new HashMap<String, ColorSensor>();
 
     /**
      * IR Seeker Map. Values from Components config file can be used to
@@ -59,19 +70,15 @@ public class Aliases {
      * Set using ~.irSeekerMap.put("name", light sensor);
      * Cleared using ~.irSeekerMap.clear("name");
      */
-    public static Map<String, Object> irSeekerMap = new HashMap<String, Object>();
+    public static Map<String, IrSeekerSensor> irSeekerMap = new HashMap<String, IrSeekerSensor>();
 
-<<<<<<< HEAD
-    //TODO: Finish mappings for all devices
-
-=======
     /**
      * Gyrometer Map. Values from Components config file can be used to
      * create an alias reference any Gyrometer.  Retrieve using ~.gyrometerMap.get("name");
      * Set using ~.gyrometerMap.put("name", light sensor);
      * Cleared using ~.gyrometerMap.clear("name");
      */
-    public static Map<String, Object> gyrometerMap = new HashMap<String, Object>();
+    public static Map<String, GyroSensor> gyrometerMap = new HashMap<String, GyroSensor>();
 
     /**
      * Accelerometer Map. Values from Components config file can be used to
@@ -79,14 +86,13 @@ public class Aliases {
      * Set using ~.accelerometerMap.put("name", light sensor);
      * Cleared using ~.accelerometerMap.clear("name");
      */
-    public static Map<String, Object> accelerometerMap = new HashMap<String, Object>();
+    public static Map<String, AccelerationSensor> accelerometerMap = new HashMap<String, AccelerationSensor>();
 
     /**
      * Camera Sensor Map. Values from Components config file can be used to
      * create an alias reference any camera sensor.  Retrieve using ~.cameraSensorMap.get("name");
-     * Set using ~.cameraSensorMap.put("name", light sensor);
-     * Cleared using ~.cameraSensorMap.clear("name");
+     * Set using ~.cameraMap.put("name", light sensor);
+     * Cleared using ~.cameraMap.clear("name");
      */
-    public static Map<String, Object> cameraSensorMap = new HashMap<String, Object>();
->>>>>>> origin/devel
+    public static Map<String, Camera> cameraMap = new HashMap<String, Camera>();
 }

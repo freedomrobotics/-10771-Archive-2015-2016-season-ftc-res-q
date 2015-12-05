@@ -2,8 +2,6 @@ package com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.vars;
 
 import android.content.res.AssetManager;
 
-import com.qualcomm.robotcore.robocol.Telemetry;
-
 /**
  * Variables that change throughout operation.
  * Some examples are Time and Distance.

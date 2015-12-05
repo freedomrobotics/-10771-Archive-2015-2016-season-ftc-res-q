@@ -1,7 +1,15 @@
 package com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.components;
 
-import com.qualcomm.robotcore.hardware.*;
-import com.qualcomm.robotcore.robocol.Telemetry;
+import android.hardware.Camera;
+
+import com.qualcomm.robotcore.hardware.AccelerationSensor;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.GyroSensor;
+import com.qualcomm.robotcore.hardware.IrSeekerSensor;
+import com.qualcomm.robotcore.hardware.LightSensor;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 /**
  * Core variables with generic names to be aliased later. Since all of the
@@ -11,24 +19,15 @@ import com.qualcomm.robotcore.robocol.Telemetry;
  */
 public class Core {
 
-
-    Core(){
-        //Default constructor
-    }
-
-    public static Telemetry telemetry;
-    public static DeviceInterfaceModule mainInterface;
-    public static LegacyModule legacyModule;
-    public static DcMotorController motorControl;
-    public static ServoController servoControl;
-    public static TouchSensor touchSensor[] = new TouchSensor[ConfigVars.touchSensorNum];
-    public static LightSensor lightSensor[] = new LightSensor[ConfigVars.lightSensorNum];
-    public static ColorSensor colorSensor[] = new ColorSensor[ConfigVars.colorSenseNum];
-    public static IrSeekerSensor irSeeker[] = new IrSeekerSensor[ConfigVars.irSensorNum];
-    public static GyroSensor gyro[] = new GyroSensor[ConfigVars.gyroNum];
-    public static AccelerationSensor accelerometer[] = new AccelerationSensor[ConfigVars.accelerometerNum];
-    public static DcMotor motor[] = new DcMotor[ConfigVars.motorNumber];
-    public static Servo servo[] = new Servo[ConfigVars.servoNumber];
+    public static TouchSensor touchSensor[];
+    public static LightSensor lightSensor[];
+    public static ColorSensor colorSensor[];
+    public static IrSeekerSensor irSeeker[];
+    public static GyroSensor gyrometer[];
+    public static AccelerationSensor accelerometer[];
+    public static DcMotor motor[];
+    public static Servo servo[];
+    public static Camera camera[];
 
     /*
       TODO: Put more comments and documentations

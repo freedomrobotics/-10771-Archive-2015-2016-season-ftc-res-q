@@ -1,11 +1,8 @@
 package com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.core;
 
-import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.components.Core;
 import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.config.Components;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.robocol.Telemetry;
-
-import java.util.Map;
 
 /**
  * Create the actual references to the components based on the configuration

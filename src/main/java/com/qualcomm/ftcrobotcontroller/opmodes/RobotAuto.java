@@ -1,6 +1,5 @@
 package com.qualcomm.ftcrobotcontroller.opmodes;
 
-import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.core.InitComp;
 import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.core.StartValues;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
@@ -16,7 +15,6 @@ public class RobotAuto extends OpMode {
     @Override
     public void init(){
         //initializer
-        InitComp.Run();
 
     }
 

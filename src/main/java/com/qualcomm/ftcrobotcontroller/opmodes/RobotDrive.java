@@ -1,5 +1,6 @@
 package com.qualcomm.ftcrobotcontroller.opmodes;
 
+import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.components.Core;
 import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.core.InitComp;
 import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.core.StartValues;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -30,8 +31,12 @@ public class RobotDrive extends OpMode{
 
     }
 
+    float motorPower;
+
     @Override
     public void loop(){
+        //Example of assigning motor power
+        Core.motor[0].setPower(motorPower);
         //core loop
     }
 

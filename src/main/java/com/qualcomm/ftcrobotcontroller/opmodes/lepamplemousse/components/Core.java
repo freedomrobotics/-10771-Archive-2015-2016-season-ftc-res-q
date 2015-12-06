@@ -29,10 +29,6 @@ public class Core {
     public static Servo servo[];
     public static Camera camera[];
 
-    /*
-      TODO: Put more comments and documentations
-      TODO: Make class file reusable for any robot of any model
-     */
 }
 
 

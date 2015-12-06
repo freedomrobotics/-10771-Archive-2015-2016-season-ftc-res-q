@@ -1,9 +1,8 @@
 package com.qualcomm.ftcrobotcontroller.opmodes;
 
-import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.config.Components;
-import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.config.Variables;
 import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.core.InitComp;
 import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.core.StartValues;
+import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.modes.Controlled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 /**
@@ -20,23 +19,21 @@ public class RobotDrive extends OpMode{
 
     @Override
     public void init(){
+        //initializer
+        InitComp initComp = new InitComp(hardwareMap, telemetry);
+
     }
 
     @Override
     public void start(){
-        Components components = new Components(telemetry);
-        Variables variables = new Variables(telemetry);
-
-        components.load();
-        variables.load();
-        telemetry.addData("dc_motor_load_test", components.retrieve("dc_motors"));
-        telemetry.addData("drivetrain_load_test", variables.retrieve("drivetrain"));
-        telemetry.addData("encoder_load_test", variables.retrieve("encoder"));
+        //set default values
+        StartValues robotLoad = new StartValues(hardwareMap);
     }
 
     @Override
     public void loop(){
         //core loop
+        Controlled controlled = new Controlled();
     }
 
     @Override

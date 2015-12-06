@@ -1,16 +1,87 @@
 # Component Configuration File
 
+# todo: 12/5/2015 improve names
+# todo: determine quantities of each components and take out todos from yml
+
 # Motors
 dc_motors:
   motor1:
+    enabled: true
     map_name: drive_left
     alias:
       - left_motor
       - left_drive
       - motor_left
   motor2:
+    enabled: true
     map_name: drive_right
     alias:
       - right_motor
       - right_drive
       - motor_right
+  motor3:
+    enabled: true
+  motor4:
+    enabled: true
+
+# Servos
+servos:
+  servo1:
+    enabled: false
+    hardware_map_name: servo
+    alias: servo_motor
+
+# Touch Sensors
+touch_sensors:
+  touch_sensor:
+    enabled: false
+    hardware_map_name: touch_sensor
+    alias: button
+
+# Light Sensors
+light_sensors:
+  light_sensor:
+    enabled: false
+    hardware_map_name: light_sensor
+    alias:
+      - mod_rob_light_sensor
+      - ods
+
+# Color Sensors
+color_sensors:
+  color_sensor:
+    enabled: false
+    hardware_map_name: color_sensor
+    alias:
+      - main_color_sensor
+      - ada_fruit_color_sensor
+
+# IR Seeker Sensors
+ir_seeker_sensors:
+  ir_seeker:
+    enabled: false
+    hardware_map_name: main_ir_seeker
+    alias:
+      - ir_seeker1
+      - ir1
+
+
+# Gyrometers
+gyrometers:
+  gyrometer:
+    enabled: false
+    hardware_map_name: main_gyrometer
+    alias:
+      - gyrometer1
+      - phone_gyro
+
+# Accelermoters
+accelerometers:
+  accelerometer:
+    enabled: false
+    hardware_map_name: main_accelerometer
+
+# Camera
+camera:
+  camera:
+    enabled: false

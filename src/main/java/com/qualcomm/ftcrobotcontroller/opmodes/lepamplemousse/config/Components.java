@@ -35,6 +35,9 @@ public class Components extends Config {
     private Yaml yaml = new Yaml();
     // An object to string map.
     private Map<String, Object> data = null;
+    // Private variable for object
+    private Integer objectNum = 0;
+    private Integer maxNum = 0;
 
     /**
      * Debuggable Constructor
@@ -224,7 +227,10 @@ public class Components extends Config {
         }
         if (config != null) {
             data = (Map<String, Object>) yaml.load(config);
+            //todo fix line 228 because "failed to load string" is not the right message under this condition
             if (Static.Debug && telemetry != null) telemetry.addData("LoadCompConfFile", "failed to load");
+            //todo insert variable initializers here
+            setNumber(objectNum, count("dc_motors"));
             if (data != null){
                 if (Static.Debug && telemetry != null) telemetry.addData("LoadCompConfFile", "loaded");
                 return true;
@@ -263,5 +269,50 @@ public class Components extends Config {
         return false;
     }
 
+
+    //TODO: 12/7/2015 FIX THESE THINGS BECAUSE THEY WERE POORLY MADE
+    //check validity of a device
+    public boolean valid(String device, Integer index){
+        if (((Map)((Map)data.get(device)).get((device)+index.toString())).get("enabled").equals(true)){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    //count parts
+    public Integer count(String device){
+        int quantity=0;
+        for (Integer i=0; i <((Map)data.get(device)).size(); i++){
+            if (valid(device, i)){
+                quantity++;
+            }
+        }
+        return quantity;
+    }
+
+    //determine max
+    public Integer determineMax(String device){
+        return ((Map)data.get(device)).size();
+    }
+
+    //setters
+    public void setNumber(Integer variable, int value){
+        variable = value;
+    }
+
+    //getter
+    public Integer getObjectNumber(){
+        return objectNum;
+    }
+
+    public Integer getmaxNumber(){
+        return maxNum;
+    }
+
+    public Object assignObject(String deviceType, Integer deviceRef){
+        return ((Map)((Map)retrieve(deviceType)).get((deviceType)+(deviceRef.toString()))).get("map_name").toString();
+    }
     //endregion
 }

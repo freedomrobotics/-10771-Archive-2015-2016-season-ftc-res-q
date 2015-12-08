@@ -30,10 +30,11 @@ public class InitComp {
     }
 
     public ReturnValues initialize(){
+        /*
         Integer count = 0;
         if (((Map)((Map)components.retrieve("dc_motors")).get("motor1")).get("enabled").equals(true)) count++;
         if (((Map)((Map)components.retrieve("dc_motors")).get("motor2")).get("enabled").equals(true)) count++;
-        Core.motor = new DcMotor[count]; // Obviously pull from config.
+
         //Sorry Joel! You were right to create the references to the array.
         if (((Map)((Map)components.retrieve("dc_motors")).get("motor1")).get("enabled").equals(true)){
             Core.motor[0] = hardwareMap.dcMotor.get(((Map)((Map)components.retrieve("dc_motors")).get("motor1")).get("map_name").toString());
@@ -47,17 +48,39 @@ public class InitComp {
         if (((Map)((Map)components.retrieve("dc_motors")).get("motor4")).get("enabled").equals(true)){
             Core.motor[3] = hardwareMap.dcMotor.get(((Map)((Map)components.retrieve("dc_motors")).get("motor4")).get("map_name").toString());
         }
+        */
+        Core.motor = new DcMotor[components.count("dc_motors")]; // Obviously pull from config.
+        objectInit("dc_motors", Core.motor);
         return ReturnValues.SUCCESS;
     }
 
-    public Components getComponents(){
-        return components;
+    //TODO: 12/7/2015 make each private variable in Components.java work
+    //todo            in a way that makes a unique value for each device type
+    //TODO: FIX THE REALLY BAD PARAMETER NAMES JOEL!!!!!
+    /**
+     * Initializes each individual object type
+     * @param deviceType The group of devices to assign
+     * @param devices   The array to assign to
+     * @return ReturnValues whether or not the method succeeded
+     */
+    public ReturnValues objectInit(String deviceType, Object devices[]){
+        for (int i=0; i<components.count(deviceType); i++){
+            int reference = i+1;
+            int max = components.determineMax(deviceType);
+            while ((!(components.valid(deviceType, reference)) && (reference<max))){
+                reference++;
+            }
+            if (components.valid(deviceType, reference)){
+                devices[i] = components.assignObject(deviceType, reference);
+            }
+            else{
+                return ReturnValues.FAIL;
+            }
+        }
+        return ReturnValues.SUCCESS;
     }
 
-    /*
-    Not tested, yet
-        Core.motor[1] = hardwareMap.dcMotor.get(((Map)((Map)components.retrieve("dc_motors")).get("motor1")).get("hardware_map_name").toString());
-     */
+    public Components getComponents(){return components;}
 
     public void Run(){
 

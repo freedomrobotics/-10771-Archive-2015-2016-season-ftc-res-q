@@ -269,20 +269,9 @@ public class Components extends Config {
         }
         return false;
     }
-    //**********************New code************************
+    //**********************New UNTESTED code************************
 
     //TODO: 12/7/2015 FIX THESE THINGS BECAUSE THEY WERE POORLY MADE
-    //check validity of a device
-    public boolean valid(String deviceType, String deviceName, Integer index){
-        if (exists(deviceType, deviceName, index)) {
-            if (((Map) ((Map) data.get(deviceType)).get((deviceName) + index.toString())).get("enabled").equals(true)) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-        else return false;
-    }
 
     //method for checking device type's existence
     public boolean exists(String deviceType){
@@ -293,6 +282,18 @@ public class Components extends Config {
     public boolean exists(String deviceType, String deviceName, Integer index){
         if (exists(deviceType)) {
             return (((Map) data.get(deviceType)).containsKey((deviceName)+(index.toString())));
+        }
+        else return false;
+    }
+
+    //check validity of a device
+    public boolean valid(String deviceType, String deviceName, Integer index){
+        if (exists(deviceType, deviceName, index)) {
+            if (((Map) ((Map) data.get(deviceType)).get((deviceName) + index.toString())).get("enabled").equals(true)) {
+                return true;
+            } else {
+                return false;
+            }
         }
         else return false;
     }
@@ -308,13 +309,6 @@ public class Components extends Config {
             }
         }
         return quantity;
-
-    }
-
-    //Assigns map name to string
-    public Object assignObject(String deviceType, String deviceName, Integer deviceRef){
-        //if (exists(deviceType, deviceName, deviceRef))
-        return ((Map)((Map)retrieve(deviceType)).get((deviceName)+(deviceRef.toString()))).get("map_name").toString();
     }
 
     //determine max
@@ -323,6 +317,12 @@ public class Components extends Config {
             return ((Map) data.get(device)).size();
         }
         else return 0;
+    }
+
+    //Assigns map name to string
+    public Object assignObject(String deviceType, String deviceName, Integer deviceRef){
+        //if (exists(deviceType, deviceName, deviceRef))
+        return ((Map)((Map)retrieve(deviceType)).get((deviceName)+(deviceRef.toString()))).get("map_name").toString();
     }
 
     //setters
@@ -337,5 +337,7 @@ public class Components extends Config {
     public Integer getmaxNumber(){
         return maxNum;
     }
+    //*******************************END New Untested Code*******************************
+
     //endregion
 }

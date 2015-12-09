@@ -49,7 +49,7 @@ public class InitComp {
             Core.motor[3] = hardwareMap.dcMotor.get(((Map)((Map)components.retrieve("dc_motors")).get("motor4")).get("map_name").toString());
         }
         */
-        //***************new code*******************
+        //***************new untested code*******************
         Core.motor = new DcMotor[components.count("dc_motors", "motor")]; // Obviously pull from config.
         objectInit("dc_motors", "motor", Core.motor);
         objectInit("servos", "servo", Core.servo);
@@ -59,7 +59,8 @@ public class InitComp {
 
     //TODO: 12/7/2015 make each private variable in Components.java work
     //todo            in a way that makes a unique value for each device type
-    //TODO: FIX THE REALLY BAD PARAMETER NAMES JOEL!!!!!
+    //TODO: 12/8/2015 FIX THE REALLY BAD PARAMETER NAMES JOEL!!!!!
+    //TODO: 12/9/2015 There might be some redundant "if (exists())" statments
     /**
      * Initializes each individual object type
      * @param deviceType The group of devices to assign
@@ -71,7 +72,7 @@ public class InitComp {
             for (int i = 0; i < components.count(deviceType, deviceName); i++) {
                 int reference = i + 1;
                 int max = components.determineMax(deviceType);
-                while ((!(components.valid(deviceType, deviceName, reference)) && (reference < max))) {
+                while ((!(components.valid(deviceType, deviceName, reference)) && (reference <= max))) {
                     reference++;
                 }
                 if (components.valid(deviceType, deviceName, reference)) {

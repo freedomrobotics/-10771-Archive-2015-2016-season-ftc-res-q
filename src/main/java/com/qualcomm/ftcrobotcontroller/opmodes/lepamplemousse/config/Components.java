@@ -35,6 +35,8 @@ public class Components extends Config {
     private Yaml yaml = new Yaml();
     // An object to string map.
     private Map<String, Object> data = null;
+    // An object to integer map
+    private Map<Object[], Integer> number = null;   //just an idea...
     // Private variable for object
     private Integer objectNum = 0;
     private Integer maxNum = 0;
@@ -326,8 +328,8 @@ public class Components extends Config {
     }
 
     //setters
-    public void setNumber(Integer variable, int value){
-        variable = value;
+    public void setNumber(Object[] deviceClass, Integer quantity){
+        //number.put(deviceClass, quantity);    //An idea where the class object is mapped to the quantity and max amount of object
     }
 
     //getters

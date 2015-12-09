@@ -50,7 +50,6 @@ public class InitComp {
         //***************new untested code*******************
         Core.motor = new DcMotor[components.count("dc_motors", "motor")]; // Obviously pull from config.
         objectInit("dc_motors", "motor", Core.motor);
-        objectInit("servos", "servo", Core.servo);
         //**************new code******************
         return ReturnValues.SUCCESS;
     }

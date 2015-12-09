@@ -49,8 +49,11 @@ public class InitComp {
             Core.motor[3] = hardwareMap.dcMotor.get(((Map)((Map)components.retrieve("dc_motors")).get("motor4")).get("map_name").toString());
         }
         */
-        Core.motor = new DcMotor[components.count("dc_motors")]; // Obviously pull from config.
-        objectInit("dc_motors", Core.motor);
+        //***************new code*******************
+        Core.motor = new DcMotor[components.count("dc_motors", "motor")]; // Obviously pull from config.
+        objectInit("dc_motors", "motor", Core.motor);
+        objectInit("servos", "servo", Core.servo);
+        //**************new code******************
         return ReturnValues.SUCCESS;
     }
 
@@ -63,21 +66,23 @@ public class InitComp {
      * @param devices   The array to assign to
      * @return ReturnValues whether or not the method succeeded
      */
-    public ReturnValues objectInit(String deviceType, Object devices[]){
-        for (int i=0; i<components.count(deviceType); i++){
-            int reference = i+1;
-            int max = components.determineMax(deviceType);
-            while ((!(components.valid(deviceType, reference)) && (reference<max))){
-                reference++;
+    public ReturnValues objectInit(String deviceType, String deviceName, Object devices[]){
+        if (components.exists(deviceType)){
+            for (int i = 0; i < components.count(deviceType, deviceName); i++) {
+                int reference = i + 1;
+                int max = components.determineMax(deviceType);
+                while ((!(components.valid(deviceType, deviceName, reference)) && (reference < max))) {
+                    reference++;
+                }
+                if (components.valid(deviceType, deviceName, reference)) {
+                    devices[i] = components.assignObject(deviceType, deviceName, reference);
+                } else {
+                    return ReturnValues.FAIL;
+                }
             }
-            if (components.valid(deviceType, reference)){
-                devices[i] = components.assignObject(deviceType, reference);
-            }
-            else{
-                return ReturnValues.FAIL;
-            }
+            return ReturnValues.SUCCESS;
         }
-        return ReturnValues.SUCCESS;
+        else return ReturnValues.FAIL;
     }
 
     public Components getComponents(){return components;}

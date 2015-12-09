@@ -229,8 +229,9 @@ public class Components extends Config {
             data = (Map<String, Object>) yaml.load(config);
             //todo fix line 228 because "failed to load string" is not the right message under this condition
             if (Static.Debug && telemetry != null) telemetry.addData("LoadCompConfFile", "failed to load");
-            //todo insert variable initializers here
-            setNumber(objectNum, count("dc_motors"));
+            //****************NEW CODE****************
+            //setNumber(objectNum, count("dc_motors", "motor"));
+            //****************NEW CODE*****************
             if (data != null){
                 if (Static.Debug && telemetry != null) telemetry.addData("LoadCompConfFile", "loaded");
                 return true;
@@ -268,33 +269,60 @@ public class Components extends Config {
         }
         return false;
     }
-
+    //**********************New code************************
 
     //TODO: 12/7/2015 FIX THESE THINGS BECAUSE THEY WERE POORLY MADE
     //check validity of a device
-    public boolean valid(String device, Integer index){
-        if (((Map)((Map)data.get(device)).get((device)+index.toString())).get("enabled").equals(true)){
-            return true;
+    public boolean valid(String deviceType, String deviceName, Integer index){
+        if (exists(deviceType, deviceName, index)) {
+            if (((Map) ((Map) data.get(deviceType)).get((deviceName) + index.toString())).get("enabled").equals(true)) {
+                return true;
+            } else {
+                return false;
+            }
         }
-        else{
-            return false;
+        else return false;
+    }
+
+    //method for checking device type's existence
+    public boolean exists(String deviceType){
+        return data.containsKey(deviceType);
+    }
+
+    //method for checking string id's existence
+    public boolean exists(String deviceType, String deviceName, Integer index){
+        if (exists(deviceType)) {
+            return (((Map) data.get(deviceType)).containsKey((deviceName)+(index.toString())));
         }
+        else return false;
     }
 
     //count parts
-    public Integer count(String device){
+    public Integer count(String device, String deviceName){
         int quantity=0;
-        for (Integer i=0; i <((Map)data.get(device)).size(); i++){
-            if (valid(device, i)){
-                quantity++;
+        if (exists(device)) {
+            for (Integer i = 1; i <= ((Map) data.get(device)).size(); i++) {
+                if (valid(device, deviceName, i)) {
+                    quantity++;
+                }
             }
         }
         return quantity;
+
+    }
+
+    //Assigns map name to string
+    public Object assignObject(String deviceType, String deviceName, Integer deviceRef){
+        //if (exists(deviceType, deviceName, deviceRef))
+        return ((Map)((Map)retrieve(deviceType)).get((deviceName)+(deviceRef.toString()))).get("map_name").toString();
     }
 
     //determine max
     public Integer determineMax(String device){
-        return ((Map)data.get(device)).size();
+        if (exists(device)){
+            return ((Map) data.get(device)).size();
+        }
+        else return 0;
     }
 
     //setters
@@ -302,17 +330,12 @@ public class Components extends Config {
         variable = value;
     }
 
-    //getter
+    //getters
     public Integer getObjectNumber(){
         return objectNum;
     }
-
     public Integer getmaxNumber(){
         return maxNum;
-    }
-
-    public Object assignObject(String deviceType, Integer deviceRef){
-        return ((Map)((Map)retrieve(deviceType)).get((deviceType)+(deviceRef.toString()))).get("map_name").toString();
     }
     //endregion
 }

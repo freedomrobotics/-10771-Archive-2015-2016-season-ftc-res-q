@@ -5,7 +5,11 @@ import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.config.Components;
 import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.vars.ReturnValues;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.robocol.Telemetry;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Create the actual references to the components based on the configuration
@@ -48,8 +52,10 @@ public class InitComp {
         }
         */
         //***************new untested code*******************
-        Core.motor = new DcMotor[components.count("dc_motors", "motor")]; // Obviously pull from config.
-        objectInit("dc_motors", "motor", Core.motor);
+        Core.motor = new DcMotor[components.count("dc_motors", "motor")];
+        objectInit("dc_motors", "motor", hardwareMap.dcMotor, Core.motor);
+        Core.servo = new Servo[components.count("servos", "servo")];
+        objectInit("servos", "servo", hardwareMap.servo, Core.servo);
         //**************new code******************
         return ReturnValues.SUCCESS;
     }
@@ -57,14 +63,15 @@ public class InitComp {
     //TODO: 12/7/2015 make each private variable in Components.java work
     //todo            in a way that makes a unique value for each device type
     //TODO: 12/8/2015 FIX THE REALLY BAD PARAMETER NAMES JOEL!!!!!
-    //TODO: 12/9/2015 There might be some redundant "if (exists())" statments
+    //TODO: 12/9/2015 There might be some redundant "if (exists())" statements
+    //TODO: 12/11/2015 Make objectInit require less arguments
     /**
      * Initializes each individual object type
      * @param deviceType The group of devices to assign
      * @param devices   The array to assign to
      * @return ReturnValues whether or not the method succeeded
      */
-    public ReturnValues objectInit(String deviceType, String deviceName, Object devices[]){
+    public ReturnValues objectInit(String deviceType, String deviceName, HardwareMap.DeviceMapping deviceMapping, Object devices[]){
         if (components.exists(deviceType)){
             for (int i = 0; i < components.count(deviceType, deviceName); i++) {
                 int reference = i + 1;
@@ -73,7 +80,7 @@ public class InitComp {
                     reference++;
                 }
                 if (components.valid(deviceType, deviceName, reference)) {
-                    devices[i] = components.assignObject(deviceType, deviceName, reference);
+                    devices[i] = assignObject(deviceType, deviceName, reference, deviceMapping);
                 } else {
                     return ReturnValues.FAIL;
                 }
@@ -81,6 +88,22 @@ public class InitComp {
             return ReturnValues.SUCCESS;
         }
         else return ReturnValues.FAIL;
+    }
+
+    private Object assignObject(String deviceType, String deviceName, Integer deviceRef, HardwareMap.DeviceMapping deviceMapping){
+        //if (exists(deviceType, deviceName, deviceRef))
+        return deviceMapping.get(((Map)((Map)components.retrieve(deviceType)).get((deviceName)+(deviceRef.toString()))).get("map_name").toString());
+    }
+
+
+    //TODO: 12/11/2015 Alias function attempt is a fail:( To be deleted or revised
+    private void alias(String deviceType, String deviceName, Integer deviceRef, Object device, HashMap<String, Object> aliasMap) {
+        Object[] array;
+        aliasMap.putAll(((Map) ((Map) ((Map) components.retrieve(deviceType)).get((deviceName) + (deviceRef.toString()))).get("alias")));
+        array = aliasMap.keySet().toArray();
+        for (int i=0; i<aliasMap.size(); i++){
+            aliasMap.put(array[i].toString(), device);
+        }
     }
 
     public Components getComponents(){return components;}

@@ -1,8 +1,5 @@
 # Component Configuration File
 
-# todo: 12/5/2015 improve names
-# todo: determine quantities of each components and take out todos from yml
-
 # Motors
 dc_motors:
   motor1:
@@ -27,14 +24,23 @@ dc_motors:
 # Servos
 servos:
   servo1:
-    enabled: false
-    map_name: servo
+    enabled: true
+    map_name: first_servo
     alias:
-      - servo_motor
+      - servo_motor1
+      - tape_measure_wench1
+      - main_wench
+  servo2:
+    enabled: true
+    map_name: second_servo
+    alias:
+      - servo_motor2
+      - tape_measure_wench2
+      - secondary_wench
 
 # Touch Sensors
 touch_sensors:
-  touch_sensor:
+  touch_sensor1:
     enabled: false
     map_name: touch_sensor
     alias:
@@ -42,7 +48,7 @@ touch_sensors:
 
 # Light Sensors
 light_sensors:
-  light_sensor:
+  light_sensor1:
     enabled: false
     map_name: light_sensor
     alias:
@@ -51,7 +57,7 @@ light_sensors:
 
 # Color Sensors
 color_sensors:
-  color_sensor:
+  color_sensor1:
     enabled: false
     map_name: color_sensor
     alias:
@@ -60,7 +66,7 @@ color_sensors:
 
 # IR Seeker Sensors
 ir_seeker_sensors:
-  ir_seeker:
+  ir_seeker1:
     enabled: false
     map_name: main_ir_seeker
     alias:
@@ -70,7 +76,7 @@ ir_seeker_sensors:
 
 # Gyrometers
 gyrometers:
-  gyrometer:
+  gyrometer1:
     enabled: false
     using_phone: true
     # map_name: main_gyrometer
@@ -80,14 +86,14 @@ gyrometers:
 
 # Accelermoters
 accelerometers:
-  accelerometer:
+  accelerometer1:
     enabled: false
     using_phone: true
     # map_name: main_accelerometer
 
 # Camera
 camera:
-  camera:
+  camera1:
     enabled: false
     using_phone: true
     enabled_functions:

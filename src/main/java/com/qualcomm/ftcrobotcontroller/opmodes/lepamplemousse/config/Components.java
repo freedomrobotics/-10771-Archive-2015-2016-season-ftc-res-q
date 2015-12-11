@@ -321,13 +321,7 @@ public class Components extends Config {
         else return 0;
     }
 
-    //Assigns map name to string
-    public Object assignObject(String deviceType, String deviceName, Integer deviceRef){
-        //if (exists(deviceType, deviceName, deviceRef))
-        return ((Map)((Map)retrieve(deviceType)).get((deviceName)+(deviceRef.toString()))).get("map_name").toString();
-    }
-
-    //setters
+    //setters todo 12/11/2015 come up with an idea to map integer values to objects
     public void setNumber(Object[] deviceClass, Integer quantity){
         //number.put(deviceClass, quantity);    //An idea where the class object is mapped to the quantity and max amount of object
     }

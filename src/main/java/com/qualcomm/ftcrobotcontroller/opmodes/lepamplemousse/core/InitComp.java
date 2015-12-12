@@ -76,10 +76,10 @@ public class InitComp {
             for (int i = 0; i < components.count(deviceType, deviceName); i++) {
                 int reference = i + 1;
                 int max = components.determineMax(deviceType);
-                while ((!(components.valid(deviceType, deviceName, reference)) && (reference <= max))) {
+                while ((!(components.enabled(deviceType, deviceName, reference)) && (reference <= max))) {
                     reference++;
                 }
-                if (components.valid(deviceType, deviceName, reference)) {
+                if (components.enabled(deviceType, deviceName, reference)) {
                     devices[i] = assignObject(deviceType, deviceName, reference, deviceMapping);
                 } else {
                     return ReturnValues.FAIL;
@@ -95,7 +95,7 @@ public class InitComp {
         return deviceMapping.get(((Map)((Map)components.retrieve(deviceType)).get((deviceName)+(deviceRef.toString()))).get("map_name").toString());
     }
 
-
+/*
     //TODO: 12/11/2015 Alias function attempt is a fail:( To be deleted or revised
     private void alias(String deviceType, String deviceName, Integer deviceRef, Object device, HashMap<String, Object> aliasMap) {
         Object[] array;
@@ -105,6 +105,7 @@ public class InitComp {
             aliasMap.put(array[i].toString(), device);
         }
     }
+    */
 
     public Components getComponents(){return components;}
 

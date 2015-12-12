@@ -1,5 +1,8 @@
 # settings.yml
 # Use this to define changeable values such as max_power.
+# All values are in metric
+# Unit of length is millimeters, not meters
+# Unit of rotation is degrees (angular velocity is in degrees per second)
 
 # The drivetrain's settings.
 drivetrain:
@@ -11,3 +14,24 @@ drivetrain:
 encoder:
   output_pulses: 1120
   encoder_pulses: 28
+
+# Winch settings
+winch:
+  linear_movement:
+    motor_encodered: true
+    motor_tape_ratio: 2.5
+    mot_max_power: 1
+    max_extend: 1524
+    max_extend_pwoer: .6
+    max_retract_power: 1
+  angular_movement:
+    hold_power: true
+    max_ang_vel: 5
+  left_servo:
+    reversed: true
+    full_rotate: 180
+    max_rotat: 180
+  right_servo:
+    reversed: false
+    full_rotate: 180
+    max_rotat: 180

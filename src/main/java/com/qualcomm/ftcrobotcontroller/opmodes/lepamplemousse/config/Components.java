@@ -274,6 +274,7 @@ public class Components extends Config {
     //**********************New UNTESTED code************************
 
     //TODO: 12/7/2015 FIX THESE THINGS BECAUSE THEY WERE POORLY MADE
+    // TODO: 12/12/2015 Javadocs
 
     //method for checking device type's existence
     public boolean exists(String deviceType){
@@ -288,8 +289,8 @@ public class Components extends Config {
         else return false;
     }
 
-    //check validity of a device
-    public boolean valid(String deviceType, String deviceName, Integer index){
+    //check if device is enabled or not
+    public boolean enabled(String deviceType, String deviceName, Integer index){
         if (exists(deviceType, deviceName, index)) {
             if (((Map) ((Map) data.get(deviceType)).get((deviceName) + index.toString())).get("enabled").equals(true)) {
                 return true;
@@ -305,7 +306,7 @@ public class Components extends Config {
         int quantity=0;
         if (exists(device)) {
             for (Integer i = 1; i <= ((Map) data.get(device)).size(); i++) {
-                if (valid(device, deviceName, i)) {
+                if (enabled(device, deviceName, i)) {
                     quantity++;
                 }
             }

@@ -17,7 +17,11 @@ dc_motors:
       - right_drive
       - motor_right
   motor3:
-    enabled: false
+    enabled: true
+    map_name: winch
+    alias:
+      - winch_motor
+      - motor_winch
   motor4:
     enabled: false
 
@@ -25,18 +29,18 @@ dc_motors:
 servos:
   servo1:
     enabled: true
-    map_name: first_servo
+    map_name: winch_left
     alias:
       - servo_motor1
-      - tape_measure_wench1
-      - main_wench
+      - tape_measure_winch1
+      - main_winch
   servo2:
     enabled: true
-    map_name: second_servo
+    map_name: winch_right
     alias:
       - servo_motor2
-      - tape_measure_wench2
-      - secondary_wench
+      - tape_measure_winch2
+      - secondary_winch
 
 # Touch Sensors
 touch_sensors:

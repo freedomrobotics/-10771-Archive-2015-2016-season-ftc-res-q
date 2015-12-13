@@ -46,4 +46,8 @@ public class StartValues {
 
     }
 
+    public Variables getVariables(){
+        return variables;
+    }
+
 }

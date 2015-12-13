@@ -41,6 +41,12 @@ servos:
       - servo_motor2
       - tape_measure_winch2
       - secondary_winch
+  servo3:
+    enabled: true
+    map_name: trigger_arm
+    alias:
+      - arm
+      - trigger
 
 # Touch Sensors
 touch_sensors:

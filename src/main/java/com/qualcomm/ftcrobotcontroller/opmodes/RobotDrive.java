@@ -36,7 +36,7 @@ public class RobotDrive extends OpMode{
     public void start(){
         //set default values
         StartValues startValues = new StartValues(telemetry);
-        controlled = new Controlled(gamepad1, gamepad2);
+        controlled = new Controlled(gamepad1, gamepad2, startValues.getVariables(), telemetry);
     }
 
     @Override

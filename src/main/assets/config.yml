@@ -1,8 +1,5 @@
 # Component Configuration File
 
-# todo: 12/5/2015 improve names
-# todo: determine quantities of each components and take out todos from yml
-
 # Motors
 dc_motors:
   motor1:
@@ -21,46 +18,61 @@ dc_motors:
       - motor_right
   motor3:
     enabled: true
+    map_name: winch
+    alias:
+      - winch_motor
+      - motor_winch
   motor4:
-    enabled: true
+    enabled: false
 
 # Servos
 servos:
   servo1:
-    enabled: false
-    hardware_map_name: servo
-    alias: servo_motor
+    enabled: true
+    map_name: winch_left
+    alias:
+      - servo_motor1
+      - tape_measure_winch1
+      - main_winch
+  servo2:
+    enabled: true
+    map_name: winch_right
+    alias:
+      - servo_motor2
+      - tape_measure_winch2
+      - secondary_winch
 
 # Touch Sensors
 touch_sensors:
-  touch_sensor:
+  touch_sensor1:
     enabled: false
-    hardware_map_name: touch_sensor
-    alias: button
+    map_name: touch_sensor
+    alias:
+      - button
 
 # Light Sensors
 light_sensors:
-  light_sensor:
+  light_sensor1:
     enabled: false
-    hardware_map_name: light_sensor
+    map_name: light_sensor
     alias:
       - mod_rob_light_sensor
       - ods
 
 # Color Sensors
 color_sensors:
-  color_sensor:
+  color_sensor1:
     enabled: false
-    hardware_map_name: color_sensor
+    map_name: color_sensor
     alias:
       - main_color_sensor
       - ada_fruit_color_sensor
 
 # IR Seeker Sensors
 ir_seeker_sensors:
-  ir_seeker:
+  ir_seeker1:
     enabled: false
-    hardware_map_name: main_ir_seeker
+    map_name: main_ir_seeker
     alias:
       - ir_seeker1
       - ir1
@@ -68,20 +80,34 @@ ir_seeker_sensors:
 
 # Gyrometers
 gyrometers:
-  gyrometer:
+  gyrometer1:
     enabled: false
-    hardware_map_name: main_gyrometer
+    using_phone: true
+    # map_name: main_gyrometer
     alias:
       - gyrometer1
       - phone_gyro
 
 # Accelermoters
 accelerometers:
-  accelerometer:
+  accelerometer1:
     enabled: false
-    hardware_map_name: main_accelerometer
+    using_phone: true
+    # map_name: main_accelerometer
 
 # Camera
 camera:
-  camera:
+  camera1:
     enabled: false
+    using_phone: true
+    enabled_functions:
+      - light_sensor
+      - color_sensor
+      - color_grid
+      - ir_sensor
+      - object_detection
+    # map_name: main_camera
+    alias:
+      - camera1
+      - phone_camera
+

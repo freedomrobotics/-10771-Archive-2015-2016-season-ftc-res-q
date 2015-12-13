@@ -96,7 +96,7 @@ public abstract class Config {
      * @param fileName The name of the config file to copy.
      * @return Whether or not the file was created successfully.
      */
-    public boolean createDefaults(String fileName){
+    protected boolean createDefaults(String fileName){
         try
         {
             File configFile = new File(configDirectory, fileName);

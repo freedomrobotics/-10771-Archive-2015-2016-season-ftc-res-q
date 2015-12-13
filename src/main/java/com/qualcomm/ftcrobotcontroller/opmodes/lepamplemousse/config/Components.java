@@ -35,6 +35,11 @@ public class Components extends Config {
     private Yaml yaml = new Yaml();
     // An object to string map.
     private Map<String, Object> data = null;
+    // An object to integer map
+    private Map<Object[], Integer> number = null;   //just an idea...
+    // Private variable for object
+    private Integer objectNum = 0;
+    private Integer maxNum = 0;
 
     /**
      * Debuggable Constructor
@@ -224,7 +229,11 @@ public class Components extends Config {
         }
         if (config != null) {
             data = (Map<String, Object>) yaml.load(config);
+            //todo fix line 228 because "failed to load string" is not the right message under this condition
             if (Static.Debug && telemetry != null) telemetry.addData("LoadCompConfFile", "failed to load");
+            //****************NEW CODE****************
+            //setNumber(objectNum, count("dc_motors", "motor"));
+            //****************NEW CODE*****************
             if (data != null){
                 if (Static.Debug && telemetry != null) telemetry.addData("LoadCompConfFile", "loaded");
                 return true;
@@ -262,6 +271,70 @@ public class Components extends Config {
         }
         return false;
     }
+    //**********************New UNTESTED code************************
+
+    //TODO: 12/7/2015 FIX THESE THINGS BECAUSE THEY WERE POORLY MADE
+    // TODO: 12/12/2015 Javadocs
+
+    //method for checking device type's existence
+    public boolean exists(String deviceType){
+        return data.containsKey(deviceType);
+    }
+
+    //method for checking string id's existence
+    public boolean exists(String deviceType, String deviceName, Integer index){
+        if (exists(deviceType)) {
+            return (((Map) data.get(deviceType)).containsKey((deviceName)+(index.toString())));
+        }
+        else return false;
+    }
+
+    //check if device is enabled or not
+    public boolean enabled(String deviceType, String deviceName, Integer index){
+        if (exists(deviceType, deviceName, index)) {
+            if (((Map) ((Map) data.get(deviceType)).get((deviceName) + index.toString())).get("enabled").equals(true)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        else return false;
+    }
+
+    //count parts
+    public Integer count(String device, String deviceName){
+        int quantity=0;
+        if (exists(device)) {
+            for (Integer i = 1; i <= ((Map) data.get(device)).size(); i++) {
+                if (enabled(device, deviceName, i)) {
+                    quantity++;
+                }
+            }
+        }
+        return quantity;
+    }
+
+    //determine max
+    public Integer determineMax(String device){
+        if (exists(device)){
+            return ((Map) data.get(device)).size();
+        }
+        else return 0;
+    }
+
+    //setters todo 12/11/2015 come up with an idea to map integer values to objects
+    public void setNumber(Object[] deviceClass, Integer quantity){
+        //number.put(deviceClass, quantity);    //An idea where the class object is mapped to the quantity and max amount of object
+    }
+
+    //getters
+    public Integer getObjectNumber(){
+        return objectNum;
+    }
+    public Integer getmaxNumber(){
+        return maxNum;
+    }
+    //*******************************END New Untested Code*******************************
 
     //endregion
 }

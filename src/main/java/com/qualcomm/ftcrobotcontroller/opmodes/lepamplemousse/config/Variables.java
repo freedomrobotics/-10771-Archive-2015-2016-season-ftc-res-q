@@ -262,5 +262,40 @@ public class Variables extends Config{
         return false;
     }
 
+    /**
+     * Gets whether or not "drivetrain" exists
+     *
+     * @return Whether or not the drivetrain exists.
+     */
+    public boolean getDrivetrainExists(){
+        return data.get("drivetrain") != null;
+    }
+
+    /**
+     * Sets whether or not the drivetrain object in the configuration file exists.
+     * Will clear the previous drivetrain object.
+     *
+     * @param exists    The existance of the drivetrain object in the configuration file.
+     */
+    public void setDrivetrainExists(boolean exists){
+        data.remove("drivetrain");
+        if (exists){
+            data.put("drivetrain", new Object());
+        }
+    }
+
+    /**
+     * Gets the value under the drivetrain object
+     *
+     * @param tag_name  The name of the object being called on within drivetrain.
+     * @return A java object that can be casted to the appropriate value.
+     */
+    public Object getDrivetrainObject(String tag_name){
+        if (getDrivetrainExists()){
+            return ((Map)data.get("drivetrain")).get(tag_name);
+        }
+        return null;
+    }
+
     //endregion
 }

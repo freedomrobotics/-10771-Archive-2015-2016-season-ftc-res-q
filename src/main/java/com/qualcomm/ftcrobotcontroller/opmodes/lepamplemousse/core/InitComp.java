@@ -50,10 +50,11 @@ public class InitComp {
         }
         */
         //***************new untested code*******************
-        //TODO: 12/14/2015 Make components.count() have hardwareMapping parameters
-        Core.motor = new DcMotor[components.count("dc_motors", "motor")];
+        //TODO: 12/14/2015 Make components.count() have shorter hardwareMapping or DYNAMIC parameters
+        //TODO: 12/14/2015 Consider putting Array initializations under objectInit
+        Core.motor = new DcMotor[components.count(mappedType(hardwareMap.dcMotor), mappedName(hardwareMap.dcMotor))];
         objectInit(hardwareMap.dcMotor, Core.motor);
-        Core.servo = new Servo[components.count("servos", "servo")];
+        Core.servo = new Servo[components.count(mappedType(hardwareMap.servo), mappedName(hardwareMap.servo))];
         objectInit(hardwareMap.servo, Core.servo);
         //**************new code******************
         return ReturnValues.SUCCESS;
@@ -96,7 +97,7 @@ public class InitComp {
         return (((Map)((Map)components.retrieve(deviceType)).get((deviceName)+(deviceRef.toString()))).get("map_name").toString());
     }
 
-    //TODO: 12/14/2015 Change method to case statements or better yet, mappings(Map<Map, String>)
+    //TODO: 12/14/2015 Change method to case statements or better yet, mappings(Map<Map, String>)(make DYNAMIC return values)
     //TODO: 12/14/2015 Figure out a way to make these comparisons under objectKey() function
     //Method for retrieving string from hardware maps
     private String mappedType(HardwareMap.DeviceMapping deviceMap){

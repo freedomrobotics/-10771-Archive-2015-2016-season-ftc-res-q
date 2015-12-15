@@ -7,8 +7,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.robocol.Telemetry;
-
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -52,10 +50,11 @@ public class InitComp {
         }
         */
         //***************new untested code*******************
+        //TODO: 12/14/2015 Make components.count() have hardwareMapping parameters
         Core.motor = new DcMotor[components.count("dc_motors", "motor")];
-        objectInit("dc_motors", "motor", hardwareMap.dcMotor, Core.motor);
+        objectInit(hardwareMap.dcMotor, Core.motor);
         Core.servo = new Servo[components.count("servos", "servo")];
-        objectInit("servos", "servo", hardwareMap.servo, Core.servo);
+        objectInit(hardwareMap.servo, Core.servo);
         //**************new code******************
         return ReturnValues.SUCCESS;
     }
@@ -67,11 +66,12 @@ public class InitComp {
     //TODO: 12/11/2015 Make objectInit require less arguments
     /**
      * Initializes each individual object type
-     * @param deviceType The group of devices to assign
      * @param devices   The array to assign to
      * @return ReturnValues whether or not the method succeeded
      */
-    public ReturnValues objectInit(String deviceType, String deviceName, HardwareMap.DeviceMapping deviceMapping, Object devices[]){
+    public ReturnValues objectInit(HardwareMap.DeviceMapping deviceMapping, Object devices[]){
+        String deviceType = mappedType(deviceMapping);
+        String deviceName = mappedName(deviceMapping);
         if (components.exists(deviceType)){
             for (int i = 0; i < components.count(deviceType, deviceName); i++) {
                 int reference = i + 1;
@@ -80,8 +80,9 @@ public class InitComp {
                     reference++;
                 }
                 if (components.enabled(deviceType, deviceName, reference)) {
-                    devices[i] = assignObject(deviceType, deviceName, reference, deviceMapping);
+                    devices[i] = deviceMapping.get(objectKey(deviceType, deviceName, reference));
                 } else {
+                    //Returns FAIL if there are not any existing enabled device keys to initialize the array elements with
                     return ReturnValues.FAIL;
                 }
             }
@@ -90,9 +91,34 @@ public class InitComp {
         else return ReturnValues.FAIL;
     }
 
-    private Object assignObject(String deviceType, String deviceName, Integer deviceRef, HardwareMap.DeviceMapping deviceMapping){
+    private String objectKey(String deviceType, String deviceName, Integer deviceRef){
         //if (exists(deviceType, deviceName, deviceRef))
-        return deviceMapping.get(((Map)((Map)components.retrieve(deviceType)).get((deviceName)+(deviceRef.toString()))).get("map_name").toString());
+        return (((Map)((Map)components.retrieve(deviceType)).get((deviceName)+(deviceRef.toString()))).get("map_name").toString());
+    }
+
+    //TODO: 12/14/2015 Change method to case statements or better yet, mappings(Map<Map, String>)
+    //TODO: 12/14/2015 Figure out a way to make these comparisons under objectKey() function
+    //Method for retrieving string from hardware maps
+    private String mappedType(HardwareMap.DeviceMapping deviceMap){
+        if (deviceMap == hardwareMap.dcMotor) return "dc_motors";
+        else if (deviceMap == hardwareMap.servo) return "servos";
+        else if (deviceMap == hardwareMap.touchSensor) return "touch_sensors";
+        else if (deviceMap == hardwareMap.lightSensor) return "light_sensors";
+        else if (deviceMap == hardwareMap.colorSensor) return "color_sensors";
+        else if (deviceMap == hardwareMap.irSeekerSensor) return "ir_seekers";
+        else if (deviceMap == hardwareMap.gyroSensor) return "gyrometers";
+        else if (deviceMap == hardwareMap.accelerationSensor) return "accelerometers";
+        //(deviceMap for camera does not exist)
+        else return "null"; //if no map matches any above return null as string
+    }
+
+    //Method for getting device ID
+    private String mappedName(HardwareMap.DeviceMapping deviceMap){
+        String deviceType = mappedType(deviceMap);
+        int lastIndex = deviceType.length()-1;
+        if (deviceType.charAt(lastIndex)=='s')
+            return deviceType.substring(0,lastIndex);
+        else return deviceType;
     }
 
 /*

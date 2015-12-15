@@ -2,27 +2,27 @@
 
 # Motors
 dc_motors:
-  motor1:
+  dc_motor1:
     enabled: true
     map_name: drive_left
     alias:
       - left_motor
       - left_drive
       - motor_left
-  motor2:
+  dc_motor2:
     enabled: true
     map_name: drive_right
     alias:
       - right_motor
       - right_drive
       - motor_right
-  motor3:
+  dc_motor3:
     enabled: true
     map_name: winch
     alias:
       - winch_motor
       - motor_winch
-  motor4:
+  dc_motor4:
     enabled: false
 
 # Servos
@@ -76,7 +76,7 @@ color_sensors:
       - ada_fruit_color_sensor
 
 # IR Seeker Sensors
-ir_seeker_sensors:
+ir_seekers:
   ir_seeker1:
     enabled: false
     map_name: main_ir_seeker

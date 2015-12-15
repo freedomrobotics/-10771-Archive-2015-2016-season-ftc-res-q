@@ -72,7 +72,7 @@ public class Components extends Config {
         // if the configuration directory even exists, then check of the config exists
         if (Dynamic.configDirExists){
             //region Debug block
-            // If debug is enabled, verbose output
+            // If debug is deviceEnabled, verbose output
             if (Static.Debug && telemetry != null) {
                 if (configFile.exists()) {
                     telemetry.addData("CompConfFile", "exists");
@@ -271,42 +271,175 @@ public class Components extends Config {
         }
         return false;
     }
-    //**********************New UNTESTED code************************
 
-    //TODO: 12/7/2015 FIX THESE THINGS BECAUSE THEY WERE POORLY MADE
+    //region Retrieval Code
+
     // TODO: 12/12/2015 Javadocs
 
-    //method for checking device type's existence
-    public boolean exists(String deviceType){
+
+    //region Device Types / Overarching Device Methods
+    /**
+     * Checks the existance of an overarching device/device category given it's device type
+     * @param deviceType    The name of hte overarching device
+     * @return  a boolean of the device's existence
+     */
+    public boolean deviceExists(String deviceType){
         return data.containsKey(deviceType);
     }
 
-    //method for checking string id's existence
-    public boolean exists(String deviceType, String deviceName, Integer index){
-        if (exists(deviceType)) {
-            return (((Map) data.get(deviceType)).containsKey((deviceName)+(index.toString())));
+    /**
+     * Gets the map object associated with a device type
+     * @param deviceType The name of the device type (e.g. dc_motors)
+     * @return A map object associated with the deviceType
+     */
+    public Map getDevice(String deviceType){
+        if (deviceExists(deviceType)){
+            return (Map)data.get(deviceType);
         }
-        else return false;
+        return null;
+    }
+    //endregion
+
+    //region Device Name / Subdevice Methods
+    /**
+     * Checks whether a subdevice exists or not depending on the given custom name
+     * @param deviceType    The name of the overarching device
+     * @param deviceName    The name of the subdevice
+     * @param id            The id of the device
+     * @return  An boolean of the subdevice's existence
+     */
+    public boolean subDeviceExists(String deviceType, String deviceName, Integer id){
+        Map device;
+        if ((device = getDevice(deviceType)) != null) {
+            return device.containsKey(deviceName + id);
+        }
+        return false;
     }
 
-    //check if device is enabled or not
-    public boolean enabled(String deviceType, String deviceName, Integer index){
-        if (exists(deviceType, deviceName, index)) {
-            if (((Map) ((Map) data.get(deviceType)).get((deviceName) + index.toString())).get("enabled").equals(true)) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-        else return false;
+    /**
+     * Checks whether a subdevice exists or not depending on the given type and id. Uses the rule that the device name is either the same or without an extra s
+     * @param deviceType    The name of the overarching device
+     * @param id            The id of the device
+     * @return  An boolean of the subdevice's existence
+     */
+    public boolean subDeviceExists(String deviceType, Integer id){
+        return subDeviceExists(deviceType, deviceName(deviceType), id);
     }
 
-    //count parts
-    public Integer count(String device, String deviceName){
+    /**
+     * Retrieves a subdevice based on a custom name
+     * @param deviceType    The name of the overarching device
+     * @param deviceName    The name of the subdevice
+     * @param id            The id of the device
+     * @return  A map object associated with the subdevice
+     */
+    public Map getSubdevice(String deviceType, String deviceName, Integer id) {
+        Map device = getDevice(deviceType);
+        if (subDeviceExists(deviceType, deviceName, id)) {
+            return (Map)device.get(deviceName + id);
+        }
+        return null;
+    }
+
+    /**
+     * Retrieves a subdevice based on the rule that the device name is either the same or without an extra s
+     * @param deviceType    The name of the overarching device
+     * @param id            The id of the device
+     * @return  An boolean of the subdevice's existence
+     */
+    public Map getSubdevice(String deviceType, Integer id) {
+        return getSubdevice(deviceType, deviceName(deviceType), id);
+    }
+
+    /**
+     * Checks if device is deviceEnabled or not given a custom name
+     * @param deviceType    The name of the overarching device
+     * @param deviceName    The name of the subdevice
+     * @param id            The id of the device
+     * @return  An boolean of whether the subdevice is deviceEnabled or not
+     */
+    public boolean deviceEnabled(String deviceType, String deviceName, Integer id){
+        Map device;
+        if ((device = getSubdevice(deviceType, deviceName, id)) != null){
+            return device.get("deviceEnabled").equals(true);
+        }
+        return false;
+    }
+
+    /**
+     * Checks if device is deviceEnabled or not based on the rule that the device name is either the same or without an extra s
+     * @param deviceType    The name of the overarching device
+     * @param id            The id of the device
+     * @return  An boolean of whether the subdevice is deviceEnabled or not
+     */
+    public boolean deviceEnabled(String deviceType, Integer id){
+        return deviceEnabled(deviceType, deviceName(deviceType), id);
+    }
+
+    /**
+     * Retrieves the hardware_map name of a subdevice given a custom name
+     * @param deviceType    The name of the overarching device
+     * @param deviceName    Dhe name of the subdevice
+     * @param id            The id of the device
+     * @return  The name of the hardware map / the map name
+     */
+    public String getMapName(String deviceType, String deviceName, Integer id){
+        Map device;
+        if ((device = getSubdevice(deviceType, deviceName, id)) != null){
+            return device.get("map_name").toString();
+        }
+        return null;
+    }
+
+    /**
+     * Retrieves the hardware_map name of a subdevice based on the rule that the device name is either the same or without an extra s
+     * @param deviceType    The name of the overarching device
+     * @param id            The id of the device
+     * @return  The name of the hardware map / the map name
+     */
+    public String getMapName(String deviceType, Integer id){
+        return getMapName(deviceType, deviceName(deviceType), id);
+    }
+    //endregion
+
+    //region Misc Methods
+    /**
+     * Returns the general device/subdevice name
+     * @param deviceType    The name of the overarching device
+     * @return  The name of the device
+     */
+    private String deviceName(String deviceType){
+        String deviceName = deviceType;
+        if (deviceType.charAt(deviceType.length()-1)=='s')
+            deviceName = deviceType.substring(0,deviceType.length()-1);
+        return deviceName;
+    }
+
+    /**
+     * Returns the device/subdevice name and it's id
+     * @param deviceType    The name of the overarching device
+     * @param id            The id of the device
+     * @return  The name of the device
+     */
+    private String deviceName(String deviceType, Integer id){
+        return deviceName(deviceType) + id;
+    }
+    //endregion
+
+    //region Still need fixes/understanding
+    // TODO: 12/15/2015 more work
+
+    /**
+     * Counts the subdevices matching a device name in a device types
+     * @param deviceType    The name of the overarching device
+     * @param deviceName    The name of the device
+     * @return  An integer count of the number of subdevices matching the device name
+     */
+    public Integer count(String deviceType, String deviceName){
         int quantity=0;
-        if (exists(device)) {
-            for (Integer i = 1; i <= ((Map) data.get(device)).size(); i++) {
-                if (enabled(device, deviceName, i)) {
+        if (deviceExists(deviceType)) {
+            for (int i = 1; i <= ((Map) data.get(deviceType)).size(); i++) {
+                if (deviceEnabled(deviceType, deviceName, i)) {
                     quantity++;
                 }
             }
@@ -314,9 +447,23 @@ public class Components extends Config {
         return quantity;
     }
 
+    /**
+     * Counts the subdevices in a device type based on the rule that the device name is either the same or without an extra s
+     * @param deviceType    The name of the overarching device
+     * @return  An integer count of the number of subdevices matching the device name
+     */
+    public Integer count(String deviceType){
+        int quantity=0;
+        String deviceName = deviceType;
+        if (deviceType.charAt(deviceType.length()-1)=='s')
+            deviceName = deviceType.substring(0,deviceType.length()-1);
+        return count(deviceType, deviceName);
+    }
+
+
     //determine max
     public Integer determineMax(String device){
-        if (exists(device)){
+        if (deviceExists(device)){
             return ((Map) data.get(device)).size();
         }
         else return 0;
@@ -336,7 +483,9 @@ public class Components extends Config {
     }
 
 
-    //*******************************END New Untested Code*******************************
+    //endregion
+
+    //endregion
 
     //endregion
 }

@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.robocol.Telemetry;
-import java.util.Map;
 
 /**
  * Create the actual references to the components based on the configuration
@@ -52,9 +51,9 @@ public class InitComp {
         //***************new untested code*******************
         //TODO: 12/14/2015 Make components.count() have shorter hardwareMapping or DYNAMIC parameters
         //TODO: 12/14/2015 Consider putting Array initializations under objectInit
-        Core.motor = new DcMotor[components.count(mappedType(hardwareMap.dcMotor), mappedName(hardwareMap.dcMotor))];
+        Core.motor = new DcMotor[components.count(mappedType(hardwareMap.dcMotor))];
         objectInit(hardwareMap.dcMotor, Core.motor);
-        Core.servo = new Servo[components.count(mappedType(hardwareMap.servo), mappedName(hardwareMap.servo))];
+        Core.servo = new Servo[components.count(mappedType(hardwareMap.servo))];
         objectInit(hardwareMap.servo, Core.servo);
         //**************new code******************
         return ReturnValues.SUCCESS;
@@ -72,16 +71,15 @@ public class InitComp {
      */
     public ReturnValues objectInit(HardwareMap.DeviceMapping deviceMapping, Object devices[]){
         String deviceType = mappedType(deviceMapping);
-        String deviceName = mappedName(deviceMapping);
-        if (components.exists(deviceType)){
-            for (int i = 0; i < components.count(deviceType, deviceName); i++) {
-                int reference = i + 1;
+        if (components.deviceExists(deviceType)){
+            for (int i = 0; i < components.count(deviceType); i++) {
+                int id = i + 1;
                 int max = components.determineMax(deviceType);
-                while ((!(components.enabled(deviceType, deviceName, reference)) && (reference <= max))) {
-                    reference++;
+                while ((!(components.deviceEnabled(deviceType, id)) && (id <= max))) {
+                    id++;
                 }
-                if (components.enabled(deviceType, deviceName, reference)) {
-                    devices[i] = deviceMapping.get(objectKey(deviceType, deviceName, reference));
+                if (components.deviceEnabled(deviceType, id)) {
+                    devices[i] = deviceMapping.get(components.getMapName(deviceType, id));
                 } else {
                     //Returns FAIL if there are not any existing enabled device keys to initialize the array elements with
                     return ReturnValues.FAIL;
@@ -90,11 +88,6 @@ public class InitComp {
             return ReturnValues.SUCCESS;
         }
         else return ReturnValues.FAIL;
-    }
-
-    private String objectKey(String deviceType, String deviceName, Integer deviceRef){
-        //if (exists(deviceType, deviceName, deviceRef))
-        return (((Map)((Map)components.retrieve(deviceType)).get((deviceName)+(deviceRef.toString()))).get("map_name").toString());
     }
 
     //TODO: 12/14/2015 Change method to case statements or better yet, mappings(Map<Map, String>)(make DYNAMIC return values)
@@ -113,13 +106,14 @@ public class InitComp {
         else return "null"; //if no map matches any above return null as string
     }
 
-    //Method for getting device ID
-    private String mappedName(HardwareMap.DeviceMapping deviceMap){
-        String deviceType = mappedType(deviceMap);
-        int lastIndex = deviceType.length()-1;
-        if (deviceType.charAt(lastIndex)=='s')
-            return deviceType.substring(0,lastIndex);
-        else return deviceType;
+    /* I got distracted, and I will finish this in next commit
+    // Simply stores a key to all the names in the alias.
+    private void setAlias(String deviceType, Object devices[], Map<String, Object> alias){
+        //for loop for each device type.
+        for (int x = 0; x < components.count(deviceType); x++) {
+            for (int i = 0; i < components.getSubdevice(deviceType, x)
+            Aliases.motorMap.put(, Core.motor[x]);
+        }
     }
 
 /*

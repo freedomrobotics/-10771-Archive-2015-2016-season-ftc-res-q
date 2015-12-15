@@ -1,6 +1,5 @@
 package com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.config;
 
-import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.components.Core;
 import java.util.Map;
 
 /**

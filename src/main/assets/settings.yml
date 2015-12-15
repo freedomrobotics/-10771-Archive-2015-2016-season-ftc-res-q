@@ -4,34 +4,48 @@
 # Unit of length is millimeters, not meters
 # Unit of rotation is degrees (angular velocity is in degrees per second)
 
-# The drivetrain's settings.
-drivetrain:
-  motor_wheel_ratio: 2.5
-  motor_max_power: 1
-
-
 # Encoder pulses per full revolution http://ftcforum.usfirst.org/archive/index.php/t-5189.html
 encoder:
   output_pulses: 1120
   encoder_pulses: 28
 
+# The drivetrain's settings.
+drivetrain:
+  motor_wheel_ratio: 2.5
+  motor_max_power: 1
+  motor_left:
+    offset: 0.0
+    map_name: drive_left
+    encodered: false
+  motor_right:
+    offset: 0.0
+    map_name: drive_right
+    encodered: false
+
 # Winch settings
 winch:
+  enabled: true
   linear_movement:
     motor_encodered: true
+    motor_reversed: true
     motor_tape_ratio: 2.5
     mot_max_power: 1
-    max_extend: 1524
-    max_extend_pwoer: .6
+    max_extend: 1828.8
+    max_extend_power: 0.6
     max_retract_power: 1
   angular_movement:
-    hold_power: true
-    max_ang_vel: 5
+    max_ang_vel: 20.0
+    full_rotate: 180.0
+    max_rotate: 90.0
+    preset: 50.5
   left_servo:
     reversed: true
-    full_rotate: 180
-    max_rotat: 180
+    offset: 15.75
   right_servo:
     reversed: false
-    full_rotate: 180
-    max_rotat: 180
+    offset: 0.0
+
+# Trigger Arm settings (It's a servo)
+trigger_arm:
+  enabled: true
+  side: right

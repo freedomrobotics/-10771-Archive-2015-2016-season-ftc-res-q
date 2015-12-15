@@ -1,137 +1,277 @@
 # Gamepad mappings
+# Function List:
+# drivetrain_left       = the left motor on the drivetrain      - analog(-1, 1)   - float
+# drivetrain_right      = the right motor on the drivetrain     - analog(-1, 1)   - float
+# winch_extend_retract  = the winch motor to extend and retract - analog(-1, 1)   - float
+# winch_angle           = the angle of the winch assembly       - analog(-1, 1)   - float
+# trigger_arm           = directly mapped to the trigger arm    - analog(0, 1)    - float
+# winch_preset          = sets the winch angle to the preset    - digital         - boolean
+# servos_off            = turns off the servos                  - digital         - boolean
+# log_cat               = enable logging; checked on init       - digital         - boolean
 gamepad_1:
-  left_stick_x: null
-#   inverted: false
-#   analog: true
-  left_stick_y: null
-#   inverted: false
-#   analog: true
+  left_stick_x:
+    enabled: false
+    function: null
+    inverted: false
+    analog: true
+
+  left_stick_y:
+    enabled: true
+    function: drivetrain_left
+    inverted: false
+    analog: true
+
   right_stick_x: null
-#   inverted: false
-#   analog: true
-  right_stick_y: null
-#   inverted: false
-#   analog: true
-  dpad_up: null
-#   inverted: false
-#   digital: true
-  dpad_down: null
-#   inverted: false
-#   digital: true
-  dpad_left: null
-#   inverted: false
-#   digital: true
-  dpad_right: null
-#   inverted: false
-#   digital: true
-  a_button: null
-#   inverted: false
-#   digital: true
-  b_button: null
-#   inverted: false
-#   digital: true
-  x_button: null
-#   inverted: false
-#   digital: true
-  y_button: null
-#   inverted: false
-#   digital: true
-  guide_button: null
-#   inverted: false
-#   digital: true
-  start_button: null
-#   inverted: false
-#   digital: true
-  back_button: null
-#   inverted: false
-#   digital: true
-  left_bumper: null
-#   inverted: false
-#   digital: true
-  right_bumper: null
-#   inverted: false
-#   digital: true
-  left_stick_button: null
-#   inverted: false
-#   digital: true
-  right_stick_button: null
-#   inverted: false
-#   digital: true
-  left_trigger: null
-#   inverted: false
-#   analog: true
-  right_trigger: null
-#   inverted: false
-#   analog: true
+    enabled: false
+    function: null
+    inverted: false
+    analog: true
+
+  right_stick_y:
+    enabled: true
+    function: drivetrain_right
+    inverted: false
+    analog: true
+
+  dpad_up:
+    enabled: false
+    function: null
+    inverted: false
+    digital: true
+
+  dpad_down:
+    enabled: false
+    function: null
+    inverted: false
+    digital: true
+
+  dpad_left:
+    enabled: false
+    function: null
+    inverted: false
+    digital: true
+
+  dpad_right:
+    enabled: false
+    function: null
+    inverted: false
+    digital: true
+
+  a_button:
+    enabled: false
+    function: null
+    inverted: false
+    digital: true
+
+  b_button:
+    enabled: false
+    function: null
+    inverted: false
+    digital: true
+
+  x_button:
+    enabled: false
+    function: null
+    inverted: false
+    digital: true
+
+  y_button:
+    enabled: false
+    function: null
+    inverted: false
+    digital: true
+
+  guide_button:
+    enabled: false
+    function: null
+    inverted: false
+    digital: true
+
+  start_button:
+    enabled: false
+    function: null
+    inverted: false
+    digital: true
+
+  back_button:
+    enabled: false
+    function: null
+    inverted: false
+    digital: true
+
+  left_bumper:
+    enabled: false
+    function: null
+    inverted: false
+    digital: true
+
+  right_bumper:
+    enabled: false
+    function: null
+    inverted: false
+    digital: true
+
+  left_stick_button:
+    enabled: false
+    function: null
+    inverted: false
+    digital: true
+
+  right_stick_button:
+    enabled: false
+    function: null
+    inverted: false
+    digital: true
+
+  left_trigger:
+    enabled: false
+    function: null
+    inverted: false
+    analog: true
+
+  right_trigger:
+    enabled: false
+    function: null
+    inverted: false
+    analog: true
+
+
 
 gamepad_2:
-  left_stick_x: null
-#   inverted: false
-#   analog: true
-  left_stick_y: null
-#   inverted: false
-#   analog: true
+  left_stick_x:
+    enabled: false
+    function: null
+    inverted: false
+    analog: true
+
+  left_stick_y:
+    enabled: true
+    function: winch_extend_retract
+    inverted: false
+    analog: true
+
   right_stick_x: null
-#   inverted: false
-#   analog: true
-  right_stick_y: null
-#   inverted: false
-#   analog: true
-  dpad_up: null
-#   inverted: false
-#   digital: true
-  dpad_down: null
-#   inverted: false
-#   digital: true
-  dpad_left: null
-#   inverted: false
-#   digital: true
-  dpad_right: null
-#   inverted: false
-#   digital: true
-  a_button: null
-#   inverted: false
-#   digital: true
-  b_button: null
-#   inverted: false
-#   digital: true
-  x_button: null
-#   inverted: false
-#   digital: true
-  y_button: null
-#   inverted: false
-#   digital: true
-  guide_button: null
-#   inverted: false
-#   digital: true
-  start_button: null
-#   inverted: false
-#   digital: true
-  back_button: null
-#   inverted: false
-#   digital: true
-  left_bumper: null
-#   inverted: false
-#   digital: true
-  right_bumper: null
-#   inverted: false
-#   digital: true
-  left_stick_button: null
-#   inverted: false
-#   digital: true
-  right_stick_button: null
-#   inverted: false
-#   digital: true
-  left_trigger: null
-#   inverted: false
-#   analog: true
-  right_trigger: null
-#   inverted: false
-#   analog: true
+    enabled: false
+    function: null
+    inverted: false
+    analog: true
+
+  right_stick_y:
+    enabled: true
+    function: winch_angle
+    inverted: false
+    analog: true
+
+  dpad_up:
+    enabled: false
+    function: null
+    inverted: false
+    digital: true
+
+  dpad_down:
+    enabled: false
+    function: null
+    inverted: false
+    digital: true
+
+  dpad_left:
+    enabled: false
+    function: null
+    inverted: false
+    digital: true
+
+  dpad_right:
+    enabled: false
+    function: null
+    inverted: false
+    digital: true
+
+  a_button:
+    enabled: false
+    function: null
+    inverted: false
+    digital: true
+
+  b_button:
+    enabled: false
+    function: null
+    inverted: false
+    digital: true
+
+  x_button:
+    enabled: false
+    function: null
+    inverted: false
+    digital: true
+
+  y_button:
+    enabled: false
+    function: null
+    inverted: false
+    digital: true
+
+  guide_button:
+    enabled: false
+    function: null
+    inverted: false
+    digital: true
+
+  start_button:
+    enabled: false
+    function: null
+    inverted: false
+    digital: true
+
+  back_button:
+    enabled: false
+    function: null
+    inverted: false
+    digital: true
+
+  left_bumper:
+    enabled: true
+    function: winch_preset
+    inverted: false
+    digital: true
+
+  right_bumper:
+    enabled: true
+    function: servos_off
+    inverted: false
+    digital: true
+
+  left_stick_button:
+    enabled: false
+    function: null
+    inverted: false
+    digital: true
+
+  right_stick_button:
+    enabled: false
+    function: null
+    inverted: false
+    digital: true
+
+  left_trigger:
+    enabled: false
+    function: null
+    inverted: false
+    analog: true
+
+  right_trigger:
+    enabled: true
+    function: trigger_arm
+    inverted: false
+    analog: true
+
+
 
 # keycombinations to activate functions.
 # not a prioritu!
 combinations:
-  load_debug:
-    - left_bumper
-    - right_bumper
+  combo1:
+    function: log_cat
+    keys:
+      gamepad1:
+        - left_bumper
+        - right_bumper

@@ -74,12 +74,13 @@ public class InitComp {
         if (components.deviceExists(deviceType)){
             for (int i = 0; i < components.count(deviceType); i++) {
                 int id = i + 1;
-                int max = components.determineMax(deviceType);
+                int max = components.maxSubdevices(deviceType);
                 while ((!(components.deviceEnabled(deviceType, id)) && (id <= max))) {
                     id++;
                 }
                 if (components.deviceEnabled(deviceType, id)) {
                     devices[i] = deviceMapping.get(components.getMapName(deviceType, id));
+                    // FIXME: 12/15/2015 Add a hook into the HardwareMap class in order to not throw a failure on component load failure
                 } else {
                     //Returns FAIL if there are not any existing enabled device keys to initialize the array elements with
                     return ReturnValues.FAIL;
@@ -91,7 +92,7 @@ public class InitComp {
     }
 
     //TODO: 12/14/2015 Change method to case statements or better yet, mappings(Map<Map, String>)(make DYNAMIC return values)
-    //TODO: 12/14/2015 Figure out a way to make these comparisons under objectKey() function
+    //TODO: 12/14/2015 Figure out a way to make these comparisons under objectKey() function // FIXME: 12/15/2015 Moved to the components class by adam
     //Method for retrieving string from hardware maps
     private String mappedType(HardwareMap.DeviceMapping deviceMap){
         if (deviceMap == hardwareMap.dcMotor) return "dc_motors";

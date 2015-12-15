@@ -35,11 +35,6 @@ public class Components extends Config {
     private Yaml yaml = new Yaml();
     // An object to string map.
     private Map<String, Object> data = null;
-    // An object to integer map
-    private Map<Object[], Integer> number = null;   //just an idea...
-    // Private variable for object
-    private Integer objectNum = 0;
-    private Integer maxNum = 0;
 
     /**
      * Debuggable Constructor
@@ -400,6 +395,47 @@ public class Components extends Config {
     public String getMapName(String deviceType, Integer id){
         return getMapName(deviceType, deviceName(deviceType), id);
     }
+
+    /**
+     * Counts the subdevices matching a device name in a device types
+     * @param deviceType    The name of the overarching device
+     * @param deviceName    The name of the device
+     * @return  An integer count of the number of subdevices matching the device name
+     */
+    public Integer count(String deviceType, String deviceName){
+        int quantity = 0;
+        Map device;
+        if ((device = getDevice(deviceType)) != null) {
+            for (int i = 1; i <= device.size(); i++) {
+                if (deviceEnabled(deviceType, deviceName, i)) {
+                    quantity++;
+                }
+            }
+        }
+        return quantity;
+    }
+
+    /**
+     * Counts the subdevices in a device type based on the rule that the device name is either the same or without an extra s
+     * @param deviceType    The name of the overarching device
+     * @return  An integer count of the number of subdevices matching the device name
+     */
+    public Integer count(String deviceType){
+        return count(deviceType, deviceName(deviceType));
+    }
+
+    /**
+     * Returns the total count of Subdevices in a device type
+     * @param deviceType    The name of the overarchin device
+     * @return  An integer count of the total number of subdevices in the device type
+     */
+    public Integer maxSubdevices(String deviceType){
+        Map device;
+        if ((device = getDevice(deviceType)) != null) {
+            return device.size();
+        }
+        else return 0;
+    }
     //endregion
 
     //region Misc Methods
@@ -424,65 +460,6 @@ public class Components extends Config {
     private String deviceName(String deviceType, Integer id){
         return deviceName(deviceType) + id;
     }
-    //endregion
-
-    //region Still need fixes/understanding
-    // TODO: 12/15/2015 more work
-
-    /**
-     * Counts the subdevices matching a device name in a device types
-     * @param deviceType    The name of the overarching device
-     * @param deviceName    The name of the device
-     * @return  An integer count of the number of subdevices matching the device name
-     */
-    public Integer count(String deviceType, String deviceName){
-        int quantity=0;
-        if (deviceExists(deviceType)) {
-            for (int i = 1; i <= ((Map) data.get(deviceType)).size(); i++) {
-                if (deviceEnabled(deviceType, deviceName, i)) {
-                    quantity++;
-                }
-            }
-        }
-        return quantity;
-    }
-
-    /**
-     * Counts the subdevices in a device type based on the rule that the device name is either the same or without an extra s
-     * @param deviceType    The name of the overarching device
-     * @return  An integer count of the number of subdevices matching the device name
-     */
-    public Integer count(String deviceType){
-        int quantity=0;
-        String deviceName = deviceType;
-        if (deviceType.charAt(deviceType.length()-1)=='s')
-            deviceName = deviceType.substring(0,deviceType.length()-1);
-        return count(deviceType, deviceName);
-    }
-
-
-    //determine max
-    public Integer determineMax(String device){
-        if (deviceExists(device)){
-            return ((Map) data.get(device)).size();
-        }
-        else return 0;
-    }
-
-    //setters todo 12/11/2015 come up with an idea to map integer values to objects
-    public void setNumber(Object[] deviceClass, Integer quantity){
-        //number.put(deviceClass, quantity);    //An idea where the class object is mapped to the quantity and max amount of object
-    }
-
-    //getters
-    public Integer getObjectNumber(){
-        return objectNum;
-    }
-    public Integer getmaxNumber(){
-        return maxNum;
-    }
-
-
     //endregion
 
     //endregion

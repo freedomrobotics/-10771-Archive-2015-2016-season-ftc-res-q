@@ -28,10 +28,6 @@ public class InitComp {
     public InitComp (HardwareMap hardwareMap, Telemetry telemetry){
         this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
-        components = new Components(telemetry);
-        if (!components.load()){
-            components.create();
-        }
     }
 
     public ReturnValues initialize(){

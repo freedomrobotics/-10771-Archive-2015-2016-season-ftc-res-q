@@ -1,6 +1,7 @@
 package com.qualcomm.ftcrobotcontroller.opmodes;
 
 import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.config.Components;
+import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.config.Controllers;
 import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.core.InitComp;
 import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.core.StartValues;
 import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.core.ControllersInit;
@@ -20,7 +21,9 @@ public class RobotDrive extends OpMode{
     Components components = null;
     Controlled controlled = null;
     ReturnValues returnValues;
+    Controllers controllerConfig = null;
     ControllersInit controls;
+    boolean reset_config;
 
     public RobotDrive(){
         //Constructor
@@ -29,8 +32,19 @@ public class RobotDrive extends OpMode{
     @Override
     public void init(){
         //initializer
+        //Check to see if the call to reset from the controller has been called
+        reset_config = false;
+        if (gamepad1.start && gamepad1.back){
+            reset_config = true;
+        }
+
+        //load the components object and check for existance and reset
+        components = new Components(telemetry);
+        if (!components.load() || reset_config){
+            components.create();
+        }
+
         InitComp initComp = new InitComp(hardwareMap, telemetry);
-        components = initComp.getComponents();
 
         if ((returnValues = initComp.initialize()) != ReturnValues.SUCCESS){
             if (returnValues == ReturnValues.MOTOR_NOT_INIT) {
@@ -40,15 +54,17 @@ public class RobotDrive extends OpMode{
                 telemetry.addData("ERROR", "Servos Failed to Initialize");
             }
         }
-        
-        controls = new ControllersInit(gamepad1, gamepad2);
-        //insert init code here
     }
 
     @Override
     public void start(){
         //set default values
         StartValues startValues = new StartValues(telemetry);
+        controllerConfig = new Controllers();
+        if
+
+        controls = new ControllersInit(gamepad1, gamepad2, controllerConfig);
+        //insert init code here
         controlled = new Controlled(controls);
     }
 

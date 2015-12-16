@@ -225,11 +225,7 @@ public class Components extends Config {
         }
         if (config != null) {
             data = (Map<String, Object>) yaml.load(config);
-            //todo fix line 228 because "failed to load string" is not the right message under this condition
             if (Static.Debug && telemetry != null) telemetry.addData("LoadCompConfFile", "failed to load");
-            //****************NEW CODE****************
-            //setNumber(objectNum, count("dc_motors", "motor"));
-            //****************NEW CODE*****************
             if (data != null){
                 if (Static.Debug && telemetry != null) telemetry.addData("LoadCompConfFile", "loaded");
                 return true;
@@ -269,9 +265,6 @@ public class Components extends Config {
     }
 
     //region Retrieval Code
-
-    // TODO: 12/12/2015 Javadocs
-
 
     //region Device Types / Overarching Device Methods
     /**

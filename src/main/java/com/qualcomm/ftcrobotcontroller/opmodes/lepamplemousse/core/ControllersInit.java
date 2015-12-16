@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 /**
  * Dynamic aliasing of various variables to the controller based on configuration
  */
-public class ControllersInit(){
+public class ControllersInit {
 
     //region Variables
     // The gamepads

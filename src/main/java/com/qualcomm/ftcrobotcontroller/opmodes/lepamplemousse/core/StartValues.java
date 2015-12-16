@@ -23,7 +23,7 @@ public class StartValues {
         }
     }
 
-    public ReturnValues loadFromConfig(){
+    /*public ReturnValues loadFromConfig(){
         Loaded.drivetrainEnabled = variables.getDrivetrainExists();
         if (Loaded.drivetrainEnabled) {
             Loaded.drivetrainMotWheel = (Float)variables.getDrivetrainObject("motor_wheel_ratio");
@@ -44,6 +44,6 @@ public class StartValues {
 
     public void resetNonConfig(){
 
-    }
+    }*/
 
 }

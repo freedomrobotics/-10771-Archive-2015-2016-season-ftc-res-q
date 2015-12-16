@@ -1,12 +1,18 @@
 package com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.core;
 
+import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.components.Aliases;
 import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.components.Core;
 import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.config.Components;
 import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.vars.ReturnValues;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.robocol.Telemetry;
+
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Create the actual references to the components based on the configuration
@@ -29,33 +35,16 @@ public class InitComp {
     }
 
     public ReturnValues initialize(){
-        /*
-        Integer count = 0;
-        if (((Map)((Map)components.retrieve("dc_motors")).get("motor1")).get("enabled").equals(true)) count++;
-        if (((Map)((Map)components.retrieve("dc_motors")).get("motor2")).get("enabled").equals(true)) count++;
-
-        //Sorry Joel! You were right to create the references to the array.
-        if (((Map)((Map)components.retrieve("dc_motors")).get("motor1")).get("enabled").equals(true)){
-            Core.motor[0] = hardwareMap.dcMotor.get(((Map)((Map)components.retrieve("dc_motors")).get("motor1")).get("map_name").toString());
-        }
-        if (((Map)((Map)components.retrieve("dc_motors")).get("motor2")).get("enabled").equals(true)){
-            Core.motor[1] = hardwareMap.dcMotor.get(((Map)((Map)components.retrieve("dc_motors")).get("motor2")).get("map_name").toString());
-        }
-        if (((Map)((Map)components.retrieve("dc_motors")).get("motor3")).get("enabled").equals(true)){
-            Core.motor[2] = hardwareMap.dcMotor.get(((Map)((Map)components.retrieve("dc_motors")).get("motor3")).get("map_name").toString());
-        }
-        if (((Map)((Map)components.retrieve("dc_motors")).get("motor4")).get("enabled").equals(true)){
-            Core.motor[3] = hardwareMap.dcMotor.get(((Map)((Map)components.retrieve("dc_motors")).get("motor4")).get("map_name").toString());
-        }
-        */
-        //***************new untested code*******************
         //TODO: 12/14/2015 Make components.count() have shorter hardwareMapping or DYNAMIC parameters
         //TODO: 12/14/2015 Consider putting Array initializations under objectInit
         Core.motor = new DcMotor[components.count(mappedType(hardwareMap.dcMotor))];
-        objectInit(hardwareMap.dcMotor, Core.motor);
+        if (objectInit(hardwareMap.dcMotor, Core.motor) != ReturnValues.SUCCESS){
+            return ReturnValues.MOTOR_NOT_INIT;
+        }
         Core.servo = new Servo[components.count(mappedType(hardwareMap.servo))];
-        objectInit(hardwareMap.servo, Core.servo);
-        //**************new code******************
+        if (objectInit(hardwareMap.servo, Core.servo) != ReturnValues.SUCCESS){
+            return ReturnValues.SERVO_NOT_INIT;
+        }
         return ReturnValues.SUCCESS;
     }
 
@@ -78,17 +67,18 @@ public class InitComp {
                 while ((!(components.deviceEnabled(deviceType, id)) && (id <= max))) {
                     id++;
                 }
-                if (components.deviceEnabled(deviceType, id)) {
+                if (components.deviceEnabled(deviceType, id) && componentExists(components.getMapName(deviceType, id), deviceMapping)) {
                     devices[i] = deviceMapping.get(components.getMapName(deviceType, id));
-                    // FIXME: 12/15/2015 Add a hook into the HardwareMap class in order to not throw a failure on component load failure
+                    setAlias(deviceType, devices[i], aliasMap(deviceMapping), id);
                 } else {
                     //Returns FAIL if there are not any existing enabled device keys to initialize the array elements with
                     return ReturnValues.FAIL;
+
                 }
             }
             return ReturnValues.SUCCESS;
         }
-        else return ReturnValues.FAIL;
+        return ReturnValues.DEVICE_DOES_NOT_EXIST;
     }
 
     //TODO: 12/14/2015 Change method to case statements or better yet, mappings(Map<Map, String>)(make DYNAMIC return values)
@@ -107,31 +97,63 @@ public class InitComp {
         else return "null"; //if no map matches any above return null as string
     }
 
-    /* I got distracted, and I will finish this in next commit
-    // Simply stores a key to all the names in the alias.
-    private void setAlias(String deviceType, Object devices[], Map<String, Object> alias){
-        //for loop for each device type.
-        for (int x = 0; x < components.count(deviceType); x++) {
-            for (int i = 0; i < components.getSubdevice(deviceType, x)
-            Aliases.motorMap.put(, Core.motor[x]);
+    /**
+     * A method derived from the HardwareMap.DeviceMapping Class to determine if a named component exists.
+     * @param mapName       The name of the mapping to check
+     * @param deviceMapping The HardwareMap.DeviceMapping object used in the OpMode
+     * @return  A boolean stating whether the component exists or not.
+     */
+    private boolean componentExists(String mapName, HardwareMap.DeviceMapping deviceMapping){
+        // Now this is a little complex.
+        // So I decompiled the HardwareMap class to figure this out since there is no built in way to check
+        // First I call to get the entry set of the map in the class, which similar to a list of unique entries of map key/values
+        // Then I call iterator on it to run through each entry.
+        Iterator devices = deviceMapping.entrySet().iterator();
+        // From here I say, while there is another entry in the set, do...
+        while (devices.hasNext()){
+            // This! I pull out the entry from the iterator and run a check on it
+            Map.Entry entry = (Map.Entry)devices.next();
+            // If it's a HardwareDevice and the mapName and the key of the entry have the same content
+            if(entry.getValue() instanceof HardwareDevice && mapName.equals(entry.getKey())){
+                // Then the component exists on the hardwareMap and we don't have to perform a non-remote robot restart because of annoying exceptions.
+                return true;
+            }
+        }
+        // Otherwise the component doesn't exist and we return a failure.
+        return false;
+    }
+
+    /**
+     * A method to store to the alias map. Figures out which aliases to get based on the rule that the device name is either the same or without an extra s
+     * @param deviceType    The type of the device
+     * @param device        The object to the device
+     * @param alias         The appropriate alias map
+     * @param id            The id of the device
+     */
+    private void setAlias(String deviceType, Object device, Map<String, Object> alias, Integer id){
+        //for loop for each alias.
+        for (int i = 0; i < components.getAlias(deviceType, id).size(); i++){
+            alias.put(components.getAlias(deviceType, id).get(i), device);
         }
     }
 
-/*
-    //TODO: 12/11/2015 Alias function attempt is a fail:( To be deleted or revised
-    private void alias(String deviceType, String deviceName, Integer deviceRef, Object device, HashMap<String, Object> aliasMap) {
-        Object[] array;
-        aliasMap.putAll(((Map) ((Map) ((Map) components.retrieve(deviceType)).get((deviceName) + (deviceRef.toString()))).get("alias")));
-        array = aliasMap.keySet().toArray();
-        for (int i=0; i<aliasMap.size(); i++){
-            aliasMap.put(array[i].toString(), device);
-        }
+    /**
+     * A method to test and return the respective map based off of the mappedType method
+     * @param deviceMap     The HardwareMap.DeviceMapping object / The device map
+     * @return  The appropriate alias Map
+     */
+    private Map aliasMap(HardwareMap.DeviceMapping deviceMap){
+        if (deviceMap == hardwareMap.dcMotor)               return Aliases.motorMap;
+        if (deviceMap == hardwareMap.servo)                 return Aliases.servoMap;
+        if (deviceMap == hardwareMap.touchSensor)           return Aliases.touchSensorMap;
+        if (deviceMap == hardwareMap.lightSensor)           return Aliases.lightSensorMap;
+        if (deviceMap == hardwareMap.colorSensor)           return Aliases.colorSensorMap;
+        if (deviceMap == hardwareMap.irSeekerSensor)        return Aliases.irSeekerMap;
+        if (deviceMap == hardwareMap.gyroSensor)            return Aliases.gyrometerMap;
+        if (deviceMap == hardwareMap.accelerationSensor)    return Aliases.accelerometerMap;
+            //(deviceMap for camera does not exist)
+        return null;
     }
-    */
 
     public Components getComponents(){return components;}
-
-    public void Run(){
-
-    }
 }

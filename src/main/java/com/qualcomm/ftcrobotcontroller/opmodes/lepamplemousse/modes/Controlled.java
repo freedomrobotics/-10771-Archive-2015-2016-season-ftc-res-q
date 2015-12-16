@@ -1,5 +1,6 @@
 package com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.modes;
 
+import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.components.Aliases;
 import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.components.Core;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
@@ -15,7 +16,7 @@ public class Controlled {
     }
     //nowhere near fina
     public void loop(){
-        Core.motor[0].setPower(gamepad1.left_stick_y);
-        Core.motor[1].setPower(-gamepad1.right_stick_y);
+        Aliases.motorMap.get("drive_left").setPower(gamepad1.left_stick_y);
+        Aliases.motorMap.get("drive_right").setPower(-gamepad1.right_stick_y);
     }
 }

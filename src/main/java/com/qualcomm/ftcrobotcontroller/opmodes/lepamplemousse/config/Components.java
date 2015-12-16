@@ -13,6 +13,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -435,6 +436,35 @@ public class Components extends Config {
             return device.size();
         }
         else return 0;
+    }
+
+    /**
+     * Returns a list of the aliases in a subdevice including the map_name given a custom name
+     * @param deviceType    The name of the overarching device
+     * @param deviceName    The name of the device
+     * @param id            The id of the device
+     * @return  A list object of the aliases
+     */
+    public List<String> getAlias(String deviceType, String deviceName, Integer id){
+        Map device;
+        List<String> alias = null;
+        if ((device = getSubdevice(deviceType, deviceName, id)) != null) {
+            if ((device.get("alias")) != null) {
+                alias = (List<String>)device.get("alias");
+                alias.add(getMapName(deviceType, deviceName, id));
+            }
+        }
+        return alias;
+    }
+
+    /**
+     * Returns a list of the aliases in a subdevice including the map_name based on the rule that the device name is either the same or without an extra s
+     * @param deviceType    The name of the overarching device
+     * @param id            The id of the device
+     * @return  A list object of the aliases
+     */
+    public List<String> getAlias(String deviceType, Integer id){
+        return getAlias(deviceType, deviceName(deviceType), id);
     }
     //endregion
 

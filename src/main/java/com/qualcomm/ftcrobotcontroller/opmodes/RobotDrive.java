@@ -6,6 +6,7 @@ import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.core.StartValues;
 import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.modes.Controlled;
 import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.vars.ReturnValues;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.robocol.Telemetry;
 
 /**
  * Le Pamplemousse DRIVE!
@@ -17,6 +18,7 @@ public class RobotDrive extends OpMode{
 
     Components components = null;
     Controlled controlled = null;
+    ReturnValues returnValues;
 
     public RobotDrive(){
         //Constructor
@@ -27,8 +29,14 @@ public class RobotDrive extends OpMode{
         //initializer
         InitComp initComp = new InitComp(hardwareMap, telemetry);
         components = initComp.getComponents();
-        if (initComp.initialize().equals(ReturnValues.SUCCESS)){
-            //idk
+
+        if ((returnValues = initComp.initialize()) != ReturnValues.SUCCESS){
+            if (returnValues == ReturnValues.MOTOR_NOT_INIT) {
+                telemetry.addData("ERROR", "Motors Failed to Initialize");
+            }
+            if (returnValues == ReturnValues.SERVO_NOT_INIT) {
+                telemetry.addData("ERROR", "Servos Failed to Initialize");
+            }
         }
     }
 

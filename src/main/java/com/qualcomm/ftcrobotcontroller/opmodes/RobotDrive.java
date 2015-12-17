@@ -2,6 +2,7 @@ package com.qualcomm.ftcrobotcontroller.opmodes;
 
 import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.config.Components;
 import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.config.Controllers;
+import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.config.Variables;
 import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.core.InitComp;
 import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.core.StartValues;
 import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.core.ControllersInit;
@@ -22,7 +23,8 @@ public class RobotDrive extends OpMode{
     Controlled controlled = null;
     ReturnValues returnValues;
     Controllers controllerConfig = null;
-    ControllersInit controls;
+    ControllersInit controls = null;
+    Variables variables = null;
     boolean reset_config;
 
     public RobotDrive(){
@@ -38,14 +40,15 @@ public class RobotDrive extends OpMode{
             reset_config = true;
         }
 
-        //load the components object and check for existance and reset
+        //load the components object and check for existence and reset
         components = new Components(telemetry);
         if (!components.load() || reset_config){
             components.create();
         }
 
-        InitComp initComp = new InitComp(hardwareMap, telemetry);
-
+        // initialize all the components
+        // and run the checks
+        InitComp initComp = new InitComp(hardwareMap, telemetry, components);
         if ((returnValues = initComp.initialize()) != ReturnValues.SUCCESS){
             if (returnValues == ReturnValues.MOTOR_NOT_INIT) {
                 telemetry.addData("ERROR", "Motors Failed to Initialize");
@@ -59,10 +62,22 @@ public class RobotDrive extends OpMode{
     @Override
     public void start(){
         //set default values
-        StartValues startValues = new StartValues(telemetry);
-        controllerConfig = new Controllers();
-        if
+        //load the variables object and check for existence and reset
+        variables = new Variables(telemetry);
+        if (!variables.load() || reset_config){
+            variables.create();
+        }
 
+        //Load all the variables from the configuration
+        StartValues startValues = new StartValues(telemetry, variables);
+
+        //load the controller mappins config and check for existence and reset
+        controllerConfig = new Controllers(telemetry);
+        if (!controllerConfig.load() || reset_config){
+            controllerConfig.create();
+        }
+
+        //Initialize the controller aliases for dynamic mapping
         controls = new ControllersInit(gamepad1, gamepad2, controllerConfig);
         //insert init code here
         controlled = new Controlled(controls);

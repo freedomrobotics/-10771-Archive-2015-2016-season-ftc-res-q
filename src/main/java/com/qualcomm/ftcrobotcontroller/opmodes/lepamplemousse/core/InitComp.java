@@ -25,9 +25,10 @@ public class InitComp {
 
     Telemetry telemetry = null;
 
-    public InitComp (HardwareMap hardwareMap, Telemetry telemetry){
+    public InitComp (HardwareMap hardwareMap, Telemetry telemetry, Components components){
         this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
+        this.components = components;
     }
 
     public ReturnValues initialize(){

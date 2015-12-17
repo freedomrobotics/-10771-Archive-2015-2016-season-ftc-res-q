@@ -15,12 +15,9 @@ public class StartValues {
 
     Telemetry telemetry = null;
 
-    public StartValues (Telemetry telemetry){
+    public StartValues (Telemetry telemetry, Variables variables){
         this.telemetry = telemetry;
-        variables = new Variables(telemetry);
-        if (!variables.load()){
-            variables.create();
-        }
+        this.variables = variables;
     }
 
     /*public ReturnValues loadFromConfig(){

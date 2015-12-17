@@ -1,8 +1,6 @@
 package com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.core;
 
 import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.config.Variables;
-import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.vars.Loaded;
-import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.vars.ReturnValues;
 import com.qualcomm.robotcore.robocol.Telemetry;
 
 /**

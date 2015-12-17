@@ -12,7 +12,6 @@ import com.qualcomm.robotcore.robocol.Telemetry;
 
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Create the actual references to the components based on the configuration

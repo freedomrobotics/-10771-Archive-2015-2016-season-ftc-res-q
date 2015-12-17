@@ -1,9 +1,7 @@
 package com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.modes;
 
-import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.core.ControllersInit;
 import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.components.Aliases;
-import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.components.Core;
-import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.core.ControllersInit;
 
 /**
  * Driver controlled class

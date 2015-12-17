@@ -4,18 +4,16 @@ import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.vars.Dynamic;
 import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.vars.ReturnValues;
 import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.vars.Static;
 import com.qualcomm.robotcore.robocol.Telemetry;
-import com.sun.script.util.BindingsEntrySet;
 
 import org.yaml.snakeyaml.Yaml;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 

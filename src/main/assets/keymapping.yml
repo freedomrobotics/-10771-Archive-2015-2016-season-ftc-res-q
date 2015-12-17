@@ -8,7 +8,7 @@
 # winch_preset          = sets the winch angle to the preset    - digital         - boolean
 # servos_off            = turns off the servos                  - digital         - boolean
 # log_cat               = enable logging; checked on init       - digital         - boolean
-gamepad_1:
+gamepad1:
   left_stick_x:
     enabled: false
     function: null
@@ -21,7 +21,7 @@ gamepad_1:
     inverted: false
     analog: true
 
-  right_stick_x: null
+  right_stick_x:
     enabled: false
     function: null
     inverted: false
@@ -137,7 +137,7 @@ gamepad_1:
 
 
 
-gamepad_2:
+gamepad2:
   left_stick_x:
     enabled: false
     function: null
@@ -150,7 +150,7 @@ gamepad_2:
     inverted: false
     analog: true
 
-  right_stick_x: null
+  right_stick_x:
     enabled: false
     function: null
     inverted: false

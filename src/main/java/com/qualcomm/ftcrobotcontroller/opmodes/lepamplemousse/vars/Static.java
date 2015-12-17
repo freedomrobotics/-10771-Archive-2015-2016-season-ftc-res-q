@@ -22,7 +22,7 @@ public class Static {
     public static final String configCompFileName = "config";
 
     /** Filename for the config file that config.Controllers loads */
-    public static final String configControlFileName = "controller";
+    public static final String configControlFileName = "keymapping";
 
     //endregion
 

@@ -16,6 +16,6 @@ public class Controlled {
     //nowhere near fina
     public void loop(){
         Aliases.motorMap.get("drive_left").setPower(controls.drivetrain_left);
-        Aliases.motorMap.get("drive_right").setPower(cotnrols.drivetrain_right);
+        Aliases.motorMap.get("drive_right").setPower(controls.drivetrain_right);
     }
 }

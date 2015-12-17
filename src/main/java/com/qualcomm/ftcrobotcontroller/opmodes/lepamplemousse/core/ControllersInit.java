@@ -4,6 +4,7 @@ import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.config.Controllers
 import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.vars.ReturnValues;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -20,16 +21,7 @@ public class ControllersInit {
     private Controllers controllerConfig = null;
     //endregion
 
-    //region Static Variable Fields for polling
-    public static float     drivetrain_left         = 0.0f;         // -1.0f to 1.0f
-    public static float     drivetrain_right        = 0.0f;         // -1.0f to 1.0f
-    public static float     winch_extend_retract    = 0.0f;         // -1.0f to 1.0f
-    public static float     winch_angle             = 0.0f;         // -1.0f to 1.0f
-    public static float     trigger_arm             = 0.0f;         // 0.0f to 1.0f
-    public static boolean   winch_preset            = false;        // true or false
-    public static boolean   servos_off              = false;        // true or false
-    public static boolean   log_cat                 = false;        // true or false
-    //endregion
+    private Map aliasing= new HashMap<String, Object>();
     
     /**
      * Contructs the ControllersInit class which is for the aliasing of various inputs from the gamepads
@@ -63,39 +55,34 @@ public class ControllersInit {
                     boolean inverted = controllerConfig.invertedEnabled(i, key);
                     if(controllerConfig.digitalEnabled(i, key)){
                         if(inverted){
-                            //check(functionName) = getGamepad(i, functionName);
+                            aliasing.put(functionName, invert((Boolean)(getGamepad(i, key))));
+                        }else{
+                            aliasing.put(functionName, (getGamepad(i, key)));
                         }
                     }else if(controllerConfig.analogEnabled(i, key)){
-
+                        if(inverted){
+                            aliasing.put(functionName, invert((Float)(getGamepad(i, key))));
+                        }else{
+                            aliasing.put(functionName, (getGamepad(i, key)));
+                        }
                     }else{
                         //What? Use default? Will do later
+                        // TODO: 12/16/2015 Appropriate return values
                     }
                 }
             }
         }
-        return ReturnValues.FAIL;
+        return ReturnValues.SUCCESS;
     }
 
     //Joel isn't there templates or something for this?
-    private boolean invert(boolean a){
+    private Boolean invert(Boolean a){
         return !a;
     }
-    private float invert(float a){
+    private Float invert(Float a){
         return -a;
     }
 
-    //And here's the terrible part :( todo:add an overriding function to objects Float and Boolean to perform checks
-    private static Object check(String name){
-        if (name.equals("drivetrain_left")) return drivetrain_left;
-        if (name.equals("drivetrain_right")) return drivetrain_right;
-        if (name.equals("winch_extend_retract")) return winch_extend_retract;
-        if (name.equals("winch_angle")) return winch_angle;
-        if (name.equals("trigger_arm")) return trigger_arm;
-        if (name.equals("winch_preset")) return winch_preset;
-        if (name.equals("servos_off")) return servos_off;
-        if (name.equals("log_cat")) return log_cat;
-        return null;
-    }
     private Object getGamepad(Integer id, String name){
         if (name.equals("left_stick_x")){if (id.equals(1)){return gamepad1.left_stick_x;}if (id.equals(2)){return gamepad2.left_stick_x;}}
         if (name.equals("left_stick_y")){if (id.equals(1)){return gamepad1.left_stick_y;}if (id.equals(2)){return gamepad2.left_stick_y;}}
@@ -119,5 +106,12 @@ public class ControllersInit {
         if (name.equals("left_trigger")){if (id.equals(1)){return gamepad1.left_trigger;}if (id.equals(2)){return gamepad2.left_trigger;}}
         if (name.equals("right_trigger")){if (id.equals(1)){return gamepad1.right_trigger;}if (id.equals(2)){return gamepad2.right_trigger;}}
         return null;
+    }
+
+    public Float getAnalog(String name){
+        return (Float)aliasing.get(name);
+    }
+    public Boolean getDigital(String name){
+        return (Boolean)aliasing.get(name);
     }
 }

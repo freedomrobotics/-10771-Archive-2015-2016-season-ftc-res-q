@@ -14,7 +14,7 @@ public class ControllersInit {
     private Gamepad gamepad1 = null;
     private Gamepad gamepad2 = null;
     // The Controller config
-    private Controllers controllers = null;
+    private Controllers controllerConfig = null;
     //endregion
 
     //region Static Variable Fields for polling
@@ -35,13 +35,10 @@ public class ControllersInit {
      */
     //The constructor takes the two gamepads as input arguments to assign to the class's variable
     //It also constructs the configuration file
-    ControllersInit(Gamepad gamepad1, Gamepad gamepad2){
+    public ControllersInit(Gamepad gamepad1, Gamepad gamepad2, Controllers controllerConfig){
         this.gamepad1 = gamepad1;
         this.gamepad2 = gamepad2;
-        controllers = new controllers();
-        if (!controllers.load()){
-            controllers.create();
-        }
+        this.controllerConfig = controllerConfig;
     }
     
     public ReturnValues initialize(){

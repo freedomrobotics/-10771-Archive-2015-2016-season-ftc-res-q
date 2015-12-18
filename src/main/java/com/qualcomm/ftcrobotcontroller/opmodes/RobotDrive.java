@@ -35,8 +35,16 @@ public class RobotDrive extends OpMode{
         //initializer
         //Check to see if the call to reset from the controller has been called
         reset_config = false;
-        if (gamepad1.start && gamepad1.back){
-            reset_config = true;
+        if (gamepad1.start && gamepad1.right_bumper){
+            telemetry.addData("Reset", "Wipe Configs? A: Confirm; B: Cancel");
+            while(!gamepad1.a || !gamepad1.b) {
+                if (gamepad1.a) {
+                    telemetry.addData("Reset", "Wiping Configs...");
+                    reset_config = true;
+                }
+                telemetry.addData("Reset", "Cancelled");
+                break;
+            }
         }
 
         //load the components object and check for existence and reset
@@ -70,16 +78,17 @@ public class RobotDrive extends OpMode{
         //Load all the variables from the configuration
         StartValues startValues = new StartValues(telemetry, variables);
 
-        //load the controller mappins config and check for existence and reset
+        //load the controller mappings config and check for existence and reset
         controllerConfig = new Controllers(telemetry);
         if (!controllerConfig.load() || reset_config){
             controllerConfig.create();
         }
 
         //Initialize the controller aliases for dynamic mapping
-        controls = new ControllersInit(gamepad1, gamepad2, controllerConfig);
+        controls = new ControllersInit(gamepad1, gamepad2, controllerConfig, telemetry);
         //insert init code here
-        controlled = new Controlled(controls);
+        controls.initialize();
+        controlled = new Controlled(controls, variables, telemetry);
     }
 
     @Override

@@ -27,6 +27,7 @@ public class Controlled {
     float servo_pos = 0;
     public Controlled(ControllersInit controls, Variables variables, Telemetry telemetry){
         this.variables = variables;
+        /*
         if (((Map)((Map)variables.retrieve("winch")).get("left_servo")).get("reversed").equals(true)){
             Core.servo[0].setDirection(Servo.Direction.REVERSE);
         }else{
@@ -37,6 +38,7 @@ public class Controlled {
         }else{
             Core.servo[1].setDirection(Servo.Direction.FORWARD);
         }
+        */
         lastTime = System.currentTimeMillis();
         this.telemetry = telemetry;
         this.controls = controls;
@@ -46,6 +48,15 @@ public class Controlled {
 
         long changeTime = System.currentTimeMillis()-lastTime;
         lastTime += changeTime;
+        telemetry.addData("drivetrain_left", controls.getAnalog("drivetrain_left"));
+        telemetry.addData("drivetrain_right", controls.getAnalog("drivetrain_right"));
+        telemetry.addData("winch_extend_retract", controls.getAnalog("winch_extend_retract"));
+        telemetry.addData("winch_angle", controls.getAnalog("winch_angle"));
+        telemetry.addData("trigger_arm", controls.getAnalog("trigger_arm"));
+        telemetry.addData("winch_preset", controls.getDigital("winch_preset"));
+        telemetry.addData("servos_off", controls.getDigital("servos_off"));
+        //telemetry.addData("log_cat", controls.getDigital("log_cat"));
+        /*
         Core.motor[0].setPower(gamepad1.left_stick_y);
         Core.motor[1].setPower(-gamepad1.right_stick_y);
         if (!gamepad2.right_bumper) {
@@ -69,6 +80,7 @@ public class Controlled {
             RB_pressed = true;
         }
         Core.motor[2].setPower(gamepad2.left_stick_y);
+        */
 
         /* Check
         Aliases.motorMap.get("drive_left").setPower(controls.getAnalog("drivetrain_left"));

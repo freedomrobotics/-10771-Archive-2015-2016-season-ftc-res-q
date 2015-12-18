@@ -21,6 +21,9 @@ public class Static {
     /** Filename for the config file that config.Components loads */
     public static final String configCompFileName = "config";
 
+    /** Filename for the config file that config.Controllers loads */
+    public static final String configControlFileName = "keymapping";
+
     //endregion
 
     //region Static Variables/Configurations globally

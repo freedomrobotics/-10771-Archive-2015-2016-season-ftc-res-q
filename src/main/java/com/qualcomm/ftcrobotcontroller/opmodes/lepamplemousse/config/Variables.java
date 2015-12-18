@@ -261,15 +261,83 @@ public class Variables extends Config{
         }
         return false;
     }
+    //********************************NEW Untested Code**************************
 
     /**
-     * Gets whether or not "drivetrain" exists
+     * Gets whether or not setting type exists
      *
-     * @return Whether or not the drivetrain exists.
+     * @return Whether or not the setting type exists.
      */
-    public boolean getDrivetrainExists(){
-        return data.get("drivetrain") != null;
+    public boolean settingExists(String setting){
+        return data.containsKey(setting);
     }
+
+    /**
+     * Method for determining existence of a setting
+     * @param settingType the category of a setting
+     * @param setting the specific setting
+     * @return whether or not it exists
+     */
+    public boolean settingExists(String settingType, String setting){
+        if (settingExists(settingType)) {
+            return ((Map) data.get(settingType)).containsKey(setting);
+        }
+        else return false;
+    }
+
+    //checks if a device type is enabled
+    public boolean enabled(String type){
+        if (((Map)data.get(type)).get("enabled").equals(true)) return true;
+        else return false;
+    }
+
+    //checks if device(motor) is reversed
+    //TODO: 12/14/2015 Improve
+    public boolean reversed(String type, String device){
+        if(settingExists(type, device)){
+            if (((Map)((Map)data.get(type)).get(device)).get("reversed").equals(true)) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        else return false;
+    }
+
+    //Method for obtaining offsets for a device
+    public Integer obtainOffset(String type, String setting){
+        if (settingExists(type, setting)){
+            return Integer.parseInt(((Map)((Map)data.get(type)).get(setting)).get("offset").toString());
+        }
+        else return null;
+    }
+
+    //Method for any quantity setting(especially winch)
+    public Integer settingQuantity(String type, String quantity){
+        if(settingExists(type,quantity)){
+            return Integer.parseInt(((Map)data.get(type)).get(quantity).toString());
+        }
+        else return null;
+    }
+
+    //Overloaded quantity method
+    public Integer settingQuantity(String type, String setting, String quantity){
+        if (settingExists(type, setting)){
+            return Integer.parseInt(((Map)((Map)data.get(type)).get(setting)).get(quantity).toString());
+        }
+        else return null;
+    }
+
+    //
+    public String deviceSettingKey(String type, String device){
+        if (settingExists(type, device)){
+            return (((Map)((Map)data.get(type)).get(device)).get("map_name").toString());
+        }
+        else return null;
+    }
+
+    //***************************END New Untested Code*************************
 
     /**
      * Sets whether or not the drivetrain object in the configuration file exists.
@@ -291,7 +359,7 @@ public class Variables extends Config{
      * @return A java object that can be casted to the appropriate value.
      */
     public Object getDrivetrainObject(String tag_name){
-        if (getDrivetrainExists()){
+        if (settingExists("drivetrain")){
             return ((Map)data.get("drivetrain")).get(tag_name);
         }
         return null;

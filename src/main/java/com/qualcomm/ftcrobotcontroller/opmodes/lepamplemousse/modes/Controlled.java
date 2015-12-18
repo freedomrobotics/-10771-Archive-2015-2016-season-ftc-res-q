@@ -1,5 +1,6 @@
 package com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.modes;
 
+
 import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.components.Core;
 import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.config.Variables;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -7,6 +8,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.robocol.Telemetry;
 
 import java.util.Map;
+
+import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.components.Aliases;
+import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.core.ControllersInit;
 
 /**
  * Driver controlled class
@@ -18,11 +22,10 @@ public class Controlled {
     private long lastTime;      // The time at the last time check (using System.currentTimeMillis())
     Telemetry telemetry = null;
     boolean RB_pressed = false;
+    ControllersInit controls;
 
     float servo_pos = 0;
-    public Controlled(Gamepad gamepad1, Gamepad gamepad2, Variables variables, Telemetry telemetry){
-        this.gamepad1 = gamepad1;
-        this.gamepad2 = gamepad2;
+    public Controlled(ControllersInit controls, Variables variables, Telemetry telemetry){
         this.variables = variables;
         if (((Map)((Map)variables.retrieve("winch")).get("left_servo")).get("reversed").equals(true)){
             Core.servo[0].setDirection(Servo.Direction.REVERSE);
@@ -36,9 +39,11 @@ public class Controlled {
         }
         lastTime = System.currentTimeMillis();
         this.telemetry = telemetry;
+        this.controls = controls;
     }
     //nowhere near final
     public void loop(){
+
         long changeTime = System.currentTimeMillis()-lastTime;
         lastTime += changeTime;
         Core.motor[0].setPower(gamepad1.left_stick_y);
@@ -64,5 +69,10 @@ public class Controlled {
             RB_pressed = true;
         }
         Core.motor[2].setPower(gamepad2.left_stick_y);
+
+        /* Check
+        Aliases.motorMap.get("drive_left").setPower(controls.getAnalog("drivetrain_left"));
+        Aliases.motorMap.get("drive_right").setPower(controls.getAnalog("drivetrain_right"));*/
+
     }
 }

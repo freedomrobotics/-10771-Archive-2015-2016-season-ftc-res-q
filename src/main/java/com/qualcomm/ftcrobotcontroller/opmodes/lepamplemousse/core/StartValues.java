@@ -1,8 +1,6 @@
 package com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.core;
 
 import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.config.Variables;
-import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.vars.Loaded;
-import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.vars.ReturnValues;
 import com.qualcomm.robotcore.robocol.Telemetry;
 
 /**
@@ -15,15 +13,12 @@ public class StartValues {
 
     Telemetry telemetry = null;
 
-    public StartValues (Telemetry telemetry){
+    public StartValues (Telemetry telemetry, Variables variables){
         this.telemetry = telemetry;
-        variables = new Variables(telemetry);
-        if (!variables.load()){
-            variables.create();
-        }
+        this.variables = variables;
     }
 
-    public ReturnValues loadFromConfig(){
+    /*public ReturnValues loadFromConfig(){
         Loaded.drivetrainEnabled = variables.getDrivetrainExists();
         if (Loaded.drivetrainEnabled) {
             Loaded.drivetrainMotWheel = (Float)variables.getDrivetrainObject("motor_wheel_ratio");
@@ -44,7 +39,7 @@ public class StartValues {
 
     public void resetNonConfig(){
 
-    }
+    }*/
 
     public Variables getVariables(){
         return variables;

@@ -45,9 +45,16 @@ servos:
     enabled: true
     map_name: trigger_arm
     alias:
+      - servo_motor3
       - arm_trigger
       - trigger
       - arm
+  servo4:
+    enabled: true
+    map_name: plow
+    alias:
+      - servo_motor4
+      - plow_lift
 
 # Touch Sensors
 touch_sensors:

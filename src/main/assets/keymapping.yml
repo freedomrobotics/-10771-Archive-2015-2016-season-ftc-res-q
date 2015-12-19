@@ -7,6 +7,7 @@
 # trigger_arm           = directly mapped to the trigger arm    - analog(0, 1)    - float
 # winch_preset          = sets the winch angle to the preset    - digital         - boolean
 # servos_off            = turns off the servos                  - digital         - boolean
+# plow                  = lifts or drops the plow               - digital         - boolean
 # log_cat               = enable logging; checked on init       - digital         - boolean
 gamepad1:
   left_stick_x:
@@ -188,7 +189,7 @@ gamepad2:
 
   a_button:
     enabled: false
-    function: null
+    function: plow
     inverted: false
     digital: true
 

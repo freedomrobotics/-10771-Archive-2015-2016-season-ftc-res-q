@@ -30,6 +30,11 @@ public class Controlled {
         }else{
             Aliases.servoMap.get("winch_right").setDirection(Servo.Direction.FORWARD);
         }
+        if (((Map) values.get("plow")).get("reversed").equals(true)){
+            Aliases.servoMap.get("plow").setDirection(Servo.Direction.REVERSE);
+        }else{
+            Aliases.servoMap.get("plow").setDirection(Servo.Direction.FORWARD);
+        }
         lastTime = System.currentTimeMillis();
     }
     //nowhere near fina
@@ -56,8 +61,15 @@ public class Controlled {
             Aliases.servoMap.get("winch_left").getController().pwmDisable();
             Aliases.servoMap.get("winch_right").getController().pwmDisable();
             Aliases.servoMap.get("trigger_arm").getController().pwmDisable();
+            Aliases.servoMap.get("plow").getController().pwmDisable();
             RB_pressed = true;
         }
-        Aliases.motorMap.get("winch").setPower(controls.getAnalog("winch_extend_retract"));
+        if (controls.getDigital("winch_preset")){
+            Aliases.servoMap.get("plow").setPosition(((Double) ((Double) ((Map) values.get("plow")).get("offset") / (Double) ((Map) values.get("winch")).get("full_rotate"))).floatValue() + ((Double) ((Double) ((Map) values.get("plow")).get("up_angle") / (Double) ((Map) values.get("winch")).get("full_rotate"))).floatValue());
+
+        }else {
+            Aliases.servoMap.get("plow").setPosition(((Double) ((Double) ((Map) values.get("plow")).get("offset") / (Double) ((Map) values.get("winch")).get("full_rotate"))).floatValue() + ((Double) ((Double) ((Map) values.get("plow")).get("down_angle") / (Double) ((Map) values.get("winch")).get("full_rotate"))).floatValue());
+            Aliases.motorMap.get("winch").setPower(controls.getAnalog("winch_extend_retract"));
+        }
     }
 }

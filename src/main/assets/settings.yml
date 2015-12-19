@@ -49,3 +49,13 @@ winch:
 trigger_arm:
   enabled: true
   side: right
+
+
+# Plow settings (It's a servo)
+plow:
+  enabled: true
+  reversed: false
+  offset: 0.0
+  full_rotate: 180.0
+  down_angle: 0.0
+  up_angle: 90.0

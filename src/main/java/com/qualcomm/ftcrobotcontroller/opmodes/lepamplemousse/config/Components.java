@@ -350,7 +350,7 @@ public class Components extends Config {
     public boolean deviceEnabled(String deviceType, String deviceName, Integer id){
         Map device;
         if ((device = getSubdevice(deviceType, deviceName, id)) != null){
-            return device.get("deviceEnabled").equals(true);
+            return device.get("enabled").equals(true);
         }
         return false;
     }

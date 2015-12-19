@@ -26,11 +26,9 @@ drivetrain:
 winch:
   enabled: true
   linear_movement:
-    motor_encodered: true
     motor_reversed: true
     motor_tape_ratio: 2.5
     mot_max_power: 1
-    max_extend: 1828.8
     max_extend_power: 0.6
     max_retract_power: 1
   angular_movement:

@@ -13,7 +13,9 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Configuration fie accessor for a Variables Config File
@@ -363,6 +365,21 @@ public class Variables extends Config{
             return ((Map)data.get("drivetrain")).get(tag_name);
         }
         return null;
+    }
+
+
+    // TODO: 12/19/2015 Match for the correct class.
+    // TODO: 12/19/2015 Merge common functions into config.java
+
+    /**
+     * Returns a set for the inputs under a specific gamepad
+     * @return A set with an entryset of the nested map within a controller
+     */
+    public Set<Map.Entry<String, Object>> getEntrySet(){
+        if (data != null){
+            return data.entrySet();
+        }
+        return new HashMap<String, Object>().entrySet();
     }
 
     //endregion

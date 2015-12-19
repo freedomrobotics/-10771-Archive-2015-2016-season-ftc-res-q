@@ -305,7 +305,7 @@ public class Controllers extends Config{
      * @param input The input to be checked
      * @return whether or not the input exists
      */
-    public boolean buttonExists(Integer id, String input){
+    public boolean inputExists(Integer id, String input){
         Map controller;
         if ((controller = getGamepad(id)) != null){
             return controller.containsKey(input);
@@ -323,7 +323,9 @@ public class Controllers extends Config{
     public boolean getBoolean(Integer id, String input, String setting){
         Map controller;
         if ((controller = getInput(id, input)) != null){
-            return controller.get(setting).equals(true);
+            if (controller.get(setting) != null) {
+                return controller.get(setting).equals(true);
+            }
         }
         return false;
     }

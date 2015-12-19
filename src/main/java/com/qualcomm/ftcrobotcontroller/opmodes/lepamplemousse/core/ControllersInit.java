@@ -21,8 +21,8 @@ public class ControllersInit {
     private Controllers controllerConfig = null;
     //endregion
 
-    private Map aliasing= new HashMap<String, Object>();
-    
+    private Map<String, inputMethods> aliasing= new HashMap<String, inputMethods>();
+
     /**
      * Contructs the ControllersInit class which is for the aliasing of various inputs from the gamepads
      * @param gamepad1 Gamepad1
@@ -35,7 +35,35 @@ public class ControllersInit {
         this.gamepad2 = gamepad2;
         this.controllerConfig = controllerConfig;
     }
-    
+
+    class inputMethods{
+        boolean inverted = false;
+        boolean digital = false;
+        Integer id = 0;
+        String name;
+        inputMethods(String name, Integer id, boolean inverted, boolean digital){
+            this.name = name;
+            this.id = id;
+            this.inverted = inverted;
+            this.digital = digital;
+        }
+        public boolean getBoolean(){
+            if (digital){
+                return inverted ^ (Boolean)getGamepad(id, name);
+            }
+            return false;
+        }
+        public float getFloat() {
+            if (!digital){
+                if (inverted){
+                    return -(Float)getGamepad(id, name);
+                }
+                return (Float)getGamepad(id, name);
+            }
+            return 0.0f;
+        }
+    }
+
     public ReturnValues initialize() {
         //Insert code here to alias variables
         /* todo: Think about other way for another lifetime
@@ -54,18 +82,9 @@ public class ControllersInit {
                     String functionName = controllerConfig.getFunction(i, key);
                     boolean inverted = controllerConfig.invertedEnabled(i, key);
                     if(controllerConfig.digitalEnabled(i, key)){
-                        if(inverted){
-                            aliasing.put(functionName, invert((Boolean)(getGamepad(i, key))));
-                        }else{
-                            aliasing.put(functionName, (getGamepad(i, key)));
-                        }
-                    }else if(controllerConfig.analogEnabled(i, key)){
-                        if(inverted){
-                            aliasing.put(functionName, invert((Float)(getGamepad(i, key))));
-                        }else{
-                            aliasing.put(functionName, (getGamepad(i, key)));
-                        }
+                        aliasing.put(functionName, new inputMethods(key, i, inverted, true));
                     }else{
+                        aliasing.put(functionName, new inputMethods(key, i, inverted, false));
                         //What? Use default? Will do later
                         // TODO: 12/16/2015 Appropriate return values
                     }
@@ -73,14 +92,6 @@ public class ControllersInit {
             }
         }
         return ReturnValues.SUCCESS;
-    }
-
-    //Joel isn't there templates or something for this?
-    private Boolean invert(Boolean a){
-        return !a;
-    }
-    private Float invert(Float a){
-        return -a;
     }
 
     private Object getGamepad(Integer id, String name){
@@ -109,9 +120,9 @@ public class ControllersInit {
     }
 
     public Float getAnalog(String name){
-        return (Float)aliasing.get(name);
+        return aliasing.get(name).getFloat();
     }
     public Boolean getDigital(String name){
-        return (Boolean)aliasing.get(name);
+        return aliasing.get(name).getBoolean();
     }
 }

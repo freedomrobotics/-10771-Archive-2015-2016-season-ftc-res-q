@@ -17,10 +17,12 @@ drivetrain:
     offset: 0.0
     map_name: drive_left
     encodered: false
+    reversed: false
   motor_right:
     offset: 0.0
     map_name: drive_right
     encodered: false
+    reversed: true
 
 # Winch settings
 winch:

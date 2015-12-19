@@ -120,27 +120,28 @@ public class StartValues {
             return data.toString();
         }
     }
-
+/*
     public ReturnValues initialize(){
         Iterator settings = variables.getEntrySet().iterator();
         while (settings.hasNext()){
+            Settings settings1 = new Settings();
+            Map<String, Object> newMap = new HashMap<String, Object>();
             Map.Entry settingObject = (Map.Entry)settings.next();
-            if(iterateOverValues(settingObject.getValue())){
-                continue;
-            }
-            objects.put((String)settingObject.getKey(), new Settings(){);
+            newMap.put((String)settingObject.getKey(), iterateOverValues(settingObject.getValue()));
+            settings1.addToMap((String)settingObject.getKey(), settingObject.getValue());
+            objects.put((String)settingObject.getKey(),);
 
         }
     }
 
-    private boolean iterateOverValues(Object object){
+    private Object iterateOverValues(Object object){
         Pattern p = Pattern.compile("[{}]]");
         Matcher m = p.matcher(object.toString());
         if(m.find()) {
             Iterator values = ((Map)object).entrySet().iterator();
             while (values.hasNext()){
                 Map.Entry valueObject = (Map.Entry)values.next();
-
+                object
             }
         }
     }
@@ -174,5 +175,9 @@ public class StartValues {
     public void resetNonConfig(){
 
     }*/
+
+    public Object get(String key){
+        return variables.retrieve(key);
+    }
 
 }

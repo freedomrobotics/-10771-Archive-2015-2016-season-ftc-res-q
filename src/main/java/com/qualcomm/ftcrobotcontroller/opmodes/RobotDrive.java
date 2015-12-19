@@ -87,7 +87,7 @@ public class RobotDrive extends OpMode{
         //Initialize the controller aliases for dynamic mapping
         controls = new ControllersInit(gamepad1, gamepad2, controllerConfig);
         //insert init code here
-        controlled = new Controlled(controls);
+        controlled = new Controlled(controls, startValues);
         controls.initialize();
     }
 

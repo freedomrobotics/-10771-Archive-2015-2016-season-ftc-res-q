@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -95,4 +96,82 @@ public class Aliases {
      * Cleared using ~.cameraMap.clear("name");
      */
     public static Map<String, Camera> cameraMap = new HashMap<String, Camera>();
+
+    //region setters
+
+    public static void put(String key, DcMotor motor){
+        motorMap.put(key, motor);
+    }
+    public static void put(String key, Servo servo){
+        servoMap.put(key, servo);
+    }
+    public static void put(String key, TouchSensor touchSensor){
+        touchSensorMap.put(key, touchSensor);
+    }
+    public static void put(String key, LightSensor lightSensor){
+        lightSensorMap.put(key, lightSensor);
+    }
+    public static void put(String key, ColorSensor colorSensor){
+        colorSensorMap.put(key, colorSensor);
+    }
+    public static void put(String key, IrSeekerSensor irSeeker){
+        irSeekerMap.put(key, irSeeker);
+    }
+    public static void put(String key, GyroSensor gyrometer){
+        gyrometerMap.put(key, gyrometer);
+    }
+    public static void put(String key, AccelerationSensor accelerometer){
+        accelerometerMap.put(key, accelerometer);
+    }
+    public static void put(String key, Camera camera) {
+        cameraMap.put(key, camera);
+    }
+
+    public static void put(List<String> key, DcMotor motor){
+        for (int i = 0; i < key.size(); i++) {
+            motorMap.put(key.get(i), motor);
+        }
+    }
+    public static void put(List<String> key, Servo servo){
+        for (int i = 0; i < key.size(); i++) {
+            servoMap.put(key.get(i), servo);
+        }
+    }
+    public static void put(List<String> key, TouchSensor touchSensor){
+        for (int i = 0; i < key.size(); i++) {
+            touchSensorMap.put(key.get(i), touchSensor);
+        }
+    }
+    public static void put(List<String> key, LightSensor lightSensor){
+        for (int i = 0; i < key.size(); i++) {
+            lightSensorMap.put(key.get(i), lightSensor);
+        }
+    }
+    public static void put(List<String> key, ColorSensor colorSensor){
+        for (int i = 0; i < key.size(); i++) {
+            colorSensorMap.put(key.get(i), colorSensor);
+        }
+    }
+    public static void put(List<String> key, IrSeekerSensor irSeeker){
+        for (int i = 0; i < key.size(); i++) {
+            irSeekerMap.put(key.get(i), irSeeker);
+        }
+    }
+    public static void put(List<String> key, GyroSensor gyrometer){
+        for (int i = 0; i < key.size(); i++) {
+            gyrometerMap.put(key.get(i), gyrometer);
+        }
+    }
+    public static void put(List<String> key, AccelerationSensor accelerometer){
+        for (int i = 0; i < key.size(); i++) {
+            accelerometerMap.put(key.get(i), accelerometer);
+        }
+    }
+    public static void put(List<String> key, Camera camera) {
+        for (int i = 0; i < key.size(); i++) {
+            cameraMap.put(key.get(i), camera);
+        }
+    }
+
+    //endregion
 }

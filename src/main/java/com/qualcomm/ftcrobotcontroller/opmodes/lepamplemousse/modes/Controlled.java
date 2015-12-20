@@ -1,6 +1,7 @@
 package com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.modes;
 
 import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.components.Aliases;
+import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.components.Core;
 import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.core.ControllersInit;
 import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.core.StartValues;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -20,7 +21,7 @@ public class Controlled {
     public Controlled(ControllersInit controls, StartValues startValues){
         this.controls = controls;
         this.values = startValues;
-        if (((Map)((Map) values.get("winch")).get("left_servo")).get("reversed").equals(true)){
+        /*if (((Map)((Map) values.get("winch")).get("left_servo")).get("reversed").equals(true)){
             Aliases.servoMap.get("winch_left").setDirection(Servo.Direction.REVERSE);
         }else{
             Aliases.servoMap.get("winch_left").setDirection(Servo.Direction.FORWARD);
@@ -34,7 +35,7 @@ public class Controlled {
             Aliases.servoMap.get("plow").setDirection(Servo.Direction.REVERSE);
         }else{
             Aliases.servoMap.get("plow").setDirection(Servo.Direction.FORWARD);
-        }
+        }*/
         lastTime = System.currentTimeMillis();
     }
     //nowhere near fina
@@ -43,7 +44,7 @@ public class Controlled {
         lastTime += changeTime;
         Aliases.motorMap.get("drive_left").setPower(controls.getAnalog("drivetrain_left"));
         Aliases.motorMap.get("drive_right").setPower(controls.getAnalog("drivetrain_right"));
-        if (!controls.getDigital("servos_off")) {
+        /*if (!controls.getDigital("servos_off")) {
             servo_pos += controls.getAnalog("winch_angle")*((((Double)((Map)((Map)values.get("winch")).get("angular_movement")).get("max_ang_vel")).floatValue()/((Double)((Map)((Map)values.get("winch")).get("angular_movement")).get("full_rotate")).floatValue())*((float)changeTime/1000.0f));
             if (servo_pos > (Double)((Map)((Map)values.get("winch")).get("angular_movement")).get("max_rotate")/(Double)((Map)((Map)values.get("winch")).get("angular_movement")).get("full_rotate")){
                 servo_pos = ((Double)((Double)((Map)((Map)values.get("winch")).get("angular_movement")).get("max_rotate")/(Double)((Map)((Map)values.get("winch")).get("angular_movement")).get("full_rotate"))).floatValue();
@@ -70,6 +71,6 @@ public class Controlled {
         }else {
             Aliases.servoMap.get("plow").setPosition(((Double) ((Double) ((Map) values.get("plow")).get("offset") / (Double) ((Map) values.get("winch")).get("full_rotate"))).floatValue() + ((Double) ((Double) ((Map) values.get("plow")).get("down_angle") / (Double) ((Map) values.get("winch")).get("full_rotate"))).floatValue());
             Aliases.motorMap.get("winch").setPower(controls.getAnalog("winch_extend_retract"));
-        }
+        }*/
     }
 }

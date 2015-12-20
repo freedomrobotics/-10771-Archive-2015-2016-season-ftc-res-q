@@ -4,13 +4,21 @@ import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.components.Aliases
 import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.components.Core;
 import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.config.Components;
 import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.vars.ReturnValues;
+import com.qualcomm.robotcore.hardware.AccelerationSensor;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.IrSeekerSensor;
+import com.qualcomm.robotcore.hardware.LightSensor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.robocol.Telemetry;
 
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -24,37 +32,75 @@ public class InitComp {
 
     Telemetry telemetry = null;
 
+    List<ReturnValues> failures = new LinkedList<ReturnValues>();
+
+    /**
+     * Constructs the Components Initialization Object
+     * @param hardwareMap    Reference to the hardwareMap of the OpMode
+     * @param telemetry      Reference to the telemetry output for debug
+     * @param components     Reference to the components configuration object
+     */
     public InitComp (HardwareMap hardwareMap, Telemetry telemetry, Components components){
         this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
         this.components = components;
     }
 
+    /**
+     * Initializes all of the components
+     * @return The ReturnValue of the function
+     */
     public ReturnValues initialize(){
-        //TODO: 12/14/2015 Make components.count() have shorter hardwareMapping or DYNAMIC parameters
-        //TODO: 12/14/2015 Consider putting Array initializations under objectInit
+        failures.clear();
         Core.motor = new DcMotor[components.count(mappedType(hardwareMap.dcMotor))];
-        if (objectInit(hardwareMap.dcMotor, Core.motor) != ReturnValues.SUCCESS){
-            return ReturnValues.MOTOR_NOT_INIT;
+        if (objectInit(hardwareMap.dcMotor, Core.motor) == ReturnValues.FAIL){
+            failures.add(ReturnValues.MOTOR_NOT_INIT);
         }
         Core.servo = new Servo[components.count(mappedType(hardwareMap.servo))];
-        if (objectInit(hardwareMap.servo, Core.servo) != ReturnValues.SUCCESS){
-            return ReturnValues.SERVO_NOT_INIT;
+        if (objectInit(hardwareMap.servo, Core.servo) == ReturnValues.FAIL){
+            failures.add(ReturnValues.SERVO_NOT_INIT);
         }
+        Core.touchSensor = new TouchSensor[components.count(mappedType(hardwareMap.touchSensor))];
+        if (objectInit(hardwareMap.touchSensor, Core.touchSensor) == ReturnValues.FAIL){
+            failures.add(ReturnValues.TOUCHSENSOR_NOT_INIT);
+        }
+        Core.lightSensor = new LightSensor[components.count(mappedType(hardwareMap.lightSensor))];
+        if (objectInit(hardwareMap.lightSensor, Core.lightSensor) == ReturnValues.FAIL){
+            failures.add(ReturnValues.LIGHTSENSOR_NOT_INIT);
+        }
+        Core.colorSensor = new ColorSensor[components.count(mappedType(hardwareMap.colorSensor))];
+        if (objectInit(hardwareMap.colorSensor, Core.colorSensor) == ReturnValues.FAIL){
+            failures.add(ReturnValues.COLORSENSOR_NOT_INIT);
+        }
+        Core.irSeeker = new IrSeekerSensor[components.count(mappedType(hardwareMap.irSeekerSensor))];
+        if (objectInit(hardwareMap.irSeekerSensor, Core.irSeeker) == ReturnValues.FAIL){
+            failures.add(ReturnValues.IRSEEKER_NOT_INIT);
+        }
+        Core.gyrometer = new GyroSensor[components.count(mappedType(hardwareMap.gyroSensor))];
+        if (objectInit(hardwareMap.gyroSensor, Core.gyrometer) == ReturnValues.FAIL){
+            failures.add(ReturnValues.GYROMETER_NOT_INIT);
+        }
+        Core.accelerometer = new AccelerationSensor[components.count(mappedType(hardwareMap.accelerationSensor))];
+        if (objectInit(hardwareMap.accelerationSensor, Core.accelerometer) == ReturnValues.FAIL){
+            failures.add(ReturnValues.ACCELEROMETER_NOT_INIT);
+        }
+        if(failures.size() > 1){
+            return ReturnValues.MULTI_NOT_INIT;
+        }else if(failures.size() == 1){
+            return failures.get(0);
+        }
+        // TODO: 12/19/2015 Camera settings
         return ReturnValues.SUCCESS;
     }
 
     //TODO: 12/7/2015 make each private variable in Components.java work
     //todo            in a way that makes a unique value for each device type
-    //TODO: 12/8/2015 FIX THE REALLY BAD PARAMETER NAMES JOEL!!!!!
-    //TODO: 12/9/2015 There might be some redundant "if (exists())" statements
-    //TODO: 12/11/2015 Make objectInit require less arguments
     /**
      * Initializes each individual object type
      * @param devices   The array to assign to
      * @return ReturnValues whether or not the method succeeded
      */
-    public ReturnValues objectInit(HardwareMap.DeviceMapping deviceMapping, Object devices[]){
+    private ReturnValues objectInit(HardwareMap.DeviceMapping deviceMapping, Object devices[]){
         String deviceType = mappedType(deviceMapping);
         if (components.deviceExists(deviceType)){
             for (int i = 0; i < components.count(deviceType); i++) {
@@ -65,7 +111,7 @@ public class InitComp {
                 }
                 if (components.deviceEnabled(deviceType, id) && componentExists(components.getMapName(deviceType, id), deviceMapping)) {
                     devices[i] = deviceMapping.get(components.getMapName(deviceType, id));
-                    setAlias(deviceType, devices[i], aliasMap(deviceMapping), id);
+                    setAlias(deviceType, i, id);
                 } else {
                     //Returns FAIL if there are not any existing enabled device keys to initialize the array elements with
                     return ReturnValues.FAIL;
@@ -90,7 +136,7 @@ public class InitComp {
         else if (deviceMap == hardwareMap.gyroSensor) return "gyrometers";
         else if (deviceMap == hardwareMap.accelerationSensor) return "accelerometers";
         //(deviceMap for camera does not exist)
-        else return "null"; //if no map matches any above return null as string
+        else return null; //if no map matches any above return null as string
     }
 
     /**
@@ -122,34 +168,44 @@ public class InitComp {
     /**
      * A method to store to the alias map. Figures out which aliases to get based on the rule that the device name is either the same or without an extra s
      * @param deviceType    The type of the device
-     * @param device        The object to the device
-     * @param alias         The appropriate alias map
-     * @param id            The id of the device
+     * @param deviceId      The id of the core object to the device
+     * @param configId      The id of the device in the config
      */
-    private void setAlias(String deviceType, Object device, Map<String, Object> alias, Integer id){
-        //for loop for each alias.
-        for (int i = 0; i < components.getAlias(deviceType, id).size(); i++){
-            alias.put(components.getAlias(deviceType, id).get(i), device);
+    //CHEAP I know, but it works (I was being dumb with the old way, so that didn't work :/)
+    private void setAlias(String deviceType, Integer deviceId, Integer configId){
+        if (deviceType.equals("dc_motors")){
+            Aliases.put(components.getAlias(deviceType, configId), Core.motor[deviceId]);
+        }
+        if (deviceType.equals("servos")){
+            Aliases.put(components.getAlias(deviceType, configId), Core.servo[deviceId]);
+        }
+        if (deviceType.equals("touch_sensors")){
+            Aliases.put(components.getAlias(deviceType, configId), Core.touchSensor[deviceId]);
+        }
+        if (deviceType.equals("light_sensors")){
+            Aliases.put(components.getAlias(deviceType, configId), Core.lightSensor[deviceId]);
+        }
+        if (deviceType.equals("color_sensors")){
+            Aliases.put(components.getAlias(deviceType, configId), Core.colorSensor[deviceId]);
+        }
+        if (deviceType.equals("ir_seekers")){
+            Aliases.put(components.getAlias(deviceType, configId), Core.irSeeker[deviceId]);
+        }
+        if (deviceType.equals("gyrometers")){
+            Aliases.put(components.getAlias(deviceType, configId), Core.gyrometer[deviceId]);
+        }
+        if (deviceType.equals("accelerometers")){
+            Aliases.put(components.getAlias(deviceType, configId), Core.accelerometer[deviceId]);
+        }
+        if (deviceType.equals("camera")){
+            Aliases.put(components.getAlias(deviceType, configId), Core.camera[deviceId]);
         }
     }
 
     /**
-     * A method to test and return the respective map based off of the mappedType method
-     * @param deviceMap     The HardwareMap.DeviceMapping object / The device map
-     * @return  The appropriate alias Map
+     * @return The list of failures that occured during initialization
      */
-    private Map aliasMap(HardwareMap.DeviceMapping deviceMap){
-        if (deviceMap == hardwareMap.dcMotor)               return Aliases.motorMap;
-        if (deviceMap == hardwareMap.servo)                 return Aliases.servoMap;
-        if (deviceMap == hardwareMap.touchSensor)           return Aliases.touchSensorMap;
-        if (deviceMap == hardwareMap.lightSensor)           return Aliases.lightSensorMap;
-        if (deviceMap == hardwareMap.colorSensor)           return Aliases.colorSensorMap;
-        if (deviceMap == hardwareMap.irSeekerSensor)        return Aliases.irSeekerMap;
-        if (deviceMap == hardwareMap.gyroSensor)            return Aliases.gyrometerMap;
-        if (deviceMap == hardwareMap.accelerationSensor)    return Aliases.accelerometerMap;
-            //(deviceMap for camera does not exist)
-        return null;
+    public List<ReturnValues> getFailures(){
+        return failures;
     }
-
-    public Components getComponents(){return components;}
 }

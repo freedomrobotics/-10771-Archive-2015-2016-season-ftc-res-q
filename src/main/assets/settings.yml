@@ -37,7 +37,7 @@ winch:
     max_ang_vel: 20.0
     full_rotate: 180.0
     max_rotate: 90.0
-    preset: 50.5
+    preset: 15.0
   left_servo:
     reversed: true
     offset: 15.75
@@ -55,9 +55,9 @@ trigger_arm:
 plow:
   enabled: true
   reversed: false
-  offset: 0.0
+  offset: 30.0
   full_rotate: 180.0
   down_angle: 0.0
-  up_angle: 90.0
+  up_angle: 130.0
 
 test: true

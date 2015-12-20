@@ -6,19 +6,19 @@ package com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.maneuvers;
  */
 public class Avoid {
 
-    Avoid (){
+    Avoid() {
         //Default constructor
     }
 
-    public void wallBump(){
+    public void wallBump() {
         //If robot bumps into wall
     }
 
-    public void wrongButton(){
+    public void wrongButton() {
         //If robot senses wrong colors
     }
 
-    public void avoidRobot(){
+    public void avoidRobot() {
         //If robot senses another robot
     }
 

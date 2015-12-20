@@ -19,12 +19,11 @@ import java.util.Set;
 
 /**
  * Configuration class for controllers
- *
  */
-public class Controllers extends Config{
+public class Controllers extends Config {
 
     // Filename with the suffix
-    private String fileName = Static.configControlFileName+Static.configFileSufffix;
+    private String fileName = Static.configControlFileName + Static.configFileSufffix;
     // The actual file
     private File configFile = new File(configDirectory, fileName);
     // Does the file exist or no.
@@ -38,9 +37,10 @@ public class Controllers extends Config{
 
     /**
      * Debuggable Constructor
+     *
      * @param telemetry Telemetry output for Debug
      */
-    public Controllers(Telemetry telemetry){
+    public Controllers(Telemetry telemetry) {
         //Calling the superclass' (Config.class) constructor.
         super(telemetry);
         this.telemetry = telemetry;
@@ -50,7 +50,7 @@ public class Controllers extends Config{
     /**
      * Non-debuggable constructor
      */
-    public Controllers(){
+    public Controllers() {
         //Calling the superclass' (Config.class) constructor.
         super();
         init();
@@ -65,7 +65,7 @@ public class Controllers extends Config{
         // saves code by not typing true a billion times.
         fileExists = true;
         // if the configuration directory even exists, then check of the config exists
-        if (Dynamic.configDirExists){
+        if (Dynamic.configDirExists) {
             //region Debug block
             // If debug is enabled, verbose output
             if (Static.Debug && telemetry != null) {
@@ -82,21 +82,22 @@ public class Controllers extends Config{
                 }
             }
             //endregion
-            else{
+            else {
                 // shortened logic
-                if(!configFile.exists() && writable){
-                    if(!createDefaults(fileName)){
+                if (!configFile.exists() && writable) {
+                    if (!createDefaults(fileName)) {
                         fileExists = false;
                     }
-                }else if (!configFile.exists()) {
+                } else if (!configFile.exists()) {
                     fileExists = false;
                 }
             }
         }
         // If config doesn't exists, obviously the file doesn't and the system can't be
         // writable, so just say it doesn't exist
-        else{
-            if (Static.Debug && telemetry != null) telemetry.addData("ControlConFile", "using defaults");
+        else {
+            if (Static.Debug && telemetry != null)
+                telemetry.addData("ControlConFile", "using defaults");
             fileExists = false;
         }
     }
@@ -109,8 +110,8 @@ public class Controllers extends Config{
      */
     @Override
     public boolean read() {
-        if (load()){
-            if (!verify()){
+        if (load()) {
+            if (!verify()) {
                 load(true);
                 return false;
             }
@@ -125,53 +126,56 @@ public class Controllers extends Config{
      * If the configuration file exists, it will be replaced.
      *
      * @param useDefaults Whether or not to load the defaults
-     * @param loadAfter Whether or not to load the file and verify after replacing
+     * @param loadAfter   Whether or not to load the file and verify after replacing
      * @return Success Value based on the ReturnValues enumeration
      */
     @Override
     public ReturnValues create(boolean useDefaults, boolean loadAfter) {
         boolean result;
-        if (useDefaults){
+        if (useDefaults) {
             result = createDefaults(fileName);
             if (Static.Debug && telemetry != null) {
                 if (result) {
                     telemetry.addData("CreatedControlConFile", "default created");
                     fileExists = true;
-                }else{
+                } else {
                     telemetry.addData("CreatedControlConFile", "failed to create default");
                 }
             }
-        }else{
+        } else {
             try {
                 FileWriter configWrite = new FileWriter(configFile);
                 configWrite.write(yaml.dump(data));
                 configWrite.flush();
                 configWrite.close();
-                if (Static.Debug && telemetry != null) telemetry.addData("CreatedControlConFile", "created successfully");
+                if (Static.Debug && telemetry != null)
+                    telemetry.addData("CreatedControlConFile", "created successfully");
                 result = fileExists = true;
             } catch (IOException e) {
                 e.printStackTrace();
-                if (Static.Debug && telemetry != null) telemetry.addData("CreatedControlConFile", "failed to create");
+                if (Static.Debug && telemetry != null)
+                    telemetry.addData("CreatedControlConFile", "failed to create");
                 result = false;
             }
         }
-        if (!loadAfter){
+        if (!loadAfter) {
             return (result) ? ReturnValues.SUCCESS : ReturnValues.FAIL;     // Look up Ternary operator if you don't understand
-        }else if (!result) {
+        } else if (!result) {
             return ReturnValues.FAIL;
-        }else{
-            if (load()){
-                if(verify()){
-                    if (Static.Debug && telemetry != null) telemetry.addData("LoadedControlConFile", "default loaded");
+        } else {
+            if (load()) {
+                if (verify()) {
+                    if (Static.Debug && telemetry != null)
+                        telemetry.addData("LoadedControlConFile", "default loaded");
                     return ReturnValues.SUCCESS;
-                }
-                else {
-                    if (Static.Debug && telemetry != null) telemetry.addData("LoadedControlConFile", "failed to verify");
+                } else {
+                    if (Static.Debug && telemetry != null)
+                        telemetry.addData("LoadedControlConFile", "failed to verify");
                     return ReturnValues.UNABLE_TO_VERIFY;
                 }
-            }
-            else {
-                if (Static.Debug && telemetry != null) telemetry.addData("LoadedControlConFile", "failed to load");
+            } else {
+                if (Static.Debug && telemetry != null)
+                    telemetry.addData("LoadedControlConFile", "failed to load");
                 return ReturnValues.UNABLE_TO_LOAD;
             }
         }
@@ -202,31 +206,35 @@ public class Controllers extends Config{
         if (loadDefault) {
             try {
                 config = Dynamic.globalAssets.open(fileName);
-                if (Static.Debug && telemetry != null) telemetry.addData("LoadControlConFile", "default selected");
+                if (Static.Debug && telemetry != null)
+                    telemetry.addData("LoadControlConFile", "default selected");
             } catch (IOException e) {
-                if (Static.Debug && telemetry != null) telemetry.addData("LoadControlConFile", "failed to load default");
+                if (Static.Debug && telemetry != null)
+                    telemetry.addData("LoadControlConFile", "failed to load default");
                 e.printStackTrace();
                 return false;
             }
-        }
-        else if (fileExists){
+        } else if (fileExists) {
             try {
                 config = new FileInputStream(configFile);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
-                if (Static.Debug && telemetry != null) telemetry.addData("LoadControlConfFile", "file failed to load");
+                if (Static.Debug && telemetry != null)
+                    telemetry.addData("LoadControlConfFile", "file failed to load");
                 return false;
             }
-            if (Static.Debug && telemetry != null) telemetry.addData("LoadControlConfFile", "file selected");
-        }
-        else{
+            if (Static.Debug && telemetry != null)
+                telemetry.addData("LoadControlConfFile", "file selected");
+        } else {
             return false;
         }
         if (config != null) {
             data = (Map<String, Object>) yaml.load(config);
-            if (Static.Debug && telemetry != null) telemetry.addData("LoadControlConfFile", "failed to load");
-            if (data != null){
-                if (Static.Debug && telemetry != null) telemetry.addData("LoadControlConfFile", "loaded");
+            if (Static.Debug && telemetry != null)
+                telemetry.addData("LoadControlConfFile", "failed to load");
+            if (data != null) {
+                if (Static.Debug && telemetry != null)
+                    telemetry.addData("LoadControlConfFile", "loaded");
                 return true;
             }
         }
@@ -241,7 +249,7 @@ public class Controllers extends Config{
      */
     @Override
     public Object retrieve(String key) {
-        if (data != null){
+        if (data != null) {
             return data.get(key);
         }
         return null;
@@ -255,7 +263,7 @@ public class Controllers extends Config{
      */
     @Override
     public boolean store(String key, Object object) {
-        if (data != null){
+        if (data != null) {
             data.put(key, object);
         }
         return false;
@@ -266,48 +274,52 @@ public class Controllers extends Config{
 
     /**
      * Checks the existance of a gamepad
+     *
      * @param id The name of hte overarching device
-     * @return  a boolean of the device's existence
+     * @return a boolean of the device's existence
      */
-    public boolean gamepadExists(Integer id){
+    public boolean gamepadExists(Integer id) {
         return data.containsKey("gamepad" + id);
     }
 
     /**
      * Getter for the controller
+     *
      * @param id The id of the gamepad to retrieve
      * @return The map of the controller
      */
-    public Map getGamepad(Integer id){
+    public Map getGamepad(Integer id) {
         if (gamepadExists(id)) {
-            return (Map)data.get("gamepad" + id);
+            return (Map) data.get("gamepad" + id);
         }
         return null;
     }
 
     /**
      * Getter for an input on a controller given the id
-     * @param id Id of the controller
+     *
+     * @param id    Id of the controller
      * @param input The specified input as string
      * @return The mapping of the input
      */
-    public Map getInput(Integer id, String input){
+    public Map getInput(Integer id, String input) {
         Map controller;
-        if ((controller = getGamepad(id)) != null){
-            return (Map)controller.get(input);
+        if ((controller = getGamepad(id)) != null) {
+            return (Map) controller.get(input);
         }
         return null;
     }
 
     /**
      * Checker for the input's existence in the mapping
-     * @param id Id of the controller
+     *
+     * @param id    Id of the controller
      * @param input The input to be checked
      * @return whether or not the input exists
      */
-    public boolean inputExists(Integer id, String input){
+    public boolean inputExists(Integer id, String input) {
         Map controller;
-        if ((controller = getGamepad(id)) != null){
+        if ((controller = getGamepad(id)) != null) {
             return controller.containsKey(input);
         }
         return false;
@@ -315,14 +327,15 @@ public class Controllers extends Config{
 
     /**
      * Generic checker for setting
-     * @param id id of the controller
-     * @param input The specified input
+     *
+     * @param id      id of the controller
+     * @param input   The specified input
      * @param setting The setting to be checked as string
      * @return Boolean value of setting key
      */
-    public boolean getBoolean(Integer id, String input, String setting){
+    public boolean getBoolean(Integer id, String input, String setting) {
         Map controller;
-        if ((controller = getInput(id, input)) != null){
+        if ((controller = getInput(id, input)) != null) {
             if (controller.get(setting) != null) {
                 return controller.get(setting).equals(true);
             }
@@ -332,53 +345,58 @@ public class Controllers extends Config{
 
     /**
      * Check if input is enabled
-     * @param id Id of the controller
+     *
+     * @param id    Id of the controller
      * @param input the input to check
      * @return Whether or not the input is enabled
      */
-    public boolean inputEnabled(Integer id, String input){
+    public boolean inputEnabled(Integer id, String input) {
         return getBoolean(id, input, "enabled");
     }
 
     /**
      * Check if analog is enabled
-     * @param id Id of the controller
+     *
+     * @param id    Id of the controller
      * @param input the input to check
      * @return Whether or not the input is analog
      */
-    public boolean analogEnabled(Integer id, String input){
+    public boolean analogEnabled(Integer id, String input) {
         return getBoolean(id, input, "analog");
     }
 
     /**
      * Check if digital is enabled
-     * @param id Id of the controller
+     *
+     * @param id    Id of the controller
      * @param input the input to check
      * @return Whether or not the input is digital
      */
-    public boolean digitalEnabled(Integer id, String input){
+    public boolean digitalEnabled(Integer id, String input) {
         return getBoolean(id, input, "digital");
     }
 
     /**
      * Check if the input is inverted
-     * @param id Id of the controller
+     *
+     * @param id    Id of the controller
      * @param input the input to check
      * @return Whether or not the input is inverted
      */
-    public boolean invertedEnabled(Integer id, String input){
+    public boolean invertedEnabled(Integer id, String input) {
         return getBoolean(id, input, "inverted");
     }
 
     /**
      * Retrieve the function of the input
-     * @param id Id of the controller
+     *
+     * @param id    Id of the controller
      * @param input the input to check
      * @return The function of the input
      */
-    public String getFunction(Integer id, String input){
+    public String getFunction(Integer id, String input) {
         Map controller;
-        if ((controller = getInput(id, input)) != null){
+        if ((controller = getInput(id, input)) != null) {
             return controller.get("function").toString();
         }
         return null;
@@ -386,12 +404,13 @@ public class Controllers extends Config{
 
     /**
      * Returns a set for the inputs under a specific gamepad
+     *
      * @param id id of the controller
      * @return A set with an entryset of the nested map within a controller
      */
-    public Set<Map.Entry<String, Object>> getEntrySet(Integer id){
+    public Set<Map.Entry<String, Object>> getEntrySet(Integer id) {
         Map controller;
-        if ((controller = getGamepad(id)) != null){
+        if ((controller = getGamepad(id)) != null) {
             return controller.entrySet();
         }
         return new HashMap<String, Object>().entrySet();

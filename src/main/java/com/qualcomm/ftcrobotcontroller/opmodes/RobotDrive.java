@@ -12,11 +12,11 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 /**
  * Le Pamplemousse DRIVE!
- *
+ * <p/>
  * The core robot framework. This file should rarely be edited.
  * This is the regular drive
  */
-public class RobotDrive extends OpMode{
+public class RobotDrive extends OpMode {
 
     Components components = null;
     Controlled controlled = null;
@@ -26,12 +26,12 @@ public class RobotDrive extends OpMode{
     Variables variables = null;
     boolean reset_config;
 
-    public RobotDrive(){
+    public RobotDrive() {
         //Constructor
     }
 
     @Override
-    public void init(){
+    public void init() {
         //initializer
         //Check to see if the call to reset from the controller has been called
         /* didn't work so change to add options to each individual yml file
@@ -49,31 +49,30 @@ public class RobotDrive extends OpMode{
 
         //load the components object and check for existence
         components = new Components(telemetry);
-        if (!components.load()){
+        if (!components.load()) {
             components.create();
         }
 
         // initialize all the components
         // and run the checks
         InitComp initComp = new InitComp(hardwareMap, telemetry, components);
-        if ((returnValues = initComp.initialize()) != ReturnValues.SUCCESS){
+        if ((returnValues = initComp.initialize()) != ReturnValues.SUCCESS) {
             if (returnValues == ReturnValues.MOTOR_NOT_INIT) {
                 telemetry.addData("ERROR", "Motors Failed to Initialize");
-            }
-            else if (returnValues == ReturnValues.SERVO_NOT_INIT) {
+            } else if (returnValues == ReturnValues.SERVO_NOT_INIT) {
                 telemetry.addData("ERROR", "Servos Failed to Initialize");
-            }else{
+            } else {
                 telemetry.addData("ERROR", "Something wrong happened!");
             }
         }
     }
 
     @Override
-    public void start(){
+    public void start() {
         //set default values
         //load the variables object and check for existence
         variables = new Variables(telemetry);
-        if (!variables.load()){
+        if (!variables.load()) {
             variables.create();
         }
 
@@ -83,7 +82,7 @@ public class RobotDrive extends OpMode{
 
         //load the controller mappins config and check for existence
         controllerConfig = new Controllers(telemetry);
-        if (!controllerConfig.load()){
+        if (!controllerConfig.load()) {
             controllerConfig.create();
         }
 
@@ -95,13 +94,13 @@ public class RobotDrive extends OpMode{
     }
 
     @Override
-    public void loop(){
+    public void loop() {
         //core loop
         controlled.loop();
     }
 
     @Override
-    public void stop(){
+    public void stop() {
         //stop function
     }
 

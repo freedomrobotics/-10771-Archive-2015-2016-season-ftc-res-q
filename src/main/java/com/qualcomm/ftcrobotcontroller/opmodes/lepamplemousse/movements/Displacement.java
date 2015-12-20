@@ -6,38 +6,37 @@ package com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.movements;
  */
 public class Displacement {
 
-    Displacement(){
-    //Default Constructor
-    }
-
     private final float maxPower = 1.0f;
     private final float mediumPower = 0.5f;
     private final float minPower = 0f;
     private float leftPower = 0f;
     private float rightPower = 0f;
-
-    enum DIRECTION{
-    RIGHT, LEFT
+    Displacement() {
+        //Default Constructor
     }
 
-    public void forward(){
+    public void forward() {
         //Forward Robot movement
     }
 
-    public void reverse(){
+    public void reverse() {
         //Robot moves reverse
     }
 
-    public void stop(){
+    public void stop() {
         //Motors would equal 0
     }
 
-    public void turn(){
+    public void turn() {
         //Robot turns a certain direction
     }
 
-    public void rotateRight(){
+    public void rotateRight() {
         //Robot rotates a certain direction
+    }
+
+    enum DIRECTION {
+        RIGHT, LEFT
     }
 
 }

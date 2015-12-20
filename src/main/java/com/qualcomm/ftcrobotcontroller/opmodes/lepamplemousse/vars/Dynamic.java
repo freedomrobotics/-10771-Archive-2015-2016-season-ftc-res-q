@@ -16,7 +16,9 @@ public class Dynamic {
     // TODO: 11/27/2015 Move to dynamic
     public static boolean configDirExists = true;
 
-    /** AssetManager Reference */
+    /**
+     * AssetManager Reference
+     */
     public static AssetManager globalAssets = null;
 
 }

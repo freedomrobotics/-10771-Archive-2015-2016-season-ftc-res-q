@@ -36,11 +36,12 @@ public class InitComp {
 
     /**
      * Constructs the Components Initialization Object
-     * @param hardwareMap    Reference to the hardwareMap of the OpMode
-     * @param telemetry      Reference to the telemetry output for debug
-     * @param components     Reference to the components configuration object
+     *
+     * @param hardwareMap Reference to the hardwareMap of the OpMode
+     * @param telemetry   Reference to the telemetry output for debug
+     * @param components  Reference to the components configuration object
      */
-    public InitComp (HardwareMap hardwareMap, Telemetry telemetry, Components components){
+    public InitComp(HardwareMap hardwareMap, Telemetry telemetry, Components components) {
         this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
         this.components = components;
@@ -48,45 +49,46 @@ public class InitComp {
 
     /**
      * Initializes all of the components
+     *
      * @return The ReturnValue of the function
      */
-    public ReturnValues initialize(){
+    public ReturnValues initialize() {
         failures.clear();
         Core.motor = new DcMotor[components.count(mappedType(hardwareMap.dcMotor))];
-        if (objectInit(hardwareMap.dcMotor, Core.motor) == ReturnValues.FAIL){
+        if (objectInit(hardwareMap.dcMotor, Core.motor) == ReturnValues.FAIL) {
             failures.add(ReturnValues.MOTOR_NOT_INIT);
         }
         Core.servo = new Servo[components.count(mappedType(hardwareMap.servo))];
-        if (objectInit(hardwareMap.servo, Core.servo) == ReturnValues.FAIL){
+        if (objectInit(hardwareMap.servo, Core.servo) == ReturnValues.FAIL) {
             failures.add(ReturnValues.SERVO_NOT_INIT);
         }
         Core.touchSensor = new TouchSensor[components.count(mappedType(hardwareMap.touchSensor))];
-        if (objectInit(hardwareMap.touchSensor, Core.touchSensor) == ReturnValues.FAIL){
+        if (objectInit(hardwareMap.touchSensor, Core.touchSensor) == ReturnValues.FAIL) {
             failures.add(ReturnValues.TOUCHSENSOR_NOT_INIT);
         }
         Core.lightSensor = new LightSensor[components.count(mappedType(hardwareMap.lightSensor))];
-        if (objectInit(hardwareMap.lightSensor, Core.lightSensor) == ReturnValues.FAIL){
+        if (objectInit(hardwareMap.lightSensor, Core.lightSensor) == ReturnValues.FAIL) {
             failures.add(ReturnValues.LIGHTSENSOR_NOT_INIT);
         }
         Core.colorSensor = new ColorSensor[components.count(mappedType(hardwareMap.colorSensor))];
-        if (objectInit(hardwareMap.colorSensor, Core.colorSensor) == ReturnValues.FAIL){
+        if (objectInit(hardwareMap.colorSensor, Core.colorSensor) == ReturnValues.FAIL) {
             failures.add(ReturnValues.COLORSENSOR_NOT_INIT);
         }
         Core.irSeeker = new IrSeekerSensor[components.count(mappedType(hardwareMap.irSeekerSensor))];
-        if (objectInit(hardwareMap.irSeekerSensor, Core.irSeeker) == ReturnValues.FAIL){
+        if (objectInit(hardwareMap.irSeekerSensor, Core.irSeeker) == ReturnValues.FAIL) {
             failures.add(ReturnValues.IRSEEKER_NOT_INIT);
         }
         Core.gyrometer = new GyroSensor[components.count(mappedType(hardwareMap.gyroSensor))];
-        if (objectInit(hardwareMap.gyroSensor, Core.gyrometer) == ReturnValues.FAIL){
+        if (objectInit(hardwareMap.gyroSensor, Core.gyrometer) == ReturnValues.FAIL) {
             failures.add(ReturnValues.GYROMETER_NOT_INIT);
         }
         Core.accelerometer = new AccelerationSensor[components.count(mappedType(hardwareMap.accelerationSensor))];
-        if (objectInit(hardwareMap.accelerationSensor, Core.accelerometer) == ReturnValues.FAIL){
+        if (objectInit(hardwareMap.accelerationSensor, Core.accelerometer) == ReturnValues.FAIL) {
             failures.add(ReturnValues.ACCELEROMETER_NOT_INIT);
         }
-        if(failures.size() > 1){
+        if (failures.size() > 1) {
             return ReturnValues.MULTI_NOT_INIT;
-        }else if(failures.size() == 1){
+        } else if (failures.size() == 1) {
             return failures.get(0);
         }
         // TODO: 12/19/2015 Camera settings
@@ -95,14 +97,16 @@ public class InitComp {
 
     //TODO: 12/7/2015 make each private variable in Components.java work
     //todo            in a way that makes a unique value for each device type
+
     /**
      * Initializes each individual object type
-     * @param devices   The array to assign to
+     *
+     * @param devices The array to assign to
      * @return ReturnValues whether or not the method succeeded
      */
-    private ReturnValues objectInit(HardwareMap.DeviceMapping deviceMapping, Object devices[]){
+    private ReturnValues objectInit(HardwareMap.DeviceMapping deviceMapping, Object devices[]) {
         String deviceType = mappedType(deviceMapping);
-        if (components.deviceExists(deviceType)){
+        if (components.deviceExists(deviceType)) {
             for (int i = 0; i < components.count(deviceType); i++) {
                 int id = i + 1;
                 int max = components.maxSubdevices(deviceType);
@@ -126,7 +130,7 @@ public class InitComp {
     //TODO: 12/14/2015 Change method to case statements or better yet, mappings(Map<Map, String>)(make DYNAMIC return values)
     //TODO: 12/14/2015 Figure out a way to make these comparisons under objectKey() function // FIXME: 12/15/2015 Moved to the components class by adam
     //Method for retrieving string from hardware maps
-    private String mappedType(HardwareMap.DeviceMapping deviceMap){
+    private String mappedType(HardwareMap.DeviceMapping deviceMap) {
         if (deviceMap == hardwareMap.dcMotor) return "dc_motors";
         else if (deviceMap == hardwareMap.servo) return "servos";
         else if (deviceMap == hardwareMap.touchSensor) return "touch_sensors";
@@ -135,28 +139,29 @@ public class InitComp {
         else if (deviceMap == hardwareMap.irSeekerSensor) return "ir_seekers";
         else if (deviceMap == hardwareMap.gyroSensor) return "gyrometers";
         else if (deviceMap == hardwareMap.accelerationSensor) return "accelerometers";
-        //(deviceMap for camera does not exist)
+            //(deviceMap for camera does not exist)
         else return null; //if no map matches any above return null as string
     }
 
     /**
      * A method derived from the HardwareMap.DeviceMapping Class to determine if a named component exists.
+     *
      * @param mapName       The name of the mapping to check
      * @param deviceMapping The HardwareMap.DeviceMapping object used in the OpMode
-     * @return  A boolean stating whether the component exists or not.
+     * @return A boolean stating whether the component exists or not.
      */
-    private boolean componentExists(String mapName, HardwareMap.DeviceMapping deviceMapping){
+    private boolean componentExists(String mapName, HardwareMap.DeviceMapping deviceMapping) {
         // Now this is a little complex.
         // So I decompiled the HardwareMap class to figure this out since there is no built in way to check
         // First I call to get the entry set of the map in the class, which similar to a list of unique entries of map key/values
         // Then I call iterator on it to run through each entry.
         Iterator devices = deviceMapping.entrySet().iterator();
         // From here I say, while there is another entry in the set, do...
-        while (devices.hasNext()){
+        while (devices.hasNext()) {
             // This! I pull out the entry from the iterator and run a check on it
-            Map.Entry entry = (Map.Entry)devices.next();
+            Map.Entry entry = (Map.Entry) devices.next();
             // If it's a HardwareDevice and the mapName and the key of the entry have the same content
-            if(entry.getValue() instanceof HardwareDevice && mapName.equals(entry.getKey())){
+            if (entry.getValue() instanceof HardwareDevice && mapName.equals(entry.getKey())) {
                 // Then the component exists on the hardwareMap and we don't have to perform a non-remote robot restart because of annoying exceptions.
                 return true;
             }
@@ -167,37 +172,38 @@ public class InitComp {
 
     /**
      * A method to store to the alias map. Figures out which aliases to get based on the rule that the device name is either the same or without an extra s
-     * @param deviceType    The type of the device
-     * @param deviceId      The id of the core object to the device
-     * @param configId      The id of the device in the config
+     *
+     * @param deviceType The type of the device
+     * @param deviceId   The id of the core object to the device
+     * @param configId   The id of the device in the config
      */
     //CHEAP I know, but it works (I was being dumb with the old way, so that didn't work :/)
-    private void setAlias(String deviceType, Integer deviceId, Integer configId){
-        if (deviceType.equals("dc_motors")){
+    private void setAlias(String deviceType, Integer deviceId, Integer configId) {
+        if (deviceType.equals("dc_motors")) {
             Aliases.put(components.getAlias(deviceType, configId), Core.motor[deviceId]);
         }
-        if (deviceType.equals("servos")){
+        if (deviceType.equals("servos")) {
             Aliases.put(components.getAlias(deviceType, configId), Core.servo[deviceId]);
         }
-        if (deviceType.equals("touch_sensors")){
+        if (deviceType.equals("touch_sensors")) {
             Aliases.put(components.getAlias(deviceType, configId), Core.touchSensor[deviceId]);
         }
-        if (deviceType.equals("light_sensors")){
+        if (deviceType.equals("light_sensors")) {
             Aliases.put(components.getAlias(deviceType, configId), Core.lightSensor[deviceId]);
         }
-        if (deviceType.equals("color_sensors")){
+        if (deviceType.equals("color_sensors")) {
             Aliases.put(components.getAlias(deviceType, configId), Core.colorSensor[deviceId]);
         }
-        if (deviceType.equals("ir_seekers")){
+        if (deviceType.equals("ir_seekers")) {
             Aliases.put(components.getAlias(deviceType, configId), Core.irSeeker[deviceId]);
         }
-        if (deviceType.equals("gyrometers")){
+        if (deviceType.equals("gyrometers")) {
             Aliases.put(components.getAlias(deviceType, configId), Core.gyrometer[deviceId]);
         }
-        if (deviceType.equals("accelerometers")){
+        if (deviceType.equals("accelerometers")) {
             Aliases.put(components.getAlias(deviceType, configId), Core.accelerometer[deviceId]);
         }
-        if (deviceType.equals("camera")){
+        if (deviceType.equals("camera")) {
             Aliases.put(components.getAlias(deviceType, configId), Core.camera[deviceId]);
         }
     }
@@ -205,7 +211,7 @@ public class InitComp {
     /**
      * @return The list of failures that occured during initialization
      */
-    public List<ReturnValues> getFailures(){
+    public List<ReturnValues> getFailures() {
         return failures;
     }
 }

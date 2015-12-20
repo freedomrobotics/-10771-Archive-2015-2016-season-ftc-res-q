@@ -20,7 +20,7 @@ import java.util.Map;
  * creates a Java list or hashmap with names from the configuration files
  * so that it's easier to call upon them and any number of references can
  * be made without loss of too much efficiency
- *
+ * <p/>
  * todo Implement getters and setter and mutex or mutex-like operations for safe multithreading in the future
  * todo better yet, create an interface or abstract class or like with everything already preset.
  */
@@ -99,74 +99,90 @@ public class Aliases {
 
     //region setters
 
-    public static void put(String key, DcMotor motor){
+    public static void put(String key, DcMotor motor) {
         motorMap.put(key, motor);
     }
-    public static void put(String key, Servo servo){
+
+    public static void put(String key, Servo servo) {
         servoMap.put(key, servo);
     }
-    public static void put(String key, TouchSensor touchSensor){
+
+    public static void put(String key, TouchSensor touchSensor) {
         touchSensorMap.put(key, touchSensor);
     }
-    public static void put(String key, LightSensor lightSensor){
+
+    public static void put(String key, LightSensor lightSensor) {
         lightSensorMap.put(key, lightSensor);
     }
-    public static void put(String key, ColorSensor colorSensor){
+
+    public static void put(String key, ColorSensor colorSensor) {
         colorSensorMap.put(key, colorSensor);
     }
-    public static void put(String key, IrSeekerSensor irSeeker){
+
+    public static void put(String key, IrSeekerSensor irSeeker) {
         irSeekerMap.put(key, irSeeker);
     }
-    public static void put(String key, GyroSensor gyrometer){
+
+    public static void put(String key, GyroSensor gyrometer) {
         gyrometerMap.put(key, gyrometer);
     }
-    public static void put(String key, AccelerationSensor accelerometer){
+
+    public static void put(String key, AccelerationSensor accelerometer) {
         accelerometerMap.put(key, accelerometer);
     }
+
     public static void put(String key, Camera camera) {
         cameraMap.put(key, camera);
     }
 
-    public static void put(List<String> key, DcMotor motor){
+    public static void put(List<String> key, DcMotor motor) {
         for (int i = 0; i < key.size(); i++) {
             motorMap.put(key.get(i), motor);
         }
     }
-    public static void put(List<String> key, Servo servo){
+
+    public static void put(List<String> key, Servo servo) {
         for (int i = 0; i < key.size(); i++) {
             servoMap.put(key.get(i), servo);
         }
     }
-    public static void put(List<String> key, TouchSensor touchSensor){
+
+    public static void put(List<String> key, TouchSensor touchSensor) {
         for (int i = 0; i < key.size(); i++) {
             touchSensorMap.put(key.get(i), touchSensor);
         }
     }
-    public static void put(List<String> key, LightSensor lightSensor){
+
+    public static void put(List<String> key, LightSensor lightSensor) {
         for (int i = 0; i < key.size(); i++) {
             lightSensorMap.put(key.get(i), lightSensor);
         }
     }
-    public static void put(List<String> key, ColorSensor colorSensor){
+
+    public static void put(List<String> key, ColorSensor colorSensor) {
         for (int i = 0; i < key.size(); i++) {
             colorSensorMap.put(key.get(i), colorSensor);
         }
     }
-    public static void put(List<String> key, IrSeekerSensor irSeeker){
+
+    public static void put(List<String> key, IrSeekerSensor irSeeker) {
         for (int i = 0; i < key.size(); i++) {
             irSeekerMap.put(key.get(i), irSeeker);
         }
     }
-    public static void put(List<String> key, GyroSensor gyrometer){
+
+    public static void put(List<String> key, GyroSensor gyrometer) {
         for (int i = 0; i < key.size(); i++) {
             gyrometerMap.put(key.get(i), gyrometer);
         }
     }
-    public static void put(List<String> key, AccelerationSensor accelerometer){
+
+    public static void put(List<String> key, AccelerationSensor accelerometer) {
         for (int i = 0; i < key.size(); i++) {
             accelerometerMap.put(key.get(i), accelerometer);
         }
     }
+
     public static void put(List<String> key, Camera camera) {
         for (int i = 0; i < key.size(); i++) {
             cameraMap.put(key.get(i), camera);

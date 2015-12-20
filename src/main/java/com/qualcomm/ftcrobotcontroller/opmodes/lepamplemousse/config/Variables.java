@@ -22,10 +22,10 @@ import java.util.Set;
  * todo simplify and make some more merges with config.java
  * todo improve
  */
-public class Variables extends Config{
+public class Variables extends Config {
 
     // Filename with the suffix
-    private String fileName = Static.configVarFileName+Static.configFileSufffix;
+    private String fileName = Static.configVarFileName + Static.configFileSufffix;
     // The actual file
     private File configFile = new File(configDirectory, fileName);
     // Does the file exist or no.
@@ -39,9 +39,10 @@ public class Variables extends Config{
 
     /**
      * Debuggable Constructor
+     *
      * @param telemetry Telemetry output for Debug
      */
-    public Variables(Telemetry telemetry){
+    public Variables(Telemetry telemetry) {
         //Calling the superclass' (Config.class) constructor.
         super(telemetry);
         this.telemetry = telemetry;
@@ -51,7 +52,7 @@ public class Variables extends Config{
     /**
      * Non-debuggable constructor
      */
-    public Variables(){
+    public Variables() {
         //Calling the superclass' (Config.class) constructor.
         super();
         init();
@@ -66,7 +67,7 @@ public class Variables extends Config{
         // saves code by not typing true a billion times.
         fileExists = true;
         // if the configuration directory even exists, then check of the config exists
-        if (Dynamic.configDirExists){
+        if (Dynamic.configDirExists) {
             //region Debug block
             // If debug is enabled, verbose output
             if (Static.Debug && telemetry != null) {
@@ -83,21 +84,22 @@ public class Variables extends Config{
                 }
             }
             //endregion
-            else{
+            else {
                 // shortened logic
-                if(!configFile.exists() && writable){
-                    if(!createDefaults(fileName)){
+                if (!configFile.exists() && writable) {
+                    if (!createDefaults(fileName)) {
                         fileExists = false;
                     }
-                }else if (!configFile.exists()) {
+                } else if (!configFile.exists()) {
                     fileExists = false;
                 }
             }
         }
         // If config doesn't exists, obviously the file doesn't and the system can't be
         // writable, so just say it doesn't exist
-        else{
-            if (Static.Debug && telemetry != null) telemetry.addData("VarConfFile", "using defaults");
+        else {
+            if (Static.Debug && telemetry != null)
+                telemetry.addData("VarConfFile", "using defaults");
             fileExists = false;
         }
     }
@@ -110,8 +112,8 @@ public class Variables extends Config{
      */
     @Override
     public boolean read() {
-        if (load()){
-            if (!verify()){
+        if (load()) {
+            if (!verify()) {
                 load(true);
                 return false;
             }
@@ -126,53 +128,56 @@ public class Variables extends Config{
      * If the configuration file exists, it will be replaced.
      *
      * @param useDefaults Whether or not to load the defaults
-     * @param loadAfter Whether or not to load the file and verify after replacing
+     * @param loadAfter   Whether or not to load the file and verify after replacing
      * @return Success Value based on the ReturnValues enumeration
      */
     @Override
     public ReturnValues create(boolean useDefaults, boolean loadAfter) {
         boolean result;
-        if (useDefaults){
+        if (useDefaults) {
             result = createDefaults(fileName);
             if (Static.Debug && telemetry != null) {
                 if (result) {
                     telemetry.addData("CreatedVarConfFile", "default created");
                     fileExists = true;
-                }else{
+                } else {
                     telemetry.addData("CreatedVarConfFile", "failed to create default");
                 }
             }
-        }else{
+        } else {
             try {
                 FileWriter configWrite = new FileWriter(configFile);
                 configWrite.write(yaml.dump(data));
                 configWrite.flush();
                 configWrite.close();
-                if (Static.Debug && telemetry != null) telemetry.addData("CreatedVarConfFile", "created successfully");
+                if (Static.Debug && telemetry != null)
+                    telemetry.addData("CreatedVarConfFile", "created successfully");
                 result = fileExists = true;
             } catch (IOException e) {
                 e.printStackTrace();
-                if (Static.Debug && telemetry != null) telemetry.addData("CreatedVarConfFile", "failed to create");
+                if (Static.Debug && telemetry != null)
+                    telemetry.addData("CreatedVarConfFile", "failed to create");
                 result = false;
             }
         }
-        if (!loadAfter){
+        if (!loadAfter) {
             return (result) ? ReturnValues.SUCCESS : ReturnValues.FAIL;     // Look up Ternary operator if you don't understand
-        }else if (!result) {
+        } else if (!result) {
             return ReturnValues.FAIL;
-        }else{
-            if (load()){
-                if(verify()){
-                    if (Static.Debug && telemetry != null) telemetry.addData("LoadedVarConFile", "default loaded");
+        } else {
+            if (load()) {
+                if (verify()) {
+                    if (Static.Debug && telemetry != null)
+                        telemetry.addData("LoadedVarConFile", "default loaded");
                     return ReturnValues.SUCCESS;
-                }
-                else {
-                    if (Static.Debug && telemetry != null) telemetry.addData("LoadedVarConFile", "failed to verify");
+                } else {
+                    if (Static.Debug && telemetry != null)
+                        telemetry.addData("LoadedVarConFile", "failed to verify");
                     return ReturnValues.UNABLE_TO_VERIFY;
                 }
-            }
-            else {
-                if (Static.Debug && telemetry != null) telemetry.addData("LoadedVarConFile", "failed to load");
+            } else {
+                if (Static.Debug && telemetry != null)
+                    telemetry.addData("LoadedVarConFile", "failed to load");
                 return ReturnValues.UNABLE_TO_LOAD;
             }
         }
@@ -203,31 +208,35 @@ public class Variables extends Config{
         if (loadDefault) {
             try {
                 config = Dynamic.globalAssets.open(fileName);
-                if (Static.Debug && telemetry != null) telemetry.addData("LoadVarConfFile", "default selected");
+                if (Static.Debug && telemetry != null)
+                    telemetry.addData("LoadVarConfFile", "default selected");
             } catch (IOException e) {
-                if (Static.Debug && telemetry != null) telemetry.addData("LoadVarConfFile", "failed to load default");
+                if (Static.Debug && telemetry != null)
+                    telemetry.addData("LoadVarConfFile", "failed to load default");
                 e.printStackTrace();
                 return false;
             }
-        }
-        else if (fileExists){
+        } else if (fileExists) {
             try {
                 config = new FileInputStream(configFile);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
-                if (Static.Debug && telemetry != null) telemetry.addData("LoadVarConfFile", "file failed to load");
+                if (Static.Debug && telemetry != null)
+                    telemetry.addData("LoadVarConfFile", "file failed to load");
                 return false;
             }
-            if (Static.Debug && telemetry != null) telemetry.addData("LoadVarConfFile", "file selected");
-        }
-        else{
+            if (Static.Debug && telemetry != null)
+                telemetry.addData("LoadVarConfFile", "file selected");
+        } else {
             return false;
         }
         if (config != null) {
             data = (Map<String, Object>) yaml.load(config);
-            if (Static.Debug && telemetry != null) telemetry.addData("LoadVarConfFile", "failed to load");
-            if (data != null){
-                if (Static.Debug && telemetry != null) telemetry.addData("LoadVarConfFile", "loaded");
+            if (Static.Debug && telemetry != null)
+                telemetry.addData("LoadVarConfFile", "failed to load");
+            if (data != null) {
+                if (Static.Debug && telemetry != null)
+                    telemetry.addData("LoadVarConfFile", "loaded");
                 return true;
             }
         }
@@ -244,7 +253,7 @@ public class Variables extends Config{
      */
     @Override
     public Object retrieve(String key) {
-        if (data != null){
+        if (data != null) {
             return data.get(key);
         }
         return null;
@@ -258,7 +267,7 @@ public class Variables extends Config{
      */
     @Override
     public boolean store(String key, Object object) {
-        if (data != null){
+        if (data != null) {
             data.put(key, object);
         }
         return false;
@@ -270,73 +279,67 @@ public class Variables extends Config{
      *
      * @return Whether or not the setting type exists.
      */
-    public boolean settingExists(String setting){
+    public boolean settingExists(String setting) {
         return data.containsKey(setting);
     }
 
     /**
      * Method for determining existence of a setting
+     *
      * @param settingType the category of a setting
-     * @param setting the specific setting
+     * @param setting     the specific setting
      * @return whether or not it exists
      */
-    public boolean settingExists(String settingType, String setting){
+    public boolean settingExists(String settingType, String setting) {
         if (settingExists(settingType)) {
             return ((Map) data.get(settingType)).containsKey(setting);
-        }
-        else return false;
+        } else return false;
     }
 
     //checks if a device type is enabled
-    public boolean enabled(String type){
-        if (((Map)data.get(type)).get("enabled").equals(true)) return true;
+    public boolean enabled(String type) {
+        if (((Map) data.get(type)).get("enabled").equals(true)) return true;
         else return false;
     }
 
     //checks if device(motor) is reversed
     //TODO: 12/14/2015 Improve
-    public boolean reversed(String type, String device){
-        if(settingExists(type, device)){
-            if (((Map)((Map)data.get(type)).get(device)).get("reversed").equals(true)) {
+    public boolean reversed(String type, String device) {
+        if (settingExists(type, device)) {
+            if (((Map) ((Map) data.get(type)).get(device)).get("reversed").equals(true)) {
                 return true;
-            }
-            else {
+            } else {
                 return false;
             }
-        }
-        else return false;
+        } else return false;
     }
 
     //Method for obtaining offsets for a device
-    public Integer obtainOffset(String type, String setting){
-        if (settingExists(type, setting)){
-            return Integer.parseInt(((Map)((Map)data.get(type)).get(setting)).get("offset").toString());
-        }
-        else return null;
+    public Integer obtainOffset(String type, String setting) {
+        if (settingExists(type, setting)) {
+            return Integer.parseInt(((Map) ((Map) data.get(type)).get(setting)).get("offset").toString());
+        } else return null;
     }
 
     //Method for any quantity setting(especially winch)
-    public Integer settingQuantity(String type, String quantity){
-        if(settingExists(type,quantity)){
-            return Integer.parseInt(((Map)data.get(type)).get(quantity).toString());
-        }
-        else return null;
+    public Integer settingQuantity(String type, String quantity) {
+        if (settingExists(type, quantity)) {
+            return Integer.parseInt(((Map) data.get(type)).get(quantity).toString());
+        } else return null;
     }
 
     //Overloaded quantity method
-    public Integer settingQuantity(String type, String setting, String quantity){
-        if (settingExists(type, setting)){
-            return Integer.parseInt(((Map)((Map)data.get(type)).get(setting)).get(quantity).toString());
-        }
-        else return null;
+    public Integer settingQuantity(String type, String setting, String quantity) {
+        if (settingExists(type, setting)) {
+            return Integer.parseInt(((Map) ((Map) data.get(type)).get(setting)).get(quantity).toString());
+        } else return null;
     }
 
     //
-    public String deviceSettingKey(String type, String device){
-        if (settingExists(type, device)){
-            return (((Map)((Map)data.get(type)).get(device)).get("map_name").toString());
-        }
-        else return null;
+    public String deviceSettingKey(String type, String device) {
+        if (settingExists(type, device)) {
+            return (((Map) ((Map) data.get(type)).get(device)).get("map_name").toString());
+        } else return null;
     }
 
     //***************************END New Untested Code*************************
@@ -345,11 +348,11 @@ public class Variables extends Config{
      * Sets whether or not the drivetrain object in the configuration file exists.
      * Will clear the previous drivetrain object.
      *
-     * @param exists    The existance of the drivetrain object in the configuration file.
+     * @param exists The existance of the drivetrain object in the configuration file.
      */
-    public void setDrivetrainExists(boolean exists){
+    public void setDrivetrainExists(boolean exists) {
         data.remove("drivetrain");
-        if (exists){
+        if (exists) {
             data.put("drivetrain", new Object());
         }
     }
@@ -357,12 +360,12 @@ public class Variables extends Config{
     /**
      * Gets the value under the drivetrain object
      *
-     * @param tag_name  The name of the object being called on within drivetrain.
+     * @param tag_name The name of the object being called on within drivetrain.
      * @return A java object that can be casted to the appropriate value.
      */
-    public Object getDrivetrainObject(String tag_name){
-        if (settingExists("drivetrain")){
-            return ((Map)data.get("drivetrain")).get(tag_name);
+    public Object getDrivetrainObject(String tag_name) {
+        if (settingExists("drivetrain")) {
+            return ((Map) data.get("drivetrain")).get(tag_name);
         }
         return null;
     }
@@ -373,10 +376,11 @@ public class Variables extends Config{
 
     /**
      * Returns a set for the inputs under a specific gamepad
+     *
      * @return A set with an entryset of the nested map within a controller
      */
-    public Set<Map.Entry<String, Object>> getEntrySet(){
-        if (data != null){
+    public Set<Map.Entry<String, Object>> getEntrySet() {
+        if (data != null) {
             return data.entrySet();
         }
         return new HashMap<String, Object>().entrySet();

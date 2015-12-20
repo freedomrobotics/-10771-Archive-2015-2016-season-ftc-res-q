@@ -6,7 +6,7 @@ package com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.maneuvers;
  */
 public class Approach {
 
-    Approach(){
+    Approach() {
         //Default constructor
     }
     /*TODO: Consult Adam

@@ -22,15 +22,16 @@ public abstract class Config {
      * The location of the coded location of the config files
      */
     protected File configDirectory = new File(Environment.getExternalStorageDirectory().toString() + Static.configPath);
+    protected boolean writable = false;
     // flag
     private boolean configDirCheck = false;
-    protected boolean writable = false;
 
     /**
      * Debuggable Constructor
+     *
      * @param telemetry Telemetry output for Debug
      */
-    public Config(Telemetry telemetry){
+    public Config(Telemetry telemetry) {
         writable = Environment.getExternalStorageDirectory().canWrite();
         // If this hasn't been done yet, or reset has been called, run the folder check
         if (!configDirCheck || Dynamic.reset) {
@@ -66,7 +67,7 @@ public abstract class Config {
     /**
      * Non-debuggable constructor
      */
-    public Config(){
+    public Config() {
         writable = Environment.getExternalStorageDirectory().canWrite();
         // If this hasn't been done yet, or reset has been called, run the folder check
         if (!configDirCheck || Dynamic.reset) {
@@ -78,7 +79,7 @@ public abstract class Config {
     }
 
     //Just to save lines
-    private void dirCheck(){
+    private void dirCheck() {
         // Shortened logic to check and create the folder. If it can write and the folder
         // doesn't exist, it will try to create it, marking it as not existing if it fails.
         // If it doesn't exist and write can't happen, it's marked as not existing.
@@ -86,21 +87,21 @@ public abstract class Config {
             if (!configDirectory.mkdirs()) {
                 Dynamic.configDirExists = false;
             }
-        }else if (!configDirectory.exists()){
+        } else if (!configDirectory.exists()) {
             Dynamic.configDirExists = false;
         }
     }
 
     /**
      * Simple function to copy a default file to the config directory
+     *
      * @param fileName The name of the config file to copy.
      * @return Whether or not the file was created successfully.
      */
-    protected boolean createDefaults(String fileName){
-        try
-        {
+    protected boolean createDefaults(String fileName) {
+        try {
             File configFile = new File(configDirectory, fileName);
-            if (!configFile.isFile() && !configFile.createNewFile()){
+            if (!configFile.isFile() && !configFile.createNewFile()) {
                 return false;
             }
             InputStream in = Dynamic.globalAssets.open(fileName);
@@ -108,8 +109,7 @@ public abstract class Config {
 
             byte[] buffer = new byte[1024];
             int readlen;
-            while ((readlen = in.read(buffer)) != -1)
-            {
+            while ((readlen = in.read(buffer)) != -1) {
                 out.write(buffer, 0, readlen);
             }
             in.close();
@@ -117,15 +117,14 @@ public abstract class Config {
             out.close();
 
             return true;
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return false;
     }
 
     // TODO: 11/28/2015 Change some of the compound functions to use enumerations instead of assuming true
+
     /**
      * Identifies and locates the file and such.
      * Run it within the constructor
@@ -135,6 +134,7 @@ public abstract class Config {
     /**
      * Read the values from the configuration file.
      * Should run and pass the value from verify and load.
+     *
      * @return True if file loaded; false if defaults loaded.
      */
     public abstract boolean read();
@@ -143,9 +143,10 @@ public abstract class Config {
      * Creates a configuration using the default values.
      * If a configuration file exists, it will be replaced.
      * Will not load the values after.
+     *
      * @return Creation state.
      */
-    public boolean create(){
+    public boolean create() {
         return create(true, false).equals(ReturnValues.SUCCESS);
     }
 
@@ -153,18 +154,20 @@ public abstract class Config {
      * Creates a configuration using the default or stored values.
      * If a configuration file exists, it will be replaced.
      * Will not load the values after.
+     *
      * @param useDefaults Whether or not to create the defaults
      * @return Creation state.
      */
-    public boolean create(boolean useDefaults){
+    public boolean create(boolean useDefaults) {
         return create(useDefaults, false).equals(ReturnValues.SUCCESS);
     }
 
     /**
      * Creates a configuration using the default or stored values.
      * If a configuration file exists, it will be replaced.
+     *
      * @param useDefaults Whether or not to load the defaults
-     * @param loadAfter Whether or not to verify and load the file after replacing
+     * @param loadAfter   Whether or not to verify and load the file after replacing
      * @return Success Value based on the ReturnValues enumeration
      */
     public abstract ReturnValues create(boolean useDefaults, boolean loadAfter);
@@ -172,20 +175,23 @@ public abstract class Config {
     /**
      * Verify the retrieved values. True if verified, false if not.
      * Will replace bad values with defaults
+     *
      * @return Verify state
      */
     public abstract boolean verify();
 
     /**
      * Loads the file.
+     *
      * @return Loaded successfully or not
      */
-    public boolean load(){
+    public boolean load() {
         return load(false);
     }
 
     /**
      * Loads values.
+     *
      * @param loadDefault Whether to load from defaults or file.
      * @return Loaded successfully or not
      */
@@ -193,6 +199,7 @@ public abstract class Config {
 
     /**
      * Retrieves the object associated with the string
+     *
      * @param key The string to search and retrieve the object from
      * @return The object mapped to the string
      */
@@ -200,7 +207,8 @@ public abstract class Config {
 
     /**
      * Stores or replaces the object associated with the string
-     * @param key The string to search and store the object to
+     *
+     * @param key    The string to search and store the object to
      * @param object The Object to store
      */
     public abstract boolean store(String key, Object object);

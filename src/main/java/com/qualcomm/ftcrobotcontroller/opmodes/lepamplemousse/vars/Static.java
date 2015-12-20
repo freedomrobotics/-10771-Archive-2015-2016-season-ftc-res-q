@@ -6,22 +6,32 @@ package com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.vars;
  */
 public class Static {
     //region Static Variables/Configurations for the config package
-    
+
     // This is assuming the SD card path is already given.
     // Because this is going to be appended, add "/" in front
-    /** Configuration Directory Path relative to /sdcard */
+    /**
+     * Configuration Directory Path relative to /sdcard
+     */
     public static final String configPath = "/GrapefruitConfig";
 
-    /** Configuration File Suffixes. */
+    /**
+     * Configuration File Suffixes.
+     */
     public static final String configFileSufffix = ".yml";
 
-    /** Filename for the config file that config.Variables loads */
+    /**
+     * Filename for the config file that config.Variables loads
+     */
     public static final String configVarFileName = "settings";
 
-    /** Filename for the config file that config.Components loads */
+    /**
+     * Filename for the config file that config.Components loads
+     */
     public static final String configCompFileName = "config";
 
-    /** Filename for the config file that config.Controllers loads */
+    /**
+     * Filename for the config file that config.Controllers loads
+     */
     public static final String configControlFileName = "keymapping";
 
     //endregion

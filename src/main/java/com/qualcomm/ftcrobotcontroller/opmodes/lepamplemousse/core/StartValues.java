@@ -21,13 +21,47 @@ public class StartValues {
 
     Map<String, Settings> objects = new HashMap<String, Settings>();
 
-    public StartValues (Variables variables){
+    Settings flags = new Settings();
+
+    Telemetry telemetry;
+
+    /**
+     * The contrusctor for StartValues
+     * @param variables The Variables configuration object
+     */
+    public StartValues (Variables variables, Telemetry telemtry){
         this.variables = variables;
+        this.telemetry = telemtry;
     }
 
+    /**
+     * The settings object which contains a HashMap and various functions to quickly retrieve settings
+     */
     public class Settings{
         Map<String, Object> data = new HashMap<String, Object>();
 
+        /**
+         * Default constructor for the settings object which contains a HashMap and various functions to quickly retrieve settings
+         */
+        public Settings() {
+
+        }
+
+        /**
+         * Cosntructor that copies an existing map to the Settings Object
+         * @param map       The map to copy
+         */
+        public Settings(Map <String, Object> map){
+            if (map != null) {
+                data.putAll(map);
+            }
+        }
+
+        /**
+         * Adds a value to the Settings object
+         * @param key       The key associated with the object
+         * @param object    The value to store
+         */
         public void addToMap(String key, Object object) {
             data.remove(key);
             if (key != null) {
@@ -35,12 +69,21 @@ public class StartValues {
             }
         }
 
+        /**
+         * Copies an existing map to the Settings Object
+         * @param map       The map to copy
+         */
         public void addToMap(Map<String, Object> map) {
             if (map != null) {
                 data.putAll(map);
             }
         }
 
+        /**
+         * Retrieves the object associated with the key
+         * @param key       The key to retrieve the object from
+         * @return          The object associated with the key
+         */
         public Object get(String key) {
             if (valueExists(key)){
                 return data.get(key);
@@ -48,36 +91,56 @@ public class StartValues {
             return null;
         }
 
+        /**
+         * Removes the object associated with the key
+         * @param key       The key to remove the object association
+         */
         public void remove(String key) {
             data.remove(key);
         }
 
+        /**
+         * Checks to see if a key exists
+         * @param key       The key to check for
+         * @return          A boolean stating whether the key exists or not
+         */
         public boolean valueExists(String key) {
             return data.containsKey(key);
         }
 
-        public Object returnObject(String key) {
-            if(valueExists(key)){
-                return data.get(key);
-            }
-            return null;
+        /**
+         * Retrieves the object associated with the key
+         * @param key       The key to retrieve the object from
+         * @return          The object associated with the key
+         */
+        public Object getObject(String key) {
+            return get(key);
         }
 
-        public boolean returnBool(String key) {
-            if(valueExists(key)){
-                return data.get(key).toString().equals("true");
-            }
-            return false;
+        /**
+         * Retrieves the boolean associated with the key
+         * @param key       The key to retrieve the boolean from
+         * @return          The boolean associated with the key
+         */
+        public boolean getBool(String key) {
+            return get(key).toString().equals("true");
         }
 
-        public String returnString(String key) {
-            if(valueExists(key)){
-                return data.get(key).toString();
-            }
-            return null;
+        /**
+         * Retrieves the string associated with the key
+         * @param key       The key to retrieve the string from
+         * @return          The string associated with the key
+         */
+        public String getString(String key) {
+            return get(key).toString();
         }
 
-        public int returnInt(String key) {
+        /**
+         * Retrieves the integer associated with the key
+         * @param key       The key to retrieve the integer from
+         * @return          The integer associated with the key
+         */
+        public int getInt(String key) {
             if(valueExists(key)){
                 Pattern p = Pattern.compile("[a-zA-Z]");
                 Matcher m = p.matcher(data.get(key).toString());
@@ -92,21 +155,34 @@ public class StartValues {
             return 0;
         }
 
-        public float returnFloat(String key) {
+        /**
+         * Retrieves the float associated with the key
+         * @param key       The key to retrieve the float from
+         * @return          The float associated with the key
+         */
+        public float getFloat(String key) {
             if(valueExists(key)){
                 Pattern p = Pattern.compile("[a-zA-Z]");
                 Matcher m = p.matcher(data.get(key).toString());
                 if(m.find()){
                     return 0;
                 }
+                if (!data.get(key).toString().contains(".")){
+                    return ((Integer)data.get(key)).floatValue();
+                }
                 return ((Double)data.get(key)).floatValue();
             }
             return 0;
         }
 
-        public Settings returnSettings(String key){
+        /**
+         * Retrieves the Settings object associated with the key
+         * @param key       The key to retrieve the Settings object from
+         * @return          The Settings object associated with the key
+         */
+        public Settings getSettings(String key){
             if(valueExists(key)){
-                Pattern p = Pattern.compile("[{}]]");
+                Pattern p = Pattern.compile("[\\{\\}]");
                 Matcher m = p.matcher(data.get(key).toString());
                 if(m.find()) {
                     return (Settings) data.get(key);
@@ -120,64 +196,71 @@ public class StartValues {
             return data.toString();
         }
     }
-/*
+
+    /**
+     * Initializes all of the starting values from the Variables config
+     * @return Whether successfully initialized or now
+     */
     public ReturnValues initialize(){
-        Iterator settings = variables.getEntrySet().iterator();
-        while (settings.hasNext()){
-            Settings settings1 = new Settings();
-            Map<String, Object> newMap = new HashMap<String, Object>();
-            Map.Entry settingObject = (Map.Entry)settings.next();
-            newMap.put((String)settingObject.getKey(), iterateOverValues(settingObject.getValue()));
-            settings1.addToMap((String)settingObject.getKey(), settingObject.getValue());
-            objects.put((String)settingObject.getKey(),);
-
-        }
-    }
-
-    private Object iterateOverValues(Object object){
-        Pattern p = Pattern.compile("[{}]]");
-        Matcher m = p.matcher(object.toString());
-        if(m.find()) {
-            Iterator values = ((Map)object).entrySet().iterator();
-            while (values.hasNext()){
-                Map.Entry valueObject = (Map.Entry)values.next();
-                object
+        //Retrieve the iterator and the entry associated with the iteration
+        for (Object o : variables.getEntrySet()) {
+            Map.Entry settingObject = (Map.Entry) o;
+            //Check to see if it's a flag or a configuration object
+            Pattern p = Pattern.compile("[\\{\\}]");
+            Matcher m = p.matcher(settingObject.getValue().toString());
+            //If it's a flag, put it in the flag map
+            if (!m.find()) {
+                flags.addToMap(settingObject.getKey().toString(), settingObject.getValue());
+                //and continue the loop
+                continue;
             }
-        }
-    }
-
-    public Settings object(String name){
-        if (objects.containsKey("name")){{
-            return objects.get("name");
-        }}
-        return null;
-    }
-
-    /*public ReturnValues loadFromConfig(){
-        Loaded.drivetrainEnabled = variables.getDrivetrainExists();
-        if (Loaded.drivetrainEnabled) {
-            Loaded.drivetrainMotWheel = (Float)variables.getDrivetrainObject("motor_wheel_ratio");
-            Loaded.drivetrainMaxMotPow = (Float)variables.getDrivetrainObject("motor_max_power");
-
+            //otherwise run it through the iterations and stor to the configuration objects
+            objects.put(settingObject.getKey().toString(), (Settings) iterateOverValues(settingObject.getValue()));
         }
         return ReturnValues.SUCCESS;
     }
 
-    public void resetFromConfig(){
-        Loaded.drivetrainEnabled = variables.getDrivetrainExists();
-        if (Loaded.drivetrainEnabled) {
-            Loaded.drivetrainMotWheel = (Float)variables.getDrivetrainObject("motor_wheel_ratio");
-            Loaded.drivetrainMaxMotPow = (Float)variables.getDrivetrainObject("motor_max_power");
-
+    /**
+     * It's a repetative function that calls to itself in order to construct a Settings object
+     * @param object The object to check as a Map object to convert to settings
+     * @return An object of either the settings (which has to be casted) or the origial object pased.
+     */
+    private Object iterateOverValues(Object object){
+        //Begin assembling the settings
+        Settings settings = new Settings();
+        //Regular Expressions to determine if the Object is a Map
+        Pattern p = Pattern.compile("[\\{\\}]");
+        Matcher m = p.matcher(object.toString());
+        if(m.find()) {
+            //Iterate over the Map if it is
+            for (Object o : ((Map) object).entrySet()) {
+                Map.Entry valuesObject = (Map.Entry) o;
+                //And continue the iteration
+                settings.addToMap(valuesObject.getKey().toString(), iterateOverValues(valuesObject.getValue()));
+            }
+            return settings;
         }
+        //Otherwise return the object back
+        return object;
     }
 
-    public void resetNonConfig(){
-
-    }*/
-
-    public Object get(String key){
-        return variables.retrieve(key);
+    /**
+     * Retrieves the settings object of a supersetting in the config
+     * @param name  The name of the setting
+     * @return      The setting object
+     */
+    public Settings settings(String name){
+        if (objects.containsKey(name)){
+            return objects.get(name);
+        }
+        return null;
     }
 
+    /**
+     * Retrieves the settings object of global flags in the config
+     * @return      The Settings object of the global flags
+     */
+    public Settings flags(){
+        return flags;
+    }
 }

@@ -47,7 +47,7 @@ public class RobotDrive extends OpMode{
             }
         }*/
 
-            //load the components object and check for existence
+        //load the components object and check for existence
         components = new Components(telemetry);
         if (!components.load()){
             components.create();
@@ -60,8 +60,10 @@ public class RobotDrive extends OpMode{
             if (returnValues == ReturnValues.MOTOR_NOT_INIT) {
                 telemetry.addData("ERROR", "Motors Failed to Initialize");
             }
-            if (returnValues == ReturnValues.SERVO_NOT_INIT) {
+            else if (returnValues == ReturnValues.SERVO_NOT_INIT) {
                 telemetry.addData("ERROR", "Servos Failed to Initialize");
+            }else{
+                telemetry.addData("ERROR", "Something wrong happened!");
             }
         }
     }
@@ -76,7 +78,8 @@ public class RobotDrive extends OpMode{
         }
 
         //Load all the variables from the configuration
-        StartValues startValues = new StartValues(variables);
+        StartValues startValues = new StartValues(variables, telemetry);
+        startValues.initialize();
 
         //load the controller mappins config and check for existence
         controllerConfig = new Controllers(telemetry);
@@ -87,7 +90,7 @@ public class RobotDrive extends OpMode{
         //Initialize the controller aliases for dynamic mapping
         controls = new ControllersInit(gamepad1, gamepad2, controllerConfig);
         //insert init code here
-        controlled = new Controlled(controls, startValues);
+        controlled = new Controlled(controls, startValues, telemetry);
         controls.initialize();
     }
 

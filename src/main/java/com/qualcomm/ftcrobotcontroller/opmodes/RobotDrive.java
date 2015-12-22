@@ -1,13 +1,13 @@
 package com.qualcomm.ftcrobotcontroller.opmodes;
 
-import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.config.Components;
-import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.config.Controllers;
-import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.config.Variables;
-import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.core.ControllersInit;
-import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.core.InitComp;
-import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.core.StartValues;
-import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.modes.Controlled;
-import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.vars.ReturnValues;
+import org.fhs.robotics.ftcteam10771.lepamplemousse.config.Components;
+import org.fhs.robotics.ftcteam10771.lepamplemousse.config.Controllers;
+import org.fhs.robotics.ftcteam10771.lepamplemousse.config.Variables;
+import org.fhs.robotics.ftcteam10771.lepamplemousse.core.ControllersInit;
+import org.fhs.robotics.ftcteam10771.lepamplemousse.core.InitComp;
+import org.fhs.robotics.ftcteam10771.lepamplemousse.core.StartValues;
+import org.fhs.robotics.ftcteam10771.lepamplemousse.modes.Controlled;
+import org.fhs.robotics.ftcteam10771.lepamplemousse.core.vars.ReturnValues;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 /**

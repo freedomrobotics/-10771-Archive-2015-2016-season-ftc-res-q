@@ -28,6 +28,7 @@ winch:
     max_extend: 1524
     max_extend_power: 0.6
     max_retract_power: 1
+    mot_hold_power: 0.1
   angular_movement:
     hold_power: true
     max_ang_vel: 20.0

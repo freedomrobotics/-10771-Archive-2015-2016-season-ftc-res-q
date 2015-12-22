@@ -46,7 +46,7 @@ public class Controlled {
         lastTime += changeTime;
         Core.motor[0].setPower(gamepad1.left_stick_y);
         Core.motor[1].setPower(-gamepad1.right_stick_y);
-        if (!gamepad2.right_bumper) {
+        if (!gamepad1.right_bumper) {
             servo_pos += gamepad2.right_stick_y * ((((Double) ((Map) ((Map) variables.retrieve("winch")).get("angular_movement")).get("max_ang_vel")).floatValue() / ((Double) ((Map) ((Map) variables.retrieve("winch")).get("angular_movement")).get("full_rotate")).floatValue()) * ((float) changeTime / 1000.0f));
             if (servo_pos > (Double) ((Map) ((Map) variables.retrieve("winch")).get("angular_movement")).get("max_rotate") / (Double) ((Map) ((Map) variables.retrieve("winch")).get("angular_movement")).get("full_rotate")) {
                 servo_pos = ((Double) ((Double) ((Map) ((Map) variables.retrieve("winch")).get("angular_movement")).get("max_rotate") / (Double) ((Map) ((Map) variables.retrieve("winch")).get("angular_movement")).get("full_rotate"))).floatValue();
@@ -87,6 +87,10 @@ public class Controlled {
         }
         if (lift_plow) {
             Core.motor[2].setPower(gamepad2.left_stick_y);
+        }
+
+        if (gamepad2.b){
+            Core.motor[2].setPower(((Double) (servo_pos * (Double) ((Map) ((Map) variables.retrieve("winch")).get("linear_movement")).get("mot_hold_power"))).floatValue());
         }
         telemetry.addData("winch_angle", ((Double) (servo_pos * (Double) ((Map) ((Map) variables.retrieve("winch")).get("angular_movement")).get("full_rotate"))).floatValue());
     }

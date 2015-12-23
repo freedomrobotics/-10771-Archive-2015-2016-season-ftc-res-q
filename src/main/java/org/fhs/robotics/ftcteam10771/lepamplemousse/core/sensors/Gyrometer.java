@@ -58,7 +58,7 @@ public class Gyrometer extends GyroSensor implements SensorEventListener {
         sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         //Call to the calibrated Gyroscope since I'm lazy and don't feel like doing the math.
         //It should be able to provide the "raw" values that the SDK refers to
-        gyroSensor = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE_UNCALIBRATED);
+        gyroSensor = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
         if (lessDelay){
             if (fastest){
                 sensorManager.registerListener(this, gyroSensor, SensorManager.SENSOR_DELAY_FASTEST);
@@ -68,6 +68,7 @@ public class Gyrometer extends GyroSensor implements SensorEventListener {
             return;
         }
         sensorManager.registerListener(this, gyroSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        calibrate();
     }
 
     /**
@@ -175,7 +176,17 @@ public class Gyrometer extends GyroSensor implements SensorEventListener {
 
     @Override
     public void calibrate() {
-        // TODO: 12/23/2015
+        currentRotationMatrix[0] = 1.0f;
+        currentRotationMatrix[1] = 1.0f;
+        currentRotationMatrix[2] = 1.0f;
+
+        currentRotationMatrix[3] = 1.0f;
+        currentRotationMatrix[4] = 1.0f;
+        currentRotationMatrix[5] = 1.0f;
+
+        currentRotationMatrix[6] = 1.0f;
+        currentRotationMatrix[7] = 1.0f;
+        currentRotationMatrix[8] = 1.0f;
     }
 
     /**

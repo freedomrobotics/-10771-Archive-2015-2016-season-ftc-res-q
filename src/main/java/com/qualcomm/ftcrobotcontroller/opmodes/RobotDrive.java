@@ -1,14 +1,15 @@
 package com.qualcomm.ftcrobotcontroller.opmodes;
 
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+
 import org.fhs.robotics.ftcteam10771.lepamplemousse.config.Components;
 import org.fhs.robotics.ftcteam10771.lepamplemousse.config.Controllers;
 import org.fhs.robotics.ftcteam10771.lepamplemousse.config.Variables;
 import org.fhs.robotics.ftcteam10771.lepamplemousse.core.ControllersInit;
 import org.fhs.robotics.ftcteam10771.lepamplemousse.core.InitComp;
 import org.fhs.robotics.ftcteam10771.lepamplemousse.core.StartValues;
-import org.fhs.robotics.ftcteam10771.lepamplemousse.modes.Controlled;
 import org.fhs.robotics.ftcteam10771.lepamplemousse.core.vars.ReturnValues;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import org.fhs.robotics.ftcteam10771.lepamplemousse.modes.Controlled;
 
 /**
  * Le Pamplemousse DRIVE!
@@ -102,6 +103,9 @@ public class RobotDrive extends OpMode {
     @Override
     public void stop() {
         //stop function
+        //run cleanup code and clear everything
+        controlled.cleanup();
+        //plus others
     }
 
 }

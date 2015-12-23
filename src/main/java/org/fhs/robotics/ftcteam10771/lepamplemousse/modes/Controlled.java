@@ -75,4 +75,8 @@ public class Controlled {
             }
         }
     }
+
+    public void cleanup(){
+        //cleanup code
+    }
 }

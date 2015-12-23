@@ -1,8 +1,9 @@
 package org.fhs.robotics.ftcteam10771.lepamplemousse.core;
 
+import com.qualcomm.robotcore.hardware.Gamepad;
+
 import org.fhs.robotics.ftcteam10771.lepamplemousse.config.Controllers;
 import org.fhs.robotics.ftcteam10771.lepamplemousse.core.vars.ReturnValues;
-import com.qualcomm.robotcore.hardware.Gamepad;
 
 import java.util.HashMap;
 import java.util.Iterator;

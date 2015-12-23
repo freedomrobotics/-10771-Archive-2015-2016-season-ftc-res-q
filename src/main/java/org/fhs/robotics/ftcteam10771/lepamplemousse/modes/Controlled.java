@@ -1,9 +1,10 @@
 package org.fhs.robotics.ftcteam10771.lepamplemousse.modes;
 
-import org.fhs.robotics.ftcteam10771.lepamplemousse.core.components.Aliases;
+import com.qualcomm.robotcore.robocol.Telemetry;
+
 import org.fhs.robotics.ftcteam10771.lepamplemousse.core.ControllersInit;
 import org.fhs.robotics.ftcteam10771.lepamplemousse.core.StartValues;
-import com.qualcomm.robotcore.robocol.Telemetry;
+import org.fhs.robotics.ftcteam10771.lepamplemousse.core.components.Aliases;
 
 /**
  * Driver controlled class

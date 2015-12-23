@@ -1,8 +1,9 @@
 package org.fhs.robotics.ftcteam10771.lepamplemousse.core;
 
+import com.qualcomm.robotcore.robocol.Telemetry;
+
 import org.fhs.robotics.ftcteam10771.lepamplemousse.config.Variables;
 import org.fhs.robotics.ftcteam10771.lepamplemousse.core.vars.ReturnValues;
-import com.qualcomm.robotcore.robocol.Telemetry;
 
 import java.util.HashMap;
 import java.util.Map;

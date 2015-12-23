@@ -1,9 +1,5 @@
 package org.fhs.robotics.ftcteam10771.lepamplemousse.core;
 
-import org.fhs.robotics.ftcteam10771.lepamplemousse.core.components.Aliases;
-import org.fhs.robotics.ftcteam10771.lepamplemousse.core.components.Core;
-import org.fhs.robotics.ftcteam10771.lepamplemousse.config.Components;
-import org.fhs.robotics.ftcteam10771.lepamplemousse.core.vars.ReturnValues;
 import com.qualcomm.robotcore.hardware.AccelerationSensor;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -15,6 +11,11 @@ import com.qualcomm.robotcore.hardware.LightSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.robocol.Telemetry;
+
+import org.fhs.robotics.ftcteam10771.lepamplemousse.config.Components;
+import org.fhs.robotics.ftcteam10771.lepamplemousse.core.components.Aliases;
+import org.fhs.robotics.ftcteam10771.lepamplemousse.core.components.Core;
+import org.fhs.robotics.ftcteam10771.lepamplemousse.core.vars.ReturnValues;
 
 import java.util.Iterator;
 import java.util.LinkedList;

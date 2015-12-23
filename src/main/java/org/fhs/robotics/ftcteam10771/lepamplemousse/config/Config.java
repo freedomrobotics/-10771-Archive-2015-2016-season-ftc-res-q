@@ -2,10 +2,11 @@ package org.fhs.robotics.ftcteam10771.lepamplemousse.config;
 
 import android.os.Environment;
 
+import com.qualcomm.robotcore.robocol.Telemetry;
+
 import org.fhs.robotics.ftcteam10771.lepamplemousse.core.vars.Dynamic;
 import org.fhs.robotics.ftcteam10771.lepamplemousse.core.vars.ReturnValues;
 import org.fhs.robotics.ftcteam10771.lepamplemousse.core.vars.Static;
-import com.qualcomm.robotcore.robocol.Telemetry;
 
 import java.io.File;
 import java.io.FileOutputStream;

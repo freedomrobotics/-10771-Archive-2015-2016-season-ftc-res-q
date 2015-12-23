@@ -34,6 +34,10 @@ public class Static {
      */
     public static final String configControlFileName = "keymapping";
 
+    /**
+      * A constant to convert nanoseconds to seconds.
+      */
+    public static final float nanoSecondsToSeconds = 1.0f / 1000000000.0f;
     //endregion
 
     //region Static Variables/Configurations globally

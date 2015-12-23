@@ -1,10 +1,10 @@
 package org.fhs.robotics.ftcteam10771.lepamplemousse.config;
 
+import com.qualcomm.robotcore.robocol.Telemetry;
+
 import org.fhs.robotics.ftcteam10771.lepamplemousse.core.vars.Dynamic;
 import org.fhs.robotics.ftcteam10771.lepamplemousse.core.vars.ReturnValues;
 import org.fhs.robotics.ftcteam10771.lepamplemousse.core.vars.Static;
-import com.qualcomm.robotcore.robocol.Telemetry;
-
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;

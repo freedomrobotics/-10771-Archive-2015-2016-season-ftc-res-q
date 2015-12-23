@@ -2,6 +2,7 @@ package com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.modes;
 
 import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.components.Core;
 import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.config.Variables;
+import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.core.sensors.Gyrometer;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.robocol.Telemetry;
@@ -20,6 +21,7 @@ public class Controlled {
     boolean RB_pressed = false;
     boolean A_pressed = false;
     boolean lift_plow = false;
+
 
     float servo_pos = 0;
     public Controlled(Gamepad gamepad1, Gamepad gamepad2, Variables variables, Telemetry telemetry){
@@ -87,6 +89,8 @@ public class Controlled {
         }
         if (lift_plow) {
             Core.motor[2].setPower(gamepad2.left_stick_y);
+        }else{
+            Core.motor[2].setPower(0);
         }
 
         if (gamepad2.b){

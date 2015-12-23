@@ -21,6 +21,8 @@ public class Static {
     /** Filename for the config file that config.Components loads */
     public static final String configCompFileName = "config";
 
+    /** A constant to convert nanoseconds to seconds. */
+    public static final float nanoSecondsToSeconds = 1.0f / 1000000000.0f;
     //endregion
 
     //region Static Variables/Configurations globally

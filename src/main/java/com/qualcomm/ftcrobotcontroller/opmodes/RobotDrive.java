@@ -45,7 +45,7 @@ public class RobotDrive extends OpMode{
         controlled = new Controlled(gamepad1, gamepad2, startValues.getVariables(), telemetry);
 
         gyrometer = new Gyrometer(hardwareMap.appContext);
-        accelerometer = new Accelerometer(hardwareMap.appContext)
+        accelerometer = new Accelerometer(hardwareMap.appContext);
     }
 
     @Override

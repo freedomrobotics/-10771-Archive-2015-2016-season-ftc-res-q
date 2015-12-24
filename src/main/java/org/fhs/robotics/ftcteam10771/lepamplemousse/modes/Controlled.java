@@ -26,6 +26,7 @@ public class Controlled {
     boolean A_pressed = false;
     long changeTime = 0;
     boolean lift_plow = false;
+    boolean use_servos = true;
 
 
     /**
@@ -60,8 +61,13 @@ public class Controlled {
         //lift or drop the plow
         liftPlow(lift_plow);
 
-        //adjust the angle of projection of winch
-        adjustWinchAngle();
+        if (use_servos){
+            adjustWinchAngle();
+            moveArmTrigger();
+        }
+        else if (controls.getDigital("servos_off") && !RB_pressed){
+            disableServos();
+        }
 
         //adjust the length of extension of winch
         extendWinch(lift_plow);
@@ -105,11 +111,11 @@ public class Controlled {
     }
 
     public Float getFloat(String component, String quantity){
-        return (Float)((Map) variables.retrieve("winch")).get("angular_movement");
+        return (Float)((Map) variables.retrieve(component)).get(quantity);
     }
 
     public Float getFloat(String component, String quantity, String data){
-        return (Float)((Map) ((Map) variables.retrieve("winch")).get("angular_movement")).get("max_rotate");
+        return (Float)((Map) ((Map) variables.retrieve(component)).get(quantity)).get(data);
     }
 
     public Float winchAngular(String data){
@@ -129,6 +135,15 @@ public class Controlled {
     }
 
     public void toggle(){
+
+        if (!controls.getDigital("servos_off")){//test branch conflict: says gamepad1.right_bumper instead of gamepad2
+            use_servos = true;
+            RB_pressed = false;
+        }
+        else if (!RB_pressed){
+            RB_pressed = true;
+            use_servos = false;
+        }
         if (controls.getDigital("plow") && !lift_plow && !A_pressed){
             lift_plow = true;
             A_pressed = true;
@@ -143,27 +158,28 @@ public class Controlled {
     }
 
     public void adjustWinchAngle(){
-        if (!controls.getDigital("servos_off")) { //test branch conflict: says gamepad1.right_bumper instead of gamepad2
-            servo_pos += controls.getAnalog("winch_angle") * ((winchAngular("max_ang_velocity") / winchAngular("full_rotate")) * ((float) changeTime / 1000.0f));
-            if (servo_pos > convertedWinch(winchAngular("max_rotate"))){
+        servo_pos += controls.getAnalog("winch_angle") * ((winchAngular("max_ang_velocity") / winchAngular("full_rotate")) * ((float) changeTime / 1000.0f));
+        if (servo_pos > convertedWinch(winchAngular("max_rotate"))){
                 servo_pos = convertedWinch(winchAngular("max_rotate"));
-            }
-            if (servo_pos < 0) {
-                servo_pos = 0;
-            }
-            if (controls.getDigital("winch_preset"))
-                servo_pos = convertedWinch(winchAngular("preset"));
-            Aliases.servoMap.get("main_winch").setPosition(servo_pos + convertedWinch(getFloat("winch", "left_servo", "offset")));
-            Aliases.servoMap.get("secondary_winch").setPosition(servo_pos + convertedWinch(getFloat("winch", "left_servo", "offset")));
-            RB_pressed = false;
-            Aliases.servoMap.get("arm_trigger").setPosition(1 - controls.getAnalog("trigger_arm"));//test branch conflict: gamepad1.right_trigger instead of gamepad 2
-        } else if (!RB_pressed) {
-            Aliases.servoMap.get("main_winch").getController().pwmDisable();
-            Aliases.servoMap.get("secondary_winch").getController().pwmDisable();
-            Aliases.servoMap.get("arm_trigger").getController().pwmDisable();
-            Aliases.servoMap.get("plow_lift").getController().pwmDisable();
-            RB_pressed = true;
         }
+        if (servo_pos < 0) {
+                servo_pos = 0;
+        }
+        if (controls.getDigital("winch_preset"))
+                servo_pos = convertedWinch(winchAngular("preset"));
+        Aliases.servoMap.get("main_winch").setPosition(servo_pos + convertedWinch(getFloat("winch", "left_servo", "offset")));
+        Aliases.servoMap.get("secondary_winch").setPosition(servo_pos + convertedWinch(getFloat("winch", "left_servo", "offset")));
+    }
+
+    public void disableServos(){
+        Aliases.servoMap.get("main_winch").getController().pwmDisable();
+        Aliases.servoMap.get("secondary_winch").getController().pwmDisable();
+        Aliases.servoMap.get("arm_trigger").getController().pwmDisable();
+        Aliases.servoMap.get("plow_lift").getController().pwmDisable();
+    }
+
+    public void moveArmTrigger(){
+        Aliases.servoMap.get("arm_trigger").setPosition(1 - controls.getAnalog("trigger_arm"));//test branch conflict: gamepad1.right_trigger instead of gamepad 2
     }
 
     public void extendWinch(boolean liftPlow){

@@ -53,6 +53,18 @@ public class Controlled {
 
         //run the drive function
         drive();
+
+        //press buttons to toggle things
+        toggle();
+
+        //lift or drop the plow
+        liftPlow(lift_plow);
+
+        //adjust the angle of projection of winch
+        adjustWinchAngle();
+
+        //adjust the length of extension of winch
+        extendWinch(lift_plow);
     }
 
     /**
@@ -113,7 +125,7 @@ public class Controlled {
     }
 
     public void press(){
-
+        //might consider putting button logics here
     }
 
     public void toggle(){

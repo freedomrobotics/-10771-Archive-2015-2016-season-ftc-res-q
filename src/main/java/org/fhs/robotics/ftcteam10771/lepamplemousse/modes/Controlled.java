@@ -1,5 +1,6 @@
 package org.fhs.robotics.ftcteam10771.lepamplemousse.modes;
 
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.robocol.Telemetry;
 
 import org.fhs.robotics.ftcteam10771.lepamplemousse.config.Variables;
@@ -18,7 +19,14 @@ public class Controlled {
     Telemetry telemetry;
     Variables variables = null;
     private long lastTime;      // The time at the last time check (using System.currentTimeMillis())
-    float servo_pos = 0;
+
+    //TODO: 12/24/2015 Organize these variables
+    float servo_pos = 0.0f;
+    boolean RB_pressed = false;
+    boolean A_pressed = false;
+    long changeTime = 0;
+    boolean lift_plow = false;
+
 
     /**
      * The constructor for the driver controlled class
@@ -27,11 +35,10 @@ public class Controlled {
      * @param startValues Reference to the object of an initialized StartValues class
      * @param telemetry   Reference to the Telemetry object of the OpMode
      */
-    public Controlled(ControllersInit controls, StartValues startValues, Telemetry telemetry, Variables variables) {
+    public Controlled(ControllersInit controls, StartValues startValues, Telemetry telemetry) {
         this.controls = controls;
         this.values = startValues;
         this.telemetry = telemetry;
-        this.variables = variables;
         lastTime = System.currentTimeMillis();
     }
 
@@ -41,7 +48,7 @@ public class Controlled {
      */
     public void loop() {
         //for any physics, we have the change in time in milliseconds given by changeTime
-        long changeTime = System.currentTimeMillis() - lastTime;
+        changeTime = System.currentTimeMillis() - lastTime;
         lastTime += changeTime;
 
         //run the drive function
@@ -51,6 +58,8 @@ public class Controlled {
     /**
      * The function to drive the drivetrain.
      */
+    // TODO: 12/24/2015 determine gamepad mappings
+    // TODO: 12/24/2015 figure out how to use acutual map_name
     // TODO: 12/20/2015 implement the max_power and map_name
     // TODO: 12/20/2015 To make easier on eyes, put recalled values into a variable or something. The JVM would automatically optimize it.
     public void drive() {
@@ -82,123 +91,86 @@ public class Controlled {
             }
         }
     }
-    /*
-    public void useWinch() {
-        if (!(Boolean)controls.getGamepad(1, "right_bumper")) {
-            servo_pos += gamepad2.right_stick_y * ((((Double) ((Map) ((Map) variables.retrieve("winch")).get("angular_movement")).get("max_ang_vel")).floatValue() / ((Double) ((Map) ((Map) variables.retrieve("winch")).get("angular_movement")).get("full_rotate")).floatValue()) * ((float) changeTime / 1000.0f));
-            if (servo_pos > (Double) ((Map) ((Map) variables.retrieve("winch")).get("angular_movement")).get("max_rotate") / (Double) ((Map) ((Map) variables.retrieve("winch")).get("angular_movement")).get("full_rotate")) {
-                servo_pos = ((Double) ((Double) ((Map) ((Map) variables.retrieve("winch")).get("angular_movement")).get("max_rotate") / (Double) ((Map) ((Map) variables.retrieve("winch")).get("angular_movement")).get("full_rotate"))).floatValue();
-            }
-            if (servo_pos < 0) {
-                servo_pos = 0;
-            }
-            if (gamepad2.left_bumper)
-                servo_pos = ((Double) ((Double) ((Map) ((Map) variables.retrieve("winch")).get("angular_movement")).get("preset") / (Double) ((Map) ((Map) variables.retrieve("winch")).get("angular_movement")).get("full_rotate"))).floatValue();
-            Core.servo[0].setPosition(servo_pos + ((Double) ((Double) ((Map) ((Map) variables.retrieve("winch")).get("left_servo")).get("offset") / (Double) ((Map) ((Map) variables.retrieve("winch")).get("angular_movement")).get("full_rotate"))).floatValue());
-            Core.servo[1].setPosition(servo_pos + ((Double) ((Double) ((Map) ((Map) variables.retrieve("winch")).get("right_servo")).get("offset") / (Double) ((Map) ((Map) variables.retrieve("winch")).get("angular_movement")).get("full_rotate"))).floatValue());
-            RB_pressed = false;
-            Core.servo[2].setPosition(1 - gamepad1.right_trigger);
-        } else if (!RB_pressed) {
-            Core.servo[0].getController().pwmDisable();
-            Core.servo[1].getController().pwmDisable();
-            Core.servo[2].getController().pwmDisable();
-            Core.servo[3].getController().pwmDisable();
-            RB_pressed = true;
-        }
-    }
 
-    public void liftPlow() {
-        if (gamepad2.a && !lift_plow && !A_pressed) {
-            lift_plow = true;
-            A_pressed = true;
-        } else if (gamepad2.a && lift_plow && !A_pressed) {
-            lift_plow = false;
-            A_pressed = true;
-        } else if (!gamepad2.a && A_pressed) {
-            A_pressed = false;
-        }
-        if (lift_plow && !RB_pressed) {
-            Core.servo[3].setPosition(((Double) ((Double) ((Map) variables.retrieve("plow")).get("offset") / (Double) ((Map) variables.retrieve("plow")).get("full_rotate"))).floatValue() + ((Double) ((Double) ((Map) variables.retrieve("plow")).get("up_angle") / (Double) ((Map) variables.retrieve("plow")).get("full_rotate"))).floatValue());
-
-        } else {
-            if (!RB_pressed)
-                Core.servo[3].setPosition(((Double) ((Double) ((Map) variables.retrieve("plow")).get("offset") / (Double) ((Map) variables.retrieve("plow")).get("full_rotate"))).floatValue() + ((Double) ((Double) ((Map) variables.retrieve("plow")).get("down_angle") / (Double) ((Map) variables.retrieve("plow")).get("full_rotate"))).floatValue());
-        }
-    }
-
-    public void extendWinch() {
-        if (lift_plow) {
-            Core.motor[2].setPower(gamepad2.left_stick_y);
-        } else {
-            Core.motor[2].setPower(0)
-        }
+    public Float getFloat(String component, String quantity){
+        return (Float)((Map) variables.retrieve("winch")).get("angular_movement");
     }
 
     public Float getFloat(String component, String quantity, String data){
-        return (Float)((Map) ((Map) variables.retrieve(component)).get(quantity)).get(data);
+        return (Float)((Map) ((Map) variables.retrieve("winch")).get("angular_movement")).get("max_rotate");
     }
 
     public Float winchAngular(String data){
         return getFloat("winch", "angular_movement", data);
     }
 
-    public Float winch_MaxAngVel_over_FullRotate(){
-        return winchAngular("max_ang_vel") / winchAngular("full_rotate");
+    public Float convertedWinch(Float quantity){
+        return quantity/winchAngular("full_rotate");
     }
 
-    public void test() {
-        long changeTime = System.currentTimeMillis() - lastTime;
-        lastTime += changeTime;
-        Core.motor[0].setPower(gamepad1.left_stick_y);
-        Core.motor[1].setPower(-gamepad1.right_stick_y);
-        if (!gamepad1.right_bumper) {
-            servo_pos += gamepad2.right_stick_y * (winch_MaxAngVel_over_FullRotate() * ((float) changeTime / 1000.0f));
-            if (servo_pos > winch_MaxAngVel_over_FullRotate()) {
-                servo_pos = winch_MaxAngVel_over_FullRotate();
+    public Float convertedPlow(Float quantity){
+        return quantity/getFloat("plow", "full_rotate");
+    }
+
+    public void press(){
+
+    }
+
+    public void toggle(){
+        if (controls.getDigital("plow") && !lift_plow && !A_pressed){
+            lift_plow = true;
+            A_pressed = true;
+        }
+        else if (controls.getDigital("plow") && lift_plow && !A_pressed) {
+            lift_plow = false;
+            A_pressed = true;
+        }
+        else if (!controls.getDigital("plow") && A_pressed) {
+            A_pressed = false;
+        }
+    }
+
+    public void adjustWinchAngle(){
+        if (!controls.getDigital("servos_off")) { //test branch conflict: says gamepad1.right_bumper instead of gamepad2
+            servo_pos += controls.getAnalog("winch_angle") * ((winchAngular("max_ang_velocity") / winchAngular("full_rotate")) * ((float) changeTime / 1000.0f));
+            if (servo_pos > convertedWinch(winchAngular("max_rotate"))){
+                servo_pos = convertedWinch(winchAngular("max_rotate"));
             }
             if (servo_pos < 0) {
                 servo_pos = 0;
             }
-            if ((Boolean)controls.getGamepad(2, "left_bumper"))
-                servo_pos = ((Double) ((Double) ((Map) ((Map) variables.retrieve("winch")).get("angular_movement")).get("preset") / (Double) ((Map) ((Map) variables.retrieve("winch")).get("angular_movement")).get("full_rotate"))).floatValue();
-            Core.servo[0].setPosition(servo_pos + ((Double) ((Double) ((Map) ((Map) variables.retrieve("winch")).get("left_servo")).get("offset") / (Double) ((Map) ((Map) variables.retrieve("winch")).get("angular_movement")).get("full_rotate"))).floatValue());
-            Core.servo[1].setPosition(servo_pos + ((Double) ((Double) ((Map) ((Map) variables.retrieve("winch")).get("right_servo")).get("offset") / (Double) ((Map) ((Map) variables.retrieve("winch")).get("angular_movement")).get("full_rotate"))).floatValue());
+            if (controls.getDigital("winch_preset"))
+                servo_pos = convertedWinch(winchAngular("preset"));
+            Aliases.servoMap.get("main_winch").setPosition(servo_pos + convertedWinch(getFloat("winch", "left_servo", "offset")));
+            Aliases.servoMap.get("secondary_winch").setPosition(servo_pos + convertedWinch(getFloat("winch", "left_servo", "offset")));
             RB_pressed = false;
-            Core.servo[2].setPosition(1 - gamepad1.right_trigger);
+            Aliases.servoMap.get("arm_trigger").setPosition(1 - controls.getAnalog("trigger_arm"));//test branch conflict: gamepad1.right_trigger instead of gamepad 2
         } else if (!RB_pressed) {
-            Core.servo[0].getController().pwmDisable();
-            Core.servo[1].getController().pwmDisable();
-            Core.servo[2].getController().pwmDisable();
-            Core.servo[3].getController().pwmDisable();
+            Aliases.servoMap.get("main_winch").getController().pwmDisable();
+            Aliases.servoMap.get("secondary_winch").getController().pwmDisable();
+            Aliases.servoMap.get("arm_trigger").getController().pwmDisable();
+            Aliases.servoMap.get("plow_lift").getController().pwmDisable();
             RB_pressed = true;
         }
-        if (gamepad2.a && !lift_plow && !A_pressed) {
-            lift_plow = true;
-            A_pressed = true;
-        } else if (gamepad2.a && lift_plow && !A_pressed) {
-            lift_plow = false;
-            A_pressed = true;
-        } else if (!gamepad2.a && A_pressed) {
-            A_pressed = false;
-        }
-        if (lift_plow && !RB_pressed) {
-            Core.servo[3].setPosition(((Double) ((Double) ((Map) variables.retrieve("plow")).get("offset") / (Double) ((Map) variables.retrieve("plow")).get("full_rotate"))).floatValue() + ((Double) ((Double) ((Map) variables.retrieve("plow")).get("up_angle") / (Double) ((Map) variables.retrieve("plow")).get("full_rotate"))).floatValue());
+    }
 
-        } else {
-            if (!RB_pressed)
-                Core.servo[3].setPosition(((Double) ((Double) ((Map) variables.retrieve("plow")).get("offset") / (Double) ((Map) variables.retrieve("plow")).get("full_rotate"))).floatValue() + ((Double) ((Double) ((Map) variables.retrieve("plow")).get("down_angle") / (Double) ((Map) variables.retrieve("plow")).get("full_rotate"))).floatValue());
-        }
-        if (lift_plow) {
-            Core.motor[2].setPower(gamepad2.left_stick_y);
-        } else {
-            Core.motor[2].setPower(0)
-        }
-
-        if (gamepad2.b) {
-            Core.motor[2].setPower(((Double) (servo_pos * (Double) ((Map) ((Map) variables.retrieve("winch")).get("linear_movement")).get("mot_hold_power"))).floatValue());
+    public void extendWinch(boolean liftPlow){
+        if (liftPlow) {
+           Aliases.motorMap.get("winch_motor").setPower(controls.getAnalog("winch_extend_retract"));
+        } else{
+            (Aliases.motorMap.get("winch_motor")).setPower(0);
         }
     }
-    */
+
+    public void liftPlow(boolean liftPlow){
+        if (liftPlow && !RB_pressed){
+            Aliases.servoMap.get("plow_lift").setPosition(convertedPlow(getFloat("plow", "offset")) + convertedPlow(getFloat("plow", "up_angle")));
+        }else {
+            if (!RB_pressed)
+            Aliases.servoMap.get("plow_lift").setPosition(convertedPlow(getFloat("plow", "offset")) + convertedPlow(getFloat("plow", "down_angle")));
+        }
+    }
+
     public void cleanup(){
         //cleanup code
     }

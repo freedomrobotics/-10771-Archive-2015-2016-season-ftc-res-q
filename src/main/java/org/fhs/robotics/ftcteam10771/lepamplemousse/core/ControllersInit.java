@@ -68,7 +68,7 @@ public class ControllersInit {
         return ReturnValues.SUCCESS;
     }
 
-    private Object getGamepad(Integer id, String name) {
+    public Object getGamepad(Integer id, String name) {
         if (name.equals("left_stick_x")) {
             if (id.equals(1)) {
                 return gamepad1.left_stick_x;

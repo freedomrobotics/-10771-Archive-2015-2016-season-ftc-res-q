@@ -108,7 +108,7 @@ gamepad1:
 
   right_bumper:
     enabled: false
-    function: null
+    function: servos_off
     inverted: false
     digital: true
 
@@ -237,7 +237,7 @@ gamepad2:
 
   right_bumper:
     enabled: true
-    function: servos_off
+    function: null
     inverted: false
     digital: true
 

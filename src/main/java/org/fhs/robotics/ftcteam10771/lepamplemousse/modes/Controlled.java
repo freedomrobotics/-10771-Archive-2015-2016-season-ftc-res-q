@@ -1,14 +1,12 @@
 package org.fhs.robotics.ftcteam10771.lepamplemousse.modes;
 
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.robocol.Telemetry;
 
 import org.fhs.robotics.ftcteam10771.lepamplemousse.config.Variables;
 import org.fhs.robotics.ftcteam10771.lepamplemousse.core.ControllersInit;
 import org.fhs.robotics.ftcteam10771.lepamplemousse.core.StartValues;
 import org.fhs.robotics.ftcteam10771.lepamplemousse.core.components.Aliases;
-
-import java.util.Map;
+import org.fhs.robotics.ftcteam10771.lepamplemousse.core.components.Core;
 
 /**
  * Driver controlled class
@@ -17,16 +15,14 @@ public class Controlled {
     ControllersInit controls;
     StartValues values = null;
     Telemetry telemetry;
-    Variables variables = null;
     private long lastTime;      // The time at the last time check (using System.currentTimeMillis())
 
     //TODO: 12/24/2015 Organize these variables
     float servo_pos = 0.0f;
-    boolean RB_pressed = false;
-    boolean A_pressed = false;
+    boolean servosOff = false;
+    boolean plowButton = false;
     long changeTime = 0;
-    boolean lift_plow = false;
-    boolean use_servos = true;
+    boolean liftPlow = false;
 
 
     /**
@@ -41,6 +37,7 @@ public class Controlled {
         this.values = startValues;
         this.telemetry = telemetry;
         lastTime = System.currentTimeMillis();
+        // TODO: 12/28/2015 Add servo reversing logic
     }
 
     /**
@@ -53,35 +50,32 @@ public class Controlled {
         lastTime += changeTime;
 
         //run the drive function
-        //Gamepad 1 Left Stick Vertical: Left drivetrain
-        //Gamepad 1 Right Stick Vertical: Right drivetrain
         drive();
 
-        //press buttons to toggle things
-        //Gamepad 2 A Button: Lift/Drop Plow
-        //Gamepad 2 Right Bumper: Turn off/on servos
-        toggle();
-
-        //lift or drop the plow
-        //Gamepad 2 A Button
-        liftPlow(lift_plow);
-
         //functions for the servos
-        //Gamepad 2 Right Bumper: Turn off/on servos
-        //Gamepad 2 Left Bumper: Sets preset projection angle
-        //Gamepad 2 Right Stick Y: Adjust projection angle
-        //Gamepad 2 Right Trigger: Flicks trigger arm
-        if (use_servos){
-            adjustWinchAngle();
-            moveArmTrigger();
-        }
-        else if (controls.getDigital("servos_off") && !RB_pressed){
+        if (controls.getDigital("servos_off") && !servosOff){
             disableServos();
+            servosOff = true;
+        }else if (!controls.getDigital("servos_off")){
+
+            if (controls.getDigital("plow") && !plowButton){
+                liftPlow = !liftPlow;
+                plowButton = true;
+                //lift or drop the plow
+                togglePlow();
+            }
+            else if (!controls.getDigital("plow")) {
+                plowButton = false;
+            }
+
+            //adjusts winch angle
+            winchAngle();
+            moveArmTrigger();
+            servosOff = false;
         }
 
         //adjust the length of extension of winch
-        // Gamepad 2 Left Stick Y: Extend/Retract Tape Measure
-        extendWinch(lift_plow);
+        extendWinch();
     }
     
     // TODO: 12/24/2015 figure out how to use acutual map_name
@@ -119,132 +113,55 @@ public class Controlled {
             }
         }
     }
-    //region float value getters
-
-    /**
-     * Obtains the float value of a data
-     * @param component The component with the value
-     * @param quantity The data to get
-     * @return The value of the data
-     */
-    public Float getFloat(String component, String quantity){
-        return (Float)((Map) variables.retrieve(component)).get(quantity);
-    }
-
-    /**
-     * Obtains float value of data
-     * @param component The component with the data
-     * @param quantity The category of data to get
-     * @param data The data to get
-     * @return The float quantity of the data
-     */
-    public Float getFloat(String component, String quantity, String data){
-        return (Float)((Map) ((Map) variables.retrieve(component)).get(quantity)).get(data);
-    }
-
-    /**
-     * Getter for the winch's angular measurements
-     * @param data The angular data to get
-     * @return The angular quantity
-     */
-    public Float winchAngular(String data){
-        return getFloat("winch", "angular_movement", data);
-    }
-
-    /**
-     * Converts the winch's angular measurement into a rational value
-     * by dividing by the configured full rotational position
-     * @param quantity The data to be converted
-     * @return The converted value
-     */
-    public Float convertedWinch(Float quantity){
-        return quantity/winchAngular("full_rotate");
-    }
-
-    /**
-     * Converts the plow's angular measurements into a rational value
-     * @param quantity The data to be converted
-     * @return The data in a rational type
-     */
-    public Float convertedPlow(Float quantity){
-        return quantity/getFloat("plow", "full_rotate");
-    }
-
-    //endregion
 
     public void press(){
-        //might consider putting button logics here
-    }
-
-    /**
-     * The function for switching
-     * positions and statuses of components
-     */
-    public void toggle(){
-
-        if (!controls.getDigital("servos_off")){//test branch conflict: says gamepad1.right_bumper instead of gamepad2
-            use_servos = true;
-            RB_pressed = false;
-        }
-        else if (!RB_pressed){
-            RB_pressed = true;
-            use_servos = false;
-        }
-        if (controls.getDigital("plow") && !lift_plow && !A_pressed){
-            lift_plow = true;
-            A_pressed = true;
-        }
-        else if (controls.getDigital("plow") && lift_plow && !A_pressed) {
-            lift_plow = false;
-            A_pressed = true;
-        }
-        else if (!controls.getDigital("plow") && A_pressed) {
-            A_pressed = false;
-        }
+        //might consider putting button logic here
     }
 
     /**
      * Adjusts the winch's
      * projection angle
      */
-    public void adjustWinchAngle(){
-        servo_pos += controls.getAnalog("winch_angle") * ((winchAngular("max_ang_velocity") / winchAngular("full_rotate")) * ((float) changeTime / 1000.0f));
-        if (servo_pos > convertedWinch(winchAngular("max_rotate"))){
-                servo_pos = convertedWinch(winchAngular("max_rotate"));
+    public void winchAngle(){
+        StartValues.Settings winch = values.settings("winch");
+        StartValues.Settings angular = winch.getSettings("angular_movement");
+        float range = angular.getFloat("full_rotate");
+        servo_pos += controls.getAnalog("winch_angle") * (angular.getFloat("max_ang_velocity") / range) * ((float) changeTime / 1000.0f);
+        if (servo_pos > angular.getFloat("max_rotate") / range){
+                servo_pos = angular.getFloat("max_rotate") / range;
         }
         if (servo_pos < 0) {
                 servo_pos = 0;
         }
         if (controls.getDigital("winch_preset"))
-                servo_pos = convertedWinch(winchAngular("preset"));
-        Aliases.servoMap.get("main_winch").setPosition(servo_pos + convertedWinch(getFloat("winch", "left_servo", "offset")));
-        Aliases.servoMap.get("secondary_winch").setPosition(servo_pos + convertedWinch(getFloat("winch", "left_servo", "offset")));
+                servo_pos = angular.getFloat("preset") / range;
+        Aliases.servoMap.get("winch_left").setPosition(servo_pos + winch.getSettings("left_servo").getFloat("offset") / range);
+        Aliases.servoMap.get("winch_right").setPosition(servo_pos + winch.getSettings("right_servo").getFloat("offset") / range);
     }
 
     /**
      * Switches the servos off
      */
     public void disableServos(){
-        Aliases.servoMap.get("main_winch").getController().pwmDisable();
-        Aliases.servoMap.get("secondary_winch").getController().pwmDisable();
-        Aliases.servoMap.get("arm_trigger").getController().pwmDisable();
-        Aliases.servoMap.get("plow_lift").getController().pwmDisable();
+        for (int i = 0; i < Core.servo.length; i++){
+            Core.servo[i].getController().pwmDisable();
+        }
     }
 
     /**
      * Moves the arm trigger of the robot
      */
     public void moveArmTrigger(){
-        Aliases.servoMap.get("arm_trigger").setPosition(1 - controls.getAnalog("trigger_arm"));//test branch conflict: gamepad1.right_trigger instead of gamepad 2
+        Aliases.servoMap.get("arm_trigger").setPosition(1 - controls.getAnalog("trigger_arm"));
     }
 
     /**
      * Extends the tape measure
      * of the winch ONLY IF the
      * plow is lifted
-     * @param liftPlow Checker to see if plow is lifted
      */
-    public void extendWinch(boolean liftPlow){
+    // TODO: 12/28/2015 implement variables from settings.yml
+    public void extendWinch(){
         if (liftPlow) {
            Aliases.motorMap.get("winch_motor").setPower(controls.getAnalog("winch_extend_retract"));
         } else{
@@ -255,14 +172,17 @@ public class Controlled {
     /**
      * Lifts plow if it is down
      * Drops plow if it is lifted
-     * @param liftPlow Checker for whether the plow is lifted or dropped
      */
-    public void liftPlow(boolean liftPlow){
-        if (liftPlow && !RB_pressed){
-            Aliases.servoMap.get("plow_lift").setPosition(convertedPlow(getFloat("plow", "offset")) + convertedPlow(getFloat("plow", "up_angle")));
+    public void togglePlow(){
+        StartValues.Settings plow = values.settings("plow");
+        float fullRange = plow.getFloat("full_rotate");
+        float offset = plow.getFloat("offset") / fullRange;
+        float up = plow.getFloat("up_angle") / fullRange;
+        float down = plow.getFloat("down_angle") / fullRange;
+        if (liftPlow){
+            Aliases.servoMap.get("plow_lift").setPosition(up + offset);
         }else {
-            if (!RB_pressed)
-            Aliases.servoMap.get("plow_lift").setPosition(convertedPlow(getFloat("plow", "offset")) + convertedPlow(getFloat("plow", "down_angle")));
+            Aliases.servoMap.get("plow_lift").setPosition(down + offset);
         }
     }
 

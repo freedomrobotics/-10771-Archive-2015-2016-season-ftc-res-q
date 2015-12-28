@@ -1,7 +1,8 @@
 package org.fhs.robotics.ftcteam10771.lepamplemousse.core.sensors.camera;
 
 /**
- * Hook class for OpenCV functions if we decide to use it
+ * Created by Adam Li on 12/27/2015.
  */
-public class OpenCVHook {
+public abstract class Camera{
+
 }

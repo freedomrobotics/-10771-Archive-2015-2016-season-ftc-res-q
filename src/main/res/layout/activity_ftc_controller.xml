@@ -129,6 +129,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       android:maxLines="4"
       android:text="" />
 
+    <FrameLayout
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_below="@+id/textErrorMessage"
+        android:id="@+id/cameraPreview"
+        android:layout_centerHorizontal="true">
+    </FrameLayout>
+
     <TextView
       android:id="@+id/textGamepad1"
       android:layout_width="match_parent"

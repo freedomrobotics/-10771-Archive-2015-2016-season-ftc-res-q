@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.AccelerationSensor;
  * Allows for polling and provides a listener to "interrupt" using the phone's built-in accelerometer.
  */
 // TODO: 12/23/2015 add a way to construct with a change in orientation. Same with gyroscope.
+// FIXME: 12/28/2015 THIS DOES NOT WORK PROPERLY
 public class Accelerometer extends AccelerationSensor implements SensorEventListener{
 
     SensorManager sensorManager;

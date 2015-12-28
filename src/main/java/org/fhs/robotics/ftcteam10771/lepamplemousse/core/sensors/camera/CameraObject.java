@@ -29,7 +29,15 @@ import java.io.IOException;
 /**
  * Camera Object. Used to create camera and pull a preview and image form it.
  * Created by Adam Li on 12/27/2015.
+ *
+ *
+ * Created with the help of below resources:
+ * https://github.com/cheer4ftc/OpModeCamera
+ * http://developer.android.com/guide/topics/media/camera.html
+ * http://stackoverflow.com/questions/3841122/android-camera-preview-is-sideways
+ * http://stackoverflow.com/questions/18149964/best-use-of-handlerthread-over-other-similar-classes/19154438#19154438
  */
+// FIXME: 12/28/2015 Causes a memory leak and subsequent app crash
 public class CameraObject {
 
     private static final String TAG = "CameraDebug";
@@ -327,7 +335,7 @@ public class CameraObject {
     }
 
     //Something
-    private class CameraData{
+    public class CameraData{
         private int w, h;
         private YuvImage yuvImage;
 

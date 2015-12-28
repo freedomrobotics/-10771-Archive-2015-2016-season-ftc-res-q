@@ -21,7 +21,7 @@ script:
     - ./gradlew test
     - ./gradlew cobertura
 after_success:
-    - ./gradlew assembleDebug
+    - ./gradlew assembleDebug assembleRelease
     - cp -r build/outputs/apk/* shippable/
 after_script:
     - cp -r build/reports/androidTests/* shippable/testresults/

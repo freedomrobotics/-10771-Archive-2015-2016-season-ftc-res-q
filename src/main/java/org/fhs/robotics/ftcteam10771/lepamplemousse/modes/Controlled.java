@@ -1,8 +1,8 @@
 package org.fhs.robotics.ftcteam10771.lepamplemousse.modes;
 
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.robocol.Telemetry;
 
-import org.fhs.robotics.ftcteam10771.lepamplemousse.config.Variables;
 import org.fhs.robotics.ftcteam10771.lepamplemousse.core.ControllersInit;
 import org.fhs.robotics.ftcteam10771.lepamplemousse.core.StartValues;
 import org.fhs.robotics.ftcteam10771.lepamplemousse.core.components.Aliases;
@@ -22,7 +22,7 @@ public class Controlled {
     boolean servosOff = false;
     boolean plowButton = false;
     long changeTime = 0;
-    boolean liftPlow = false;
+    boolean plowUp = false;
 
 
     /**
@@ -37,7 +37,7 @@ public class Controlled {
         this.values = startValues;
         this.telemetry = telemetry;
         lastTime = System.currentTimeMillis();
-        // TODO: 12/28/2015 Add servo reversing logic
+        servoSetup();
     }
 
     /**
@@ -59,7 +59,7 @@ public class Controlled {
         }else if (!controls.getDigital("servos_off")){
 
             if (controls.getDigital("plow") && !plowButton){
-                liftPlow = !liftPlow;
+                plowUp = !plowUp;
                 plowButton = true;
                 //lift or drop the plow
                 togglePlow();
@@ -162,10 +162,10 @@ public class Controlled {
      */
     // TODO: 12/28/2015 implement variables from settings.yml
     public void extendWinch(){
-        if (liftPlow) {
-           Aliases.motorMap.get("winch_motor").setPower(controls.getAnalog("winch_extend_retract"));
+        if (plowUp) {
+            Aliases.motorMap.get("winch_motor").setPower(controls.getAnalog("winch_extend_retract"));
         } else{
-            (Aliases.motorMap.get("winch_motor")).setPower(0);
+            Aliases.motorMap.get("winch_motor").setPower(0);
         }
     }
 
@@ -179,10 +179,31 @@ public class Controlled {
         float offset = plow.getFloat("offset") / fullRange;
         float up = plow.getFloat("up_angle") / fullRange;
         float down = plow.getFloat("down_angle") / fullRange;
-        if (liftPlow){
+        if (plowUp){
             Aliases.servoMap.get("plow_lift").setPosition(up + offset);
         }else {
             Aliases.servoMap.get("plow_lift").setPosition(down + offset);
+        }
+    }
+
+    /**
+     * Sets up the servos
+     */
+    private void servoSetup() {
+        if (values.settings("winch").getSettings("left_servo").getBool("reversed")){
+            Aliases.servoMap.get("winch_left").setDirection(Servo.Direction.REVERSE);
+        }else{
+            Aliases.servoMap.get("winch_left").setDirection(Servo.Direction.FORWARD);
+        }
+        if (values.settings("winch").getSettings("right_servo").getBool("reversed")){
+            Aliases.servoMap.get("winch_left").setDirection(Servo.Direction.REVERSE);
+        }else{
+            Aliases.servoMap.get("winch_left").setDirection(Servo.Direction.FORWARD);
+        }
+        if (values.settings("plow").getBool("reversed")){
+            Aliases.servoMap.get("winch_left").setDirection(Servo.Direction.REVERSE);
+        }else{
+            Aliases.servoMap.get("winch_left").setDirection(Servo.Direction.FORWARD);
         }
     }
 

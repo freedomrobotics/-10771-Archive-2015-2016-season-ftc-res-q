@@ -17,7 +17,7 @@ public class Accelerometer extends AccelerationSensor implements SensorEventList
     SensorManager sensorManager;
     Sensor accelerometer;
 
-    Acceleration acceleration;
+    Acceleration acceleration = new Acceleration();
 
     /**
      * Constructs a accelerometer sensor given the app Context based off of the FTC gyroscope sensor interfaces. Trust me, for the custom sensor classes, you want to manually call close when you're done.

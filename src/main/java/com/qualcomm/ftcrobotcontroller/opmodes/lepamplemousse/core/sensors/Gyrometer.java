@@ -6,9 +6,8 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
-import com.qualcomm.robotcore.hardware.GyroSensor;
-
 import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.vars.Static;
+import com.qualcomm.robotcore.hardware.GyroSensor;
 
 /**
  * Allows for polling of the phone's built-in gyrometer.

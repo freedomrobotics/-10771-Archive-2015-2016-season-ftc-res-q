@@ -1,7 +1,5 @@
 package com.qualcomm.ftcrobotcontroller.opmodes;
 
-import android.view.accessibility.AccessibilityManager;
-
 import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.config.Components;
 import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.core.InitComp;
 import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.core.StartValues;

@@ -7,28 +7,28 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
  */
 public class RobotAuto extends OpMode {
 
-    public RobotAuto(){
+    public RobotAuto() {
         //Constructor
     }
 
     @Override
-    public void init(){
+    public void init() {
         //initializer
 
     }
 
     @Override
-    public void start(){
+    public void start() {
         //set default values
     }
 
     @Override
-    public void loop(){
+    public void loop() {
         //core loop
     }
 
     @Override
-    public void stop(){
+    public void stop() {
         //stop function
     }
 

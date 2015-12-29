@@ -76,8 +76,15 @@ public class Controlled {
 
         //adjust the length of extension of winch
         extendWinch();
+
+        //Telemetry data for the drivers.
+        telemetryData();
     }
-    
+
+    private void telemetryData() {
+        telemetry.addData("Winch Angle", servo_pos * values.settings("winch").getSettings("angular_movement").getFloat("full_rotate"));
+    }
+
     // TODO: 12/24/2015 figure out how to use acutual map_name
     // TODO: 12/20/2015 implement the max_power and map_name
     // TODO: 12/20/2015 To make easier on eyes, put recalled values into a variable or something. The JVM would automatically optimize it.
@@ -126,7 +133,8 @@ public class Controlled {
         StartValues.Settings winch = values.settings("winch");
         StartValues.Settings angular = winch.getSettings("angular_movement");
         float range = angular.getFloat("full_rotate");
-        servo_pos += controls.getAnalog("winch_angle") * (angular.getFloat("max_ang_velocity") / range) * ((float) changeTime / 1000.0f);
+        servo_pos += controls.getAnalog("winch_angle") * (angular.getFloat("max_ang_vel") / range) * ((float) changeTime / 1000.0f);
+
         if (servo_pos > angular.getFloat("max_rotate") / range){
                 servo_pos = angular.getFloat("max_rotate") / range;
         }
@@ -180,9 +188,9 @@ public class Controlled {
         float up = plow.getFloat("up_angle") / fullRange;
         float down = plow.getFloat("down_angle") / fullRange;
         if (plowUp){
-            Aliases.servoMap.get("plow_lift").setPosition(up + offset);
+            Aliases.servoMap.get("plow").setPosition(up + offset);
         }else {
-            Aliases.servoMap.get("plow_lift").setPosition(down + offset);
+            Aliases.servoMap.get("plow").setPosition(down + offset);
         }
     }
 
@@ -196,14 +204,14 @@ public class Controlled {
             Aliases.servoMap.get("winch_left").setDirection(Servo.Direction.FORWARD);
         }
         if (values.settings("winch").getSettings("right_servo").getBool("reversed")){
-            Aliases.servoMap.get("winch_left").setDirection(Servo.Direction.REVERSE);
-        }else{
-            Aliases.servoMap.get("winch_left").setDirection(Servo.Direction.FORWARD);
+            Aliases.servoMap.get("winch_right").setDirection(Servo.Direction.REVERSE);
+        } else {
+            Aliases.servoMap.get("winch_right").setDirection(Servo.Direction.FORWARD);
         }
         if (values.settings("plow").getBool("reversed")){
-            Aliases.servoMap.get("winch_left").setDirection(Servo.Direction.REVERSE);
+            Aliases.servoMap.get("plow").setDirection(Servo.Direction.REVERSE);
         }else{
-            Aliases.servoMap.get("winch_left").setDirection(Servo.Direction.FORWARD);
+            Aliases.servoMap.get("plow").setDirection(Servo.Direction.FORWARD);
         }
     }
 

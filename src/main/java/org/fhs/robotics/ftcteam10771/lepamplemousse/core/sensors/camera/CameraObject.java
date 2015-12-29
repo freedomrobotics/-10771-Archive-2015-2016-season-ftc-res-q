@@ -37,7 +37,7 @@ import java.io.IOException;
  * http://stackoverflow.com/questions/3841122/android-camera-preview-is-sideways
  * http://stackoverflow.com/questions/18149964/best-use-of-handlerthread-over-other-similar-classes/19154438#19154438
  */
-// FIXME: 12/28/2015 Causes a memory leak and subsequent app crash
+// TODO: 12/29/2015 Javadocs 
 public class CameraObject {
 
     private static final String TAG = "CameraDebug";
@@ -48,7 +48,8 @@ public class CameraObject {
     View rootView;
     Activity activity;
     FrameLayout cameraPreviewLayout;
-    private CameraData cameraData = new CameraData();
+    public CameraData cameraData = new CameraData();
+    //public int debug = 0;
     private android.hardware.Camera.PreviewCallback previewCallback = new android.hardware.Camera.PreviewCallback() {
         @Override
         public void onPreviewFrame(byte[] data, android.hardware.Camera camera) {
@@ -57,6 +58,7 @@ public class CameraObject {
                 cameraData.setWidth(parameters.getPreviewSize().width);
                 cameraData.setHeight(parameters.getPreviewSize().height);
                 cameraData.setYuvImage(new YuvImage(data, ImageFormat.NV21, cameraData.getWidth(), cameraData.getHeight(), null));
+                //debug++;
             } catch (Exception e) {
 
             }
@@ -65,9 +67,9 @@ public class CameraObject {
     private CameraHandlerThread cameraHandlerThread = null;
 
     //USE FTC>APPCONTEXT
-    public CameraObject(Context context, int downSample){
+    public CameraObject(Context context, Downsample downSample){
         this.context = context;
-        this.downSample = downSample;
+        this.downSample = downSample.getValue();
         rootView = ((Activity)context).getWindow().getDecorView().findViewById(android.R.id.content);
         this.activity = (Activity) context;
     }
@@ -110,7 +112,7 @@ public class CameraObject {
             }
             //Camera exists on device and was defined already, so create preview (maybe)
             createPreview();
-            return ReturnValues.SUCCESS;
+            return ReturnValues.CAMERA_ALREADY_OPEN;
         }
         //Camera does not exist
         return ReturnValues.CAMERA_DOESNT_EXIST;
@@ -169,7 +171,6 @@ public class CameraObject {
         private SurfaceHolder holder;
         private android.hardware.Camera camera;
         private android.hardware.Camera.PreviewCallback previewCallback = null;
-        private ReturnValues orientation = ReturnValues.PORTRAIT;
 
         public CameraPreview(android.hardware.Camera camera, android.hardware.Camera.PreviewCallback previewCallback) {
             super(context);
@@ -187,29 +188,35 @@ public class CameraObject {
 
         public void surfaceCreated(SurfaceHolder holder) {
             // The Surface has been created, now tell the camera where to draw the preview.
+
+            //Check because if user spams, the thing crashes since surface might be removed before this is called.
+            //Doesn't stop the crash, just makes it less likely.
+            if (this.holder.getSurface() == null){
+                // preview surface does not exist
+                return;
+            }
+
             android.hardware.Camera.Parameters parameters = camera.getParameters();
-            Display display = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+            Display display = activity.getWindowManager().getDefaultDisplay();
 
             if(display.getRotation() == Surface.ROTATION_0)
             {
-                orientation = ReturnValues.PORTRAIT;
-                camera.setDisplayOrientation(90);
+                cameraData.setOrientation(Orientation.PORTRAIT);
             }
 
             if(display.getRotation() == Surface.ROTATION_90)
             {
-                orientation = ReturnValues.LANDSCAPE;
+                cameraData.setOrientation(Orientation.LANDSCAPE);
             }
 
             if(display.getRotation() == Surface.ROTATION_180)
             {
-                orientation = ReturnValues.PORTRAIT;
+                cameraData.setOrientation(Orientation.PORTRAIT_FLIPPED);
             }
 
             if(display.getRotation() == Surface.ROTATION_270)
             {
-                orientation = ReturnValues.LANDSCAPE;
-                camera.setDisplayOrientation(180);
+                cameraData.setOrientation(Orientation.LANDSCAPE_FLIPPED);
             }
 
             // start preview with new settings
@@ -248,28 +255,27 @@ public class CameraObject {
             // reformatting changes here
 
             android.hardware.Camera.Parameters parameters = camera.getParameters();
-            Display display = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+            // FIXME: 12/28/2015 Doesn't reorient the camera, but doesn't matter for now
+            Display display = activity.getWindowManager().getDefaultDisplay();
 
             if(display.getRotation() == Surface.ROTATION_0)
             {
-                orientation = ReturnValues.PORTRAIT;
-                camera.setDisplayOrientation(90);
+                cameraData.setOrientation(Orientation.PORTRAIT);
             }
 
             if(display.getRotation() == Surface.ROTATION_90)
             {
-                orientation = ReturnValues.LANDSCAPE;
+                cameraData.setOrientation(Orientation.LANDSCAPE);
             }
 
             if(display.getRotation() == Surface.ROTATION_180)
             {
-                orientation = ReturnValues.PORTRAIT;
+                cameraData.setOrientation(Orientation.PORTRAIT_FLIPPED);
             }
 
             if(display.getRotation() == Surface.ROTATION_270)
             {
-                orientation = ReturnValues.LANDSCAPE;
-                camera.setDisplayOrientation(180);
+                cameraData.setOrientation(Orientation.LANDSCAPE_FLIPPED);
             }
 
             // start preview with new settings
@@ -282,10 +288,6 @@ public class CameraObject {
             } catch (Exception e){
                 Log.d(TAG, "Error starting camera preview: " + e.getMessage());
             }
-        }
-
-        public ReturnValues getOrientation(){
-            return orientation;
         }
 
         public android.hardware.Camera.PreviewCallback getPreview(){
@@ -311,7 +313,7 @@ public class CameraObject {
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    getCameraInstance();
+                    camera = getCameraInstance();
 
                     camera.setPreviewCallback(previewCallback);
 
@@ -322,6 +324,7 @@ public class CameraObject {
                     parameters.setPreviewSize(cameraData.getWidth(), cameraData.getHeight());
 
                     camera.setParameters(parameters);
+
                     notifyCameraOpened();
                 }
             });
@@ -338,6 +341,7 @@ public class CameraObject {
     public class CameraData{
         private int w, h;
         private YuvImage yuvImage;
+        private Orientation o = Orientation.PORTRAIT;
 
         public int getWidth(){
             return w;
@@ -376,5 +380,55 @@ public class CameraObject {
             rgbImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length, opt);
             return rgbImage;
         }
+
+        public void setOrientation(Orientation o){
+            if(o == Orientation.PORTRAIT)
+            {
+                camera.setDisplayOrientation(90);
+            }
+
+            if(o == Orientation.LANDSCAPE)
+            {
+                camera.setDisplayOrientation(0);
+            }
+
+            if(o == Orientation.PORTRAIT_FLIPPED)
+            {
+                camera.setDisplayOrientation(270);
+            }
+
+            if(o == Orientation.LANDSCAPE_FLIPPED)
+            {
+                camera.setDisplayOrientation(180);
+            }
+            this.o = o;
+        }
+
+        public Orientation getOrientation(){
+            return o;
+        }
+    }
+
+    public enum Orientation{
+        PORTRAIT,
+        LANDSCAPE,
+        LANDSCAPE_FLIPPED,
+        PORTRAIT_FLIPPED
+    }
+
+    public enum Downsample{
+        FULL(1),
+        HALF(2),
+        FOURTH(4),
+        EIGHTH(8),
+        SIXTEENTH(16);
+
+        private final int value;
+
+        Downsample(final int value){
+            this.value = value;
+        }
+
+        public int getValue() { return value; }
     }
 }

@@ -16,7 +16,6 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import com.qualcomm.ftcrobotcontroller.R;
@@ -27,29 +26,65 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 /**
- * Camera Object. Used to create camera and pull a preview and image form it.
- * Created by Adam Li on 12/27/2015.
+ * Camera Object. Used to create camera and pull a preview and image from it.
  *
+ * <p>Must be constructed with reference to the main Activity (eg FtcRobotControllerActivity which is
+ * accessible from (Activity) hardwareMap.appContext).</p>
  *
- * Created with the help of below resources:
- * https://github.com/cheer4ftc/OpModeCamera
- * http://developer.android.com/guide/topics/media/camera.html
- * http://stackoverflow.com/questions/3841122/android-camera-preview-is-sideways
- * http://stackoverflow.com/questions/18149964/best-use-of-handlerthread-over-other-similar-classes/19154438#19154438
+ * <p>Should only be constructed once since more than one CameraObject will provide unexpected results
+ * without throwing an error other than {@link ReturnValues ReturnValues.CAMERA_ALREADY_OPEN}.
+ * (Maybe I should have it throw an exception)</p>
+ *
+ * <p>After construction, {@link #initCamera} is called to start and initialize the camera. Once the
+ * camera is started, it's must be stopped with {@link #stopCamera}.</p>
+ *
+ * <p>To retrieve camera data, pull values from the subclass {@link CameraData}.</p>
+ * <p>&nbsp;<br>Created by Adam Li on 12/27/2015.<br>&nbsp;</p>
+ *
+ * <p>Created with the help of below resources:
+ * <ul>
+ * <li><a href=https://github.com/cheer4ftc/OpModeCamera>https://github.com/cheer4ftc/OpModeCamera</a>
+ * <li><a href=http://developer.android.com/guide/topics/media/camera.html>
+ *     http://developer.android.com/guide/topics/media/camera.html</a>
+ * <li><a href=http://stackoverflow.com/questions/3841122/android-camera-preview-is-sideways>
+ *     http://stackoverflow.com/questions/3841122/android-camera-preview-is-sideways</a>
+ * <li><a href=http://stackoverflow.com/questions/18149964/best-use-of-handlerthread-over-other-similar-classes/19154438#19154438>
+ *     http://stackoverflow.com/questions/18149964/best-use-of-handlerthread-over-other-similar-classes/19154438#19154438</a>
+ * </ul>
+ * </p>
  */
-// TODO: 12/29/2015 Javadocs 
-public class CameraObject {
+public final class CameraObject {
 
+    //The only config for this class you'll ever need.
+    private int frameLayoutId = R.id.cameraPreview;
+
+
+    //Debug Tag that is never really used in the end
     private static final String TAG = "CameraDebug";
+    //The Camera object
     private static android.hardware.Camera camera = null;
+    //The {@link CameraPreview} object
     private static CameraPreview cameraPreview = null;
-    Context context;
-    int downSample;
-    View rootView;
-    Activity activity;
-    FrameLayout cameraPreviewLayout;
+    //The context of the app
+    private Context context;
+    //The downsampling ratio
+    private int downSample;
+    //The root view of the activity
+    private View rootView;
+    //The main activity
+    private Activity activity;
+    //The FrameLayout object of camera preview
+    private FrameLayout cameraPreviewLayout;
+    //The data from the camera
+    /**
+     * The data from the camera preview. Contains frame width, height, Camera orientation, and YUV and RGB image types.
+     *
+     * <p>See more at {@link CameraData}</p>
+     */
     public CameraData cameraData = new CameraData();
+    //A debug variable
     //public int debug = 0;
+    //The preview callback from the camera to for image data of the live preview
     private android.hardware.Camera.PreviewCallback previewCallback = new android.hardware.Camera.PreviewCallback() {
         @Override
         public void onPreviewFrame(byte[] data, android.hardware.Camera camera) {
@@ -64,21 +99,53 @@ public class CameraObject {
             }
         }
     };
+    //The thread that both opens the camera and runs the previewCallback. "reduces" lag on the main thread.
     private CameraHandlerThread cameraHandlerThread = null;
 
-    //USE FTC>APPCONTEXT
+    /**
+     * Constructor to create the Camera object given the Activity with the preview frame and the downsampling ratio.
+     *
+     * <p><b>NOTE:</b> The activity must have the FrameLayout defined in the frameLayoutId variable!</p>
+     * <p><b>NOTE:</b> This is defined by hardwareMap.appContext in the FTC SDK, but it must be casted to (Activity)</p>
+     * @param activity      The main android activity
+     * @param downSample    The downsampling ratio from {@link Downsample}
+     */
+    public CameraObject(Activity activity, Downsample downSample){
+        this(activity, activity, downSample);
+    }
+
+    /**
+     * Constructor to create the Camera object given the context of the Activity with the preview frame and the downsampling ratio.
+     *
+     * <p><b>NOTE:</b> The activity must have the FrameLayout defined in the frameLayoutId variable!</p>
+     * <p><b>NOTE:</b> This is defined by hardwareMap.appContext in the FTC SDK</p>
+     * @param context       The context of the main android activity
+     * @param downSample    The downsampling ratio from {@link Downsample}
+     */
     public CameraObject(Context context, Downsample downSample){
+        this((Activity) context, context, downSample);
+    }
+
+    /**
+     * Constructor to create the Camera object given the Activity with the preview frame, the Context of the application, and the downsampling ratio.
+     *
+     * <p><b>NOTE:</b> The activity must have the FrameLayout defined in the frameLayoutId variable!</p>
+     * @param activity      The main android activity
+     * @param context       The context of the application
+     * @param downSample    The downsampling ratio from {@link Downsample}
+     */
+    public CameraObject(Activity activity, Context context, Downsample downSample){
         this.context = context;
         this.downSample = downSample.getValue();
-        rootView = ((Activity)context).getWindow().getDecorView().findViewById(android.R.id.content);
-        this.activity = (Activity) context;
+        rootView = activity.getWindow().getDecorView().findViewById(android.R.id.content);
+        this.activity = activity;
     }
 
     /**
      * From the android tutorial, apparently a safe way to get the camera object
      * @return android.hardware.Camera
      */
-    public static android.hardware.Camera getCameraInstance(){
+    private static android.hardware.Camera getCameraInstance(){
         android.hardware.Camera c = null;
         try {
             c = android.hardware.Camera.open(); // attempt to get a Camera instance
@@ -90,11 +157,21 @@ public class CameraObject {
     }
 
     /**
-     * Method to initialize the class's Camera object (which is static)
-     * @return A ReturnValues value
+     * Method to initialize and open the camera. {@link #stopCamera} must be called after finished with this!
+     *
+     * @return
+     * A {@link ReturnValues} value for the camera status.
+     *
+     * <li><b>ReturnValues.SUCCESS:</b> The camera was successfully initialized and opened.
+     * <li><b>ReturnValues.CAMERA_ALREADY_OPEN:</b> The camera was already opened for whatever reason.
+     * If this is returned, an existing object already has the camera.
+     * <li><b>ReturnValues.CAMERA_FAILED_TO_OPEN:</b> The camera failed to open for whatever reason.
+     * <li><b>ReturnValues.CAMERA_DOESNT_EXIST:</b> This device does not have a camera.
+     *
      */
     public ReturnValues initCamera(){
-        if (checkCameraHardware()){
+        //Check of the device has a camera.
+        if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)){
             //Camera exists on device and is not defined yet
             if (camera == null){
                 cameraHandlerThread = new CameraHandlerThread();
@@ -118,13 +195,14 @@ public class CameraObject {
         return ReturnValues.CAMERA_DOESNT_EXIST;
     }
 
+    //reate the on-screen preview of the camera.
     private void createPreview(){
         if(cameraPreview == null){
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     cameraPreview = new CameraPreview(camera, previewCallback);
-                    cameraPreviewLayout = (FrameLayout) rootView.findViewById(R.id.cameraPreview);
+                    cameraPreviewLayout = (FrameLayout) rootView.findViewById(frameLayoutId);
                     cameraPreviewLayout.addView(cameraPreview);
 
                 }
@@ -133,10 +211,11 @@ public class CameraObject {
     }
 
     /**
-     * Method to stop camera. MUST BE CALLED OR ELSE.
+     * Method to stop camera. MUST BE CALLED OR ELSE (that is, if you called {@link #initCamera} at all).
      */
     public void stopCamera() {
         if (camera != null) {
+            // TODO: 12/29/2015 don't let it remove the preview until the last instance of camera has be removed. Use static counter.
             if (cameraPreview != null) {
                 activity.runOnUiThread(new Runnable() {
                     @Override
@@ -157,15 +236,8 @@ public class CameraObject {
     }
 
     /**
-     * Check if this device has a camera, also from the android tutorial
-     * @return Camera's existance
-     */
-    private boolean checkCameraHardware() {
-        return context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA);
-    }
-
-    /**
-     * Based on the code from the android camera tutorial
+     * Based on the code from the android camera tutorial.
+     * Creates the preview for the camera.
      */
     public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
         private SurfaceHolder holder;
@@ -186,6 +258,16 @@ public class CameraObject {
             this.previewCallback = previewCallback;
         }
 
+        /**
+         * This is called immediately after the surface is first created.
+         * Implementations of this should start up whatever rendering code
+         * they desire.  Note that only one thread can ever draw into
+         * a {@link Surface}, so you should not draw into the Surface here
+         * if your normal rendering will be in another thread.
+         *
+         * @param holder The SurfaceHolder whose surface is being created.
+         */
+        @Override
         public void surfaceCreated(SurfaceHolder holder) {
             // The Surface has been created, now tell the camera where to draw the preview.
 
@@ -230,11 +312,19 @@ public class CameraObject {
             }
         }
 
-        public void surfaceDestroyed(SurfaceHolder holder) {
-            // empty. Take care of releasing the Camera preview in your activity.
-        }
-
+        /**
+         * This is called immediately after any structural changes (format or
+         * size) have been made to the surface.  You should at this point update
+         * the imagery in the surface.  This method is always called at least
+         * once, after {@link #surfaceCreated}.
+         *
+         * @param holder The SurfaceHolder whose surface has changed.
+         * @param format The new PixelFormat of the surface.
+         * @param w The new width of the surface.
+         * @param h The new height of the surface.
+         */
         // Adapted from http://stackoverflow.com/questions/3841122/android-camera-preview-is-sideways
+        @Override
         public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
             // If your preview can change or rotate, take care of those events here.
             // Make sure to stop the preview before resizing or reformatting it.
@@ -290,12 +380,27 @@ public class CameraObject {
             }
         }
 
-        public android.hardware.Camera.PreviewCallback getPreview(){
-            return previewCallback;
+        /**
+         * This is called immediately before a surface is being destroyed. After
+         * returning from this call, you should no longer try to access this
+         * surface.  If you have a rendering thread that directly accesses
+         * the surface, you must ensure that thread is no longer touching the
+         * Surface before returning from this function.
+         *
+         * @param holder The SurfaceHolder whose surface is being destroyed.
+         */
+        @Override
+        public void surfaceDestroyed(SurfaceHolder holder) {
+            // empty. Take care of releasing the Camera preview in your activity.
         }
+
+        //public android.hardware.Camera.PreviewCallback getPreview(){
+        //    return previewCallback;
+        //}
     }
 
     //Adapted from http://stackoverflow.com/questions/18149964/best-use-of-handlerthread-over-other-similar-classes/19154438#19154438
+    //Creats a seperate thread for the camera read and stuff
     private class CameraHandlerThread extends HandlerThread {
         Handler mHandler = null;
 
@@ -337,7 +442,10 @@ public class CameraObject {
         }
     }
 
-    //Something
+    /**
+     * Camera Data
+     * // TODO: 12/29/2015 Complete this javadoc
+     */
     public class CameraData{
         private int w, h;
         private YuvImage yuvImage;
@@ -409,6 +517,9 @@ public class CameraObject {
         }
     }
 
+    /**
+     * The enumeration for the orientations of the camera.
+     */
     public enum Orientation{
         PORTRAIT,
         LANDSCAPE,
@@ -416,6 +527,9 @@ public class CameraObject {
         PORTRAIT_FLIPPED
     }
 
+    /**
+     * An enumeration of downsampling sizes for the camera.
+     */
     public enum Downsample{
         FULL(1),
         HALF(2),

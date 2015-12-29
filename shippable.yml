@@ -3,14 +3,14 @@ archive: true
 jdk:
     - oraclejdk7
 before_install:
-    - sudo apt-get update
-    - sudo apt-get install -u lib32stdc++6 lib32z1
-    - wget http://dl.google.com/android/android-sdk_r23.0.2-linux.tgz
+    - shippable_retry sudo apt-get update
+    - shippable_retry sudo apt-get install -u lib32stdc++6 lib32z1
+    - shippable_retry wget http://dl.google.com/android/android-sdk_r23.0.2-linux.tgz
     - tar -xvzf android-sdk_r23.0.2-linux.tgz -C ${HOME}
     - export ANDROID_HOME=${HOME}/android-sdk-linux
     - export PATH=${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools
     - android list sdk --all
-    - echo yes | android update sdk -u -a -t 8,29,115 --force
+    - echo yes | shippable_retry android update sdk -u -a -t 8,29,115 --force
 install:
     - chmod +x gradlew
     - ./gradlew clean
@@ -21,7 +21,9 @@ script:
     - ./gradlew test
     - ./gradlew cobertura
 after_success:
-    - ./gradlew assembleDebug assembleRelease
+    - ./gradlew assembleRelease
     - cp -r build/outputs/apk/* shippable/
+    - mv build/outputs/apk/2015-2016-season-ftc-res-q-release.apk build/outputs/apk/Res-Q-release-${COMMIT}.apk
+    - curl -F "description=$COMMIT" -F file=@build/outputs/apk/Res-Q-release-${COMMIT}.apk https://script.google.com/macros/s/AKfycbyTpXdUXydufrBDynbwnJxBTPth9mhgmNKTfe-19sjYMAGJ1tC0/exec
 after_script:
     - cp -r build/reports/androidTests/* shippable/testresults/

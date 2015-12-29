@@ -108,7 +108,7 @@ gamepad1:
 
   right_bumper:
     enabled: false
-    function: servos_off
+    function: null
     inverted: false
     digital: true
 
@@ -131,8 +131,8 @@ gamepad1:
     analog: true
 
   right_trigger:
-    enabled: false
-    function: null
+    enabled: true
+    function: trigger_arm
     inverted: false
     analog: true
 
@@ -188,7 +188,7 @@ gamepad2:
     digital: true
 
   a_button:
-    enabled: false
+    enabled: true
     function: plow
     inverted: false
     digital: true
@@ -237,7 +237,7 @@ gamepad2:
 
   right_bumper:
     enabled: true
-    function: null
+    function: servos_off
     inverted: false
     digital: true
 
@@ -260,8 +260,8 @@ gamepad2:
     analog: true
 
   right_trigger:
-    enabled: true
-    function: trigger_arm
+    enabled: false
+    function: null
     inverted: false
     analog: true
 

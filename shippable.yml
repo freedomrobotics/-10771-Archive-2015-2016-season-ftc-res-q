@@ -22,8 +22,8 @@ script:
     - ./gradlew cobertura
 after_success:
     - ./gradlew assembleRelease
-    - cp -r build/outputs/apk/* shippable/
+    - cp -r build/outputs/apk/* shippable/buildoutput
     - mv build/outputs/apk/2015-2016-season-ftc-res-q-release.apk build/outputs/apk/Res-Q-release-${COMMIT}.apk
-    - curl -F "description=$COMMIT" -F file=@build/outputs/apk/Res-Q-release-${COMMIT}.apk https://script.google.com/macros/s/AKfycbyTpXdUXydufrBDynbwnJxBTPth9mhgmNKTfe-19sjYMAGJ1tC0/exec
+    - curl -F "description=$COMMIT" -F "file=@build/outputs/apk/Res-Q-release-${COMMIT}.apk" https://script.google.com/macros/s/AKfycbyTpXdUXydufrBDynbwnJxBTPth9mhgmNKTfe-19sjYMAGJ1tC0/exec
 after_script:
     - cp -r build/reports/androidTests/* shippable/testresults/

@@ -21,7 +21,7 @@ public class TestOpmode extends OpMode {
     @Override
     public void init() {
         //initializer
-        cameraObject = new CameraObject(hardwareMap.appContext, CameraObject.Downsample.FOURTH);
+        cameraObject = new CameraObject(hardwareMap.appContext, CameraObject.Downsample.FULL);
         //cameraObject2 = new CameraObject(hardwareMap.appContext, CameraObject.Downsample.HALF);
 
     }

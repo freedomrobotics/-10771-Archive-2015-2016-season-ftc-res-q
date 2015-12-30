@@ -45,19 +45,15 @@ import java.io.IOException;
  * <ul>
  * <li><a href=https://github.com/cheer4ftc/OpModeCamera>https://github.com/cheer4ftc/OpModeCamera</a>
  * <li><a href=http://developer.android.com/guide/topics/media/camera.html>
- *     http://developer.android.com/guide/topics/media/camera.html</a>
+ * http://developer.android.com/guide/topics/media/camera.html</a>
  * <li><a href=http://stackoverflow.com/questions/3841122/android-camera-preview-is-sideways>
- *     http://stackoverflow.com/questions/3841122/android-camera-preview-is-sideways</a>
+ * http://stackoverflow.com/questions/3841122/android-camera-preview-is-sideways</a>
  * <li><a href=http://stackoverflow.com/questions/18149964/best-use-of-handlerthread-over-other-similar-classes/19154438#19154438>
- *     http://stackoverflow.com/questions/18149964/best-use-of-handlerthread-over-other-similar-classes/19154438#19154438</a>
+ * http://stackoverflow.com/questions/18149964/best-use-of-handlerthread-over-other-similar-classes/19154438#19154438</a>
  * </ul>
  * </p>
  */
 public final class CameraObject {
-
-    //The only config for this class you'll ever need.
-    private int frameLayoutId = R.id.cameraPreview;
-
 
     //Debug Tag that is never really used in the end
     private static final String TAG = "CameraDebug";
@@ -65,6 +61,14 @@ public final class CameraObject {
     private static android.hardware.Camera camera = null;
     //The {@link CameraPreview} object
     private static CameraPreview cameraPreview = null;
+    /**
+     * The data from the camera preview. Contains frame width, height, Camera orientation, and YUV and RGB image types.
+     * <p/>
+     * <p>See more at {@link CameraData}</p>
+     */
+    public CameraData cameraData = new CameraData();
+    //The only config for this class you'll ever need.
+    private int frameLayoutId = R.id.cameraPreview;
     //The context of the app
     private Context context;
     //The downsampling ratio
@@ -73,15 +77,9 @@ public final class CameraObject {
     private View rootView;
     //The main activity
     private Activity activity;
+    //The data from the camera
     //The FrameLayout object of camera preview
     private FrameLayout cameraPreviewLayout;
-    //The data from the camera
-    /**
-     * The data from the camera preview. Contains frame width, height, Camera orientation, and YUV and RGB image types.
-     *
-     * <p>See more at {@link CameraData}</p>
-     */
-    public CameraData cameraData = new CameraData();
     //A debug variable
     //public int debug = 0;
     //The preview callback from the camera to for image data of the live preview
@@ -104,38 +102,42 @@ public final class CameraObject {
 
     /**
      * Constructor to create the Camera object given the Activity with the preview frame and the downsampling ratio.
-     *
+     * <p/>
      * <p><b>NOTE:</b> The activity must have the FrameLayout defined in the frameLayoutId variable!</p>
      * <p><b>NOTE:</b> This is defined by hardwareMap.appContext in the FTC SDK, but it must be casted to (Activity)</p>
-     * @param activity      The main android activity
-     * @param downSample    The downsampling ratio from {@link Downsample}
+     *
+     * @param activity   The main android activity
+     * @param downSample The downsampling ratio from {@link Downsample}
      */
-    public CameraObject(Activity activity, Downsample downSample){
+    public CameraObject(Activity activity, Downsample downSample) {
         this(activity, activity, downSample);
     }
 
     /**
      * Constructor to create the Camera object given the context of the Activity with the preview frame and the downsampling ratio.
-     *
+     * <p/>
      * <p><b>NOTE:</b> The activity must have the FrameLayout defined in the frameLayoutId variable!</p>
      * <p><b>NOTE:</b> This is defined by hardwareMap.appContext in the FTC SDK</p>
-     * @param context       The context of the main android activity
-     * @param downSample    The downsampling ratio from {@link Downsample}
+     *
+     * @param context    The context of the main android activity
+     * @param downSample The downsampling ratio from {@link Downsample}
      */
-    public CameraObject(Context context, Downsample downSample){
+    public CameraObject(Context context, Downsample downSample) {
         this((Activity) context, context, downSample);
     }
 
     /**
      * Constructor to create the Camera object given the Activity with the preview frame, the Context of the application, and the downsampling ratio.
-     *
+     * <p/>
      * <p><b>NOTE:</b> The activity must have the FrameLayout defined in the frameLayoutId variable!</p>
-     * @param activity      The main android activity
-     * @param context       The context of the application
-     * @param downSample    The downsampling ratio from {@link Downsample}
+     *
+     * @param activity   The main android activity
+     * @param context    The context of the application
+     * @param downSample The downsampling ratio from {@link Downsample}
      */
-    public CameraObject(Activity activity, Context context, Downsample downSample){
+    public CameraObject(Activity activity, Context context, Downsample downSample) {
         this.context = context;
+        cameraData.setDownSample(downSample);
         this.downSample = downSample.getValue();
         rootView = activity.getWindow().getDecorView().findViewById(android.R.id.content);
         this.activity = activity;
@@ -143,14 +145,14 @@ public final class CameraObject {
 
     /**
      * From the android tutorial, apparently a safe way to get the camera object
+     *
      * @return android.hardware.Camera
      */
-    private static android.hardware.Camera getCameraInstance(){
+    private static android.hardware.Camera getCameraInstance() {
         android.hardware.Camera c = null;
         try {
             c = android.hardware.Camera.open(); // attempt to get a Camera instance
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             // Camera is not available (in use or does not exist)
         }
         return c; // returns null if camera is unavailable
@@ -159,28 +161,25 @@ public final class CameraObject {
     /**
      * Method to initialize and open the camera. {@link #stopCamera} must be called after finished with this!
      *
-     * @return
-     * A {@link ReturnValues} value for the camera status.
-     *
+     * @return A {@link ReturnValues} value for the camera status.
      * <li><b>ReturnValues.SUCCESS:</b> The camera was successfully initialized and opened.
      * <li><b>ReturnValues.CAMERA_ALREADY_OPEN:</b> The camera was already opened for whatever reason.
      * If this is returned, an existing object already has the camera.
      * <li><b>ReturnValues.CAMERA_FAILED_TO_OPEN:</b> The camera failed to open for whatever reason.
      * <li><b>ReturnValues.CAMERA_DOESNT_EXIST:</b> This device does not have a camera.
-     *
      */
-    public ReturnValues initCamera(){
+    public ReturnValues initCamera() {
         //Check of the device has a camera.
-        if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)){
+        if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
             //Camera exists on device and is not defined yet
-            if (camera == null){
+            if (camera == null) {
                 cameraHandlerThread = new CameraHandlerThread();
 
                 synchronized (cameraHandlerThread) {
                     cameraHandlerThread.openCamera();
                 }
                 //Camera exists on device, but for whatever reason, it could not open
-                if (camera == null){
+                if (camera == null) {
                     return ReturnValues.CAMERA_FAILED_TO_OPEN;
                 }
                 //Camera exists on device and was opened, so create preview
@@ -196,8 +195,8 @@ public final class CameraObject {
     }
 
     //reate the on-screen preview of the camera.
-    private void createPreview(){
-        if(cameraPreview == null){
+    private void createPreview() {
+        if (cameraPreview == null) {
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -228,10 +227,66 @@ public final class CameraObject {
             }
             camera.stopPreview();
             camera.setPreviewCallback(null);
-            if(camera != null) {
+            if (camera != null) {
                 camera.release();
             }
             camera = null;
+        }
+    }
+
+    /**
+     * <p>The enumeration for the orientations of the camera. (Goes counterClockwise)</p>
+     * <p/>
+     * Inside:
+     * <ul>
+     * <li>PORTRAIT
+     * <li>LANDSCAPE
+     * <li>PORTRAIT_FLIPPED
+     * <li>LANDSCAPE_FLIPPED
+     * </ul>
+     */
+    public enum Orientation {
+        PORTRAIT,
+        LANDSCAPE,
+        PORTRAIT_FLIPPED,
+        LANDSCAPE_FLIPPED
+    }
+
+    /**
+     * <p>An enumeration of downsampling ratios for the camera.</p>
+     * <p/>
+     * Inside:
+     * <ul>
+     * <li>FULL
+     * <li>HALF
+     * <li>FOURTH
+     * <li>EIGHTH
+     * <li>SIXTEENTH
+     * <li>BY32
+     * <li>BY64<br>&nbsp;
+     * <li>{@link #getValue()} Returns the numerical(int) ratio associated with the value.
+     * </ul>
+     */
+    public enum Downsample {
+        FULL(1),
+        HALF(2),
+        FOURTH(4),
+        EIGHTH(8),
+        SIXTEENTH(16),
+        BY32(32),
+        BY64(64);
+
+        private final int value;
+
+        Downsample(final int value) {
+            this.value = value;
+        }
+
+        /**
+         * Returns the numerical(int) ratio associated with the value.
+         */
+        public int getValue() {
+            return value;
         }
     }
 
@@ -273,7 +328,7 @@ public final class CameraObject {
 
             //Check because if user spams, the thing crashes since surface might be removed before this is called.
             //Doesn't stop the crash, just makes it less likely.
-            if (this.holder.getSurface() == null){
+            if (this.holder.getSurface() == null) {
                 // preview surface does not exist
                 return;
             }
@@ -281,23 +336,19 @@ public final class CameraObject {
             android.hardware.Camera.Parameters parameters = camera.getParameters();
             Display display = activity.getWindowManager().getDefaultDisplay();
 
-            if(display.getRotation() == Surface.ROTATION_0)
-            {
+            if (display.getRotation() == Surface.ROTATION_0) {
                 cameraData.setOrientation(Orientation.PORTRAIT);
             }
 
-            if(display.getRotation() == Surface.ROTATION_90)
-            {
+            if (display.getRotation() == Surface.ROTATION_90) {
                 cameraData.setOrientation(Orientation.LANDSCAPE);
             }
 
-            if(display.getRotation() == Surface.ROTATION_180)
-            {
+            if (display.getRotation() == Surface.ROTATION_180) {
                 cameraData.setOrientation(Orientation.PORTRAIT_FLIPPED);
             }
 
-            if(display.getRotation() == Surface.ROTATION_270)
-            {
+            if (display.getRotation() == Surface.ROTATION_270) {
                 cameraData.setOrientation(Orientation.LANDSCAPE_FLIPPED);
             }
 
@@ -320,8 +371,8 @@ public final class CameraObject {
          *
          * @param holder The SurfaceHolder whose surface has changed.
          * @param format The new PixelFormat of the surface.
-         * @param w The new width of the surface.
-         * @param h The new height of the surface.
+         * @param w      The new width of the surface.
+         * @param h      The new height of the surface.
          */
         // Adapted from http://stackoverflow.com/questions/3841122/android-camera-preview-is-sideways
         @Override
@@ -329,7 +380,7 @@ public final class CameraObject {
             // If your preview can change or rotate, take care of those events here.
             // Make sure to stop the preview before resizing or reformatting it.
 
-            if (this.holder.getSurface() == null){
+            if (this.holder.getSurface() == null) {
                 // preview surface does not exist
                 return;
             }
@@ -337,7 +388,7 @@ public final class CameraObject {
             // stop preview before making changes
             try {
                 camera.stopPreview();
-            } catch (Exception e){
+            } catch (Exception e) {
                 // ignore: tried to stop a non-existent preview
             }
 
@@ -348,23 +399,19 @@ public final class CameraObject {
             // FIXME: 12/28/2015 Doesn't reorient the camera, but doesn't matter for now
             Display display = activity.getWindowManager().getDefaultDisplay();
 
-            if(display.getRotation() == Surface.ROTATION_0)
-            {
+            if (display.getRotation() == Surface.ROTATION_0) {
                 cameraData.setOrientation(Orientation.PORTRAIT);
             }
 
-            if(display.getRotation() == Surface.ROTATION_90)
-            {
+            if (display.getRotation() == Surface.ROTATION_90) {
                 cameraData.setOrientation(Orientation.LANDSCAPE);
             }
 
-            if(display.getRotation() == Surface.ROTATION_180)
-            {
+            if (display.getRotation() == Surface.ROTATION_180) {
                 cameraData.setOrientation(Orientation.PORTRAIT_FLIPPED);
             }
 
-            if(display.getRotation() == Surface.ROTATION_270)
-            {
+            if (display.getRotation() == Surface.ROTATION_270) {
                 cameraData.setOrientation(Orientation.LANDSCAPE_FLIPPED);
             }
 
@@ -375,7 +422,7 @@ public final class CameraObject {
                 camera.setPreviewDisplay(this.holder);
                 camera.startPreview();
 
-            } catch (Exception e){
+            } catch (Exception e) {
                 Log.d(TAG, "Error starting camera preview: " + e.getMessage());
             }
         }
@@ -435,47 +482,82 @@ public final class CameraObject {
             });
             try {
                 wait();
-            }
-            catch (InterruptedException e) {
+            } catch (InterruptedException e) {
                 Log.w(TAG, "Camera open wait was interrupted");
             }
         }
     }
 
     /**
-     * Camera Data
-     * // TODO: 12/29/2015 Complete this javadoc
+     * <p><b>Camera Data</b></p>
+     * <p/>
+     * <p>This class structures the data from the camera preview. Contains frame width, height, Camera orientation, and YUV and RGB image types.<br>&nbsp;</p>
+     * <p/>
+     * Inside:
+     * <ul>
+     * <li>{@link #getDownSample()}
+     * <li>{@link #getWidth()}
+     * <li>{@link #getHeight()}
+     * <li>{@link #getOrientation()}
+     * <li>{@link #setOrientation setOrientation(}{@link Orientation}{@link #setOrientation )}
+     * <li>{@link #getYuvImage()}
+     * <li>{@link #getRgbImage()}
+     * </ul>
      */
-    public class CameraData{
+    public class CameraData {
         private int w, h;
+        private Downsample d = null;
         private YuvImage yuvImage;
         private Orientation o = Orientation.PORTRAIT;
 
-        public int getWidth(){
+        /**
+         * @return The downsampling ratio (see {@link Downsample})
+         */
+        public Downsample getDownSample() {
+            return d;
+        }
+
+        protected void setDownSample(Downsample d) {
+            this.d = d;
+        }
+
+        /**
+         * @return The width of the camera preview data as an int
+         */
+        public int getWidth() {
             return w;
         }
 
-        public void setWidth(int w){
+        protected void setWidth(int w) {
             this.w = w;
         }
 
-        public int getHeight(){
+        /**
+         * @return The height of the camera preview data as an int
+         */
+        public int getHeight() {
             return h;
         }
 
-        public void setHeight(int h){
+        protected void setHeight(int h) {
             this.h = h;
         }
 
-        public YuvImage getYuvImage(){
+        /**
+         * @return The YUV image data as a {@link YuvImage}
+         */
+        public YuvImage getYuvImage() {
             return yuvImage;
         }
 
-        public void setYuvImage(YuvImage data){
+        protected void setYuvImage(YuvImage data) {
             this.yuvImage = data;
         }
 
-        public Bitmap getRgbImage(){
+        /**
+         * @return The RGB image data as a {@link Bitmap}
+         */
+        public Bitmap getRgbImage() {
             Bitmap rgbImage;
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             yuvImage.compressToJpeg(new Rect(0, 0, w, h), 0, out);
@@ -489,60 +571,35 @@ public final class CameraObject {
             return rgbImage;
         }
 
-        public void setOrientation(Orientation o){
-            if(o == Orientation.PORTRAIT)
-            {
+        /**
+         * @return The orientation of the camera preview as a {@link Orientation}
+         */
+        public Orientation getOrientation() {
+            return o;
+        }
+
+        /**
+         * Changes the orientation of the camera preview.
+         *
+         * @param o {@link Orientation}
+         */
+        public void setOrientation(Orientation o) {
+            if (o == Orientation.PORTRAIT) {
                 camera.setDisplayOrientation(90);
             }
 
-            if(o == Orientation.LANDSCAPE)
-            {
+            if (o == Orientation.LANDSCAPE) {
                 camera.setDisplayOrientation(0);
             }
 
-            if(o == Orientation.PORTRAIT_FLIPPED)
-            {
+            if (o == Orientation.PORTRAIT_FLIPPED) {
                 camera.setDisplayOrientation(270);
             }
 
-            if(o == Orientation.LANDSCAPE_FLIPPED)
-            {
+            if (o == Orientation.LANDSCAPE_FLIPPED) {
                 camera.setDisplayOrientation(180);
             }
             this.o = o;
         }
-
-        public Orientation getOrientation(){
-            return o;
-        }
-    }
-
-    /**
-     * The enumeration for the orientations of the camera.
-     */
-    public enum Orientation{
-        PORTRAIT,
-        LANDSCAPE,
-        LANDSCAPE_FLIPPED,
-        PORTRAIT_FLIPPED
-    }
-
-    /**
-     * An enumeration of downsampling sizes for the camera.
-     */
-    public enum Downsample{
-        FULL(1),
-        HALF(2),
-        FOURTH(4),
-        EIGHTH(8),
-        SIXTEENTH(16);
-
-        private final int value;
-
-        Downsample(final int value){
-            this.value = value;
-        }
-
-        public int getValue() { return value; }
     }
 }

@@ -73,6 +73,7 @@ public final class CameraObject {
     private Context context;
     //The downsampling ratio
     private int downSample;
+    private int downSampleBitmap;
     //The root view of the activity
     private View rootView;
     //The main activity
@@ -138,7 +139,8 @@ public final class CameraObject {
     public CameraObject(Activity activity, Context context, Downsample downSample) {
         this.context = context;
         cameraData.setDownSample(downSample);
-        this.downSample = downSample.getValue();
+        this.downSample = downSample.getPreview();
+        this.downSampleBitmap = downSample.getRGB();
         rootView = activity.getWindow().getDecorView().findViewById(android.R.id.content);
         this.activity = activity;
     }
@@ -264,29 +266,48 @@ public final class CameraObject {
      * <li>SIXTEENTH
      * <li>BY32
      * <li>BY64<br>&nbsp;
+     * <li>{@link #getPreview()} Returns the numerical(int) ratio associated with the value for the camera preview.
+     * <li>{@link #getRGB()} Returns the numerical(int) ratio associated with the value for the RGB bitmap.
      * <li>{@link #getValue()} Returns the numerical(int) ratio associated with the value.
      * </ul>
      */
     public enum Downsample {
-        FULL(1),
-        HALF(2),
-        FOURTH(4),
-        EIGHTH(8),
-        SIXTEENTH(16),
-        BY32(32),
-        BY64(64);
+        FULL(1, 1),
+        HALF(2, 1),
+        FOURTH(4, 1),
+        EIGHTH(8, 1),
+        SIXTEENTH(8, 2),
+        BY32(8, 4),
+        BY64(8, 8),
+        BY128(8, 16);
 
-        private final int value;
+        private final int preview;
+        private final int RGB;
 
-        Downsample(final int value) {
-            this.value = value;
+        Downsample(final int preview, final int RGB) {
+            this.preview = preview;
+            this.RGB = RGB;
+        }
+
+        /**
+         * Returns the numerical(int) ratio associated with the value for the camera preview.
+         */
+        public int getPreview() {
+            return preview;
+        }
+
+        /**
+         * Returns the numerical(int) ratio associated with the value for the RGB bitmap.
+         */
+        public int getRGB() {
+            return RGB;
         }
 
         /**
          * Returns the numerical(int) ratio associated with the value.
          */
         public int getValue() {
-            return value;
+            return preview*RGB;
         }
     }
 
@@ -557,7 +578,9 @@ public final class CameraObject {
         /**
          * @return The RGB image data as a {@link Bitmap}
          */
+        //From cheer4ftc
         public Bitmap getRgbImage() {
+            if (yuvImage == null) return null;
             Bitmap rgbImage;
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             yuvImage.compressToJpeg(new Rect(0, 0, w, h), 0, out);
@@ -565,7 +588,7 @@ public final class CameraObject {
 
             BitmapFactory.Options opt;
             opt = new BitmapFactory.Options();
-            opt.inSampleSize = downSample;
+            opt.inSampleSize = downSampleBitmap;
 
             rgbImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length, opt);
             return rgbImage;

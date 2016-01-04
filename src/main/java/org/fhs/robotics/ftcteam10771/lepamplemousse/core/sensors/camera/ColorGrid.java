@@ -17,35 +17,50 @@ import java.util.concurrent.TimeUnit;
  * Construct with a size of 1 to somewhat mimic a color sensor. (not recommended;
  * recommended instead is to construct with some grid and take the center cell as
  * the color sensor)
+ * <p/>
+ * Construct to initialize and start. Call {@link #getGrid} to get the whole grid.
+ * Call {@link #getCell} to get a part of the grid. Call {@link #closeGrid()} to
+ * close the grid (duh!).
  */
-// TODO: 1/1/2016 Organization, style, and javadocs. I also understand some of my numbers might
+// TODO: 1/1/2016 Organization and style. I also understand some of my numbers might
 // TODO:          be backwards and that needs to be accounted for as well.
 public class ColorGrid extends Camera{
 
+    //The grid of values
     private GridValue[][] grid = null;
+    //The size of the grid.
     private int width, height;
 
-    public int counter = 0;
-
-    ScheduledExecutorService executorService;
-    Runnable gridUpdate = new Runnable() {
+    // The scheduled executor service that runs the separate thread with the updateGrid function.
+    private ScheduledExecutorService executorService;
+    //The runnable that runs the updateGrid function.
+    private Runnable gridUpdate = new Runnable() {
         public void run() {
             updateGrid();
         }
     };
 
-    /*Timer timer = new Timer();
-    TimerTask gridUpdate = new TimerTask() {
-        @Override
-        public void run() {
-            updateGrid();
-        }
-    };*/
-
+    /**
+     * Constructor to create a {@link ColorGrid} based on the phones back camera.
+     * Will create a square grid given a single side.
+     *
+     * @param side          Length of one side of the grid.
+     * @param refreshRate   How many times per second to refresh the grid.
+     * @param context       The context of the app (hardwareMap.appContext)
+     */
     public ColorGrid(int side, float refreshRate, Context context){
         this(side, side, refreshRate, context);
     }
 
+    /**
+     * Constructor to create a {@link ColorGrid} based on the phones back camera.
+     * Will create a rectangular grid given the length of two sides
+     *
+     * @param width         Width of the grid.
+     * @param height        Height of the grid.
+     * @param refreshRate   How many times per second to refresh the grid.
+     * @param context       The context of the app (hardwareMap.appContext)
+     */
     public ColorGrid(int width, int height, float refreshRate, Context context){
         grid = new GridValue[width][height];
         for (int w = 0; w < width; w++){
@@ -56,12 +71,12 @@ public class ColorGrid extends Camera{
         this.width = width;
         this.height = height;
         //calculate the nearest downsampling ratio for the camera and set it to the second nearest
-        // (unless it's a really large ratio)
+        // (unless it's a really large ratio).
         CameraObject.Downsample ds;
-        int GLS = (width > height) ? width : height;
-        int CLS = (cameraFullX < cameraFullY) ? cameraFullX : cameraFullY;
-        int w = CLS/GLS;
-        int c = (int) Math.floor(Math.log(w)/Math.log(2)) - 1;
+        int gridGreatestSide = (width > height) ? width : height;
+        int cameraLeastSide = (cameraFullX < cameraFullY) ? cameraFullX : cameraFullY;
+        int w = cameraLeastSide/gridGreatestSide;
+        int c = (int) Math.floor(Math.log(w)/Math.log(2)) - 1;      //log-base2
         switch (c){
             case 0:
                 ds = CameraObject.Downsample.FULL;
@@ -95,23 +110,26 @@ public class ColorGrid extends Camera{
         //initialize the camera with the downsample.
         //Bad style ignoring the return.
         createCameraObject(context, ds);
+        //and create the thread and the timed intervals.
         executorService = Executors.newScheduledThreadPool(1);
         executorService.scheduleAtFixedRate(gridUpdate, (long)((1.0f / refreshRate) / Static.nanoSecondsToSeconds), (long)((1.0f / refreshRate) / Static.nanoSecondsToSeconds), TimeUnit.NANOSECONDS);
-        //timer.scheduleAtFixedRate(gridUpdate, 2000, (long)((1.0f / refreshRate) * 1000.0f));
 
     }
 
+    //Simple function to iteratively update the grid
+    //An alternative would've been to create individual threads for each cell or use something like 4 threads to update a section of the grid.
     private void updateGrid(){
         Bitmap preview = cameraObject.cameraData.getRgbImage();
         if (preview == null) return;
+        //It's fine to lose a pixel. This just makes sure that I can't exceed the width or height of the bitmap in the next part.
         int cellX = (preview.getWidth() / width) - 1;
         int cellY = (preview.getHeight() / width) - 1;
         for (int w = 0; w < width; w++){
             for (int h = 0; h < height; h++){
+                //Annoying one liners.
                 grid[w][h].setColor(getAverageColor(Bitmap.createBitmap(preview, w*cellX, h*cellY, cellX, cellY)));
             }
         }
-        //counter++;
     }
 
     //http://stackoverflow.com/a/25071613
@@ -147,17 +165,45 @@ public class ColorGrid extends Camera{
                 blueBucket / pixelCount);
     }
 
+    /**
+     * Returns the {@link GridValue} of a single cell in the ColorGrid
+     * @param x         The X value (along the width) of the cell in the grid.
+     * @param y         The Y value (along the height) of the cell in the grid.
+     * @return          The {@link GridValue} of the given cell in the ColorGrid.
+     */
     public GridValue getCell(int x, int y){
         return grid[x][y];
     }
 
+    /**
+     * Returns the {@link GridValue} array that makes up the ColorGrid
+     * @return The multidimensional {@link GridValue} array that makes up the ColorGrid
+     */
+    public GridValue[][] getGrid(){
+        return grid;
+    }
+
+    /**
+     * Stops the grid.
+     */
     public void closeGrid(){
+        //Must stop the scheduled thread! or else! (nothing will happen, but it's still better to do so)
         executorService.shutdown();
-        //timer.cancel();
-        //timer.purge();
+        //Stop this "instance" of a camera object
         stopCamera();
     }
 
+    /**
+     * <p>A simple container class that holds the RGB values of a given cell in the grid.</p>
+     * <p/>
+     * Inside:
+     * <ul>
+     * <li>{@link #red()} Returns the red value of the cell.
+     * <li>{@link #green()} Returns the green value of the cell.
+     * <li>{@link #blue()} Returns the blue value of the cell.
+     * <li>{@link #colorInt()} Returns an integer for use with any function of the {@link android.graphics.Color} class.
+     * </ul>
+     */
     public class GridValue{
         private int r, g, b;
 
@@ -172,15 +218,31 @@ public class ColorGrid extends Camera{
             g = Color.green(c);
             b = Color.blue(c);
         }
+
+        /**
+         * @return The red value of the cell.
+         */
         public int red(){
             return r;
         }
+
+        /**
+         * @return The green value of the cell.
+         */
         public int green() {
             return g;
         }
+
+        /**
+         * @return The blue value of the cell.
+         */
         public int blue() {
             return b;
         }
+
+        /**
+         * @return An integer for use with any function of the {@link android.graphics.Color} class.
+         */
         public int colorInt(){
             return Color.rgb(r, g, b);
         }

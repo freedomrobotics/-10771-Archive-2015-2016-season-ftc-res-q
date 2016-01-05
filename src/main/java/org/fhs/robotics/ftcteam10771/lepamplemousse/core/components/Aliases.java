@@ -1,7 +1,5 @@
 package org.fhs.robotics.ftcteam10771.lepamplemousse.core.components;
 
-import android.hardware.Camera;
-
 import com.qualcomm.robotcore.hardware.AccelerationSensor;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -10,6 +8,8 @@ import com.qualcomm.robotcore.hardware.IrSeekerSensor;
 import com.qualcomm.robotcore.hardware.LightSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
+
+import org.fhs.robotics.ftcteam10771.lepamplemousse.core.sensors.camera.Camera;
 
 import java.util.HashMap;
 import java.util.List;
@@ -187,6 +187,18 @@ public class Aliases {
         for (int i = 0; i < key.size(); i++) {
             cameraMap.put(key.get(i), camera);
         }
+    }
+
+    public static void clearAll(){
+        motorMap.clear();
+        servoMap.clear();
+        touchSensorMap.clear();
+        lightSensorMap.clear();
+        colorSensorMap.clear();
+        irSeekerMap.clear();
+        gyrometerMap.clear();
+        accelerometerMap.clear();
+        cameraMap.clear();
     }
 
     //endregion

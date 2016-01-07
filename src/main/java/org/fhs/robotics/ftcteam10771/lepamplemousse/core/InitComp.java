@@ -150,7 +150,7 @@ public class InitComp {
                     id++;
                 }
                 if (components.deviceEnabled(device, device, id)) {
-                    Map<String, Object> TcameraObj = components.getSubdevice(device, device, i);
+                    Map<String, Object> TcameraObj = components.getSubdevice(device, device, id);
                     String func = TcameraObj.get("function").toString();
                     if (func.equals("color_grid")){
                         if (TcameraObj.get("extra") == null) continue;
@@ -165,7 +165,7 @@ public class InitComp {
                             gridX = gridY = (Integer)extraParam.get("grid_side");
                         }
                         if (extraParam.get("refresh_rate") != null){
-                            refresh = (Float)extraParam.get("refresh_rate");
+                            refresh = ((Double)extraParam.get("refresh_rate")).floatValue();
                         }
                         if (gridX <= 0 || refresh <= 0.0f){
                             continue;

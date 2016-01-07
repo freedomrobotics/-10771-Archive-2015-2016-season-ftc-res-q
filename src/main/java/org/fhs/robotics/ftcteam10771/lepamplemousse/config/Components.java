@@ -395,7 +395,8 @@ public class Components extends Config {
     public String getMapName(String deviceType, String deviceName, Integer id) {
         Map device;
         if ((device = getSubdevice(deviceType, deviceName, id)) != null) {
-            return device.get("map_name").toString();
+            if (device.get("map_name") != null)
+                return device.get("map_name").toString();
         }
         return null;
     }
@@ -468,7 +469,8 @@ public class Components extends Config {
         if ((device = getSubdevice(deviceType, deviceName, id)) != null) {
             if ((device.get("alias")) != null) {
                 alias = (List<String>) device.get("alias");
-                alias.add(getMapName(deviceType, deviceName, id));
+                if (getMapName(deviceType, deviceName, id) != null)
+                    alias.add(getMapName(deviceType, deviceName, id));
             }
         }
         return alias;

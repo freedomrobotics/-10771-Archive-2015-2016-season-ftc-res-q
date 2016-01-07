@@ -110,23 +110,18 @@ accelerometers:
     # map_name: main_accelerometer
 
 # Camera
-# Valid function types:
-# color_grid    =     a grid of colors returned from the camera. Extra parameters are grid_x,
-#                     grid_y, grid_side, and refresh_rate. grid_x and grid_y set the grid width
-#                     & height; grid_side overrides grid_x and grid_y to set both width & height;
-#                     refresh_rate sets how many times per second the grid is going to update itself.
-#                     Either grid_x and grid_y or grid_size required. refresh_rate required. Will
-#                     silently fail to load otherwise.
-#
-# NOTE: If function is undefined, it will silently assume that the device is disabled.
 camera:
   camera1:
     enabled: false
-    function: color_grid
-    extra:
-      grid_x: 3
-      grid_y: 3
-      grid_side: 3
-      refresh_rate: 30
-    alias:
+    using_phone: true
+    enabled_functions:
+      - light_sensor
+      - color_sensor
       - color_grid
+      - ir_sensor
+      - object_detection
+    # map_name: main_camera
+    alias:
+      - camera1
+      - phone_camera
+

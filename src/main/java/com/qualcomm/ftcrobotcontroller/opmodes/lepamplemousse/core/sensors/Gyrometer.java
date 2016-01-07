@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.GyroSensor;
 /**
  * Allows for polling of the phone's built-in gyrometer.
  * todo allow for uncalibrated version without noise and drift compensation
+ * FIXME THIS IS BROKEN
  */
 //maybe  and provides a listener to "interrupt" using
 public class Gyrometer extends GyroSensor implements SensorEventListener {

@@ -1,66 +1,111 @@
 package com.qualcomm.ftcrobotcontroller.opmodes;
 
-import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.config.Components;
-import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.core.InitComp;
-import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.core.StartValues;
-import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.core.sensors.Accelerometer;
-import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.core.sensors.Gyrometer;
-import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.modes.Controlled;
-import com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.vars.ReturnValues;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+
+import org.fhs.robotics.ftcteam10771.lepamplemousse.config.Components;
+import org.fhs.robotics.ftcteam10771.lepamplemousse.config.Controllers;
+import org.fhs.robotics.ftcteam10771.lepamplemousse.config.Variables;
+import org.fhs.robotics.ftcteam10771.lepamplemousse.core.ControllersInit;
+import org.fhs.robotics.ftcteam10771.lepamplemousse.core.InitComp;
+import org.fhs.robotics.ftcteam10771.lepamplemousse.core.StartValues;
+import org.fhs.robotics.ftcteam10771.lepamplemousse.core.vars.ReturnValues;
+import org.fhs.robotics.ftcteam10771.lepamplemousse.modes.Controlled;
 
 /**
  * Le Pamplemousse DRIVE!
- *
+ * <p/>
  * The core robot framework. This file should rarely be edited.
  * This is the regular drive
  */
-public class RobotDrive extends OpMode{
+public class RobotDrive extends OpMode {
 
     Components components = null;
     Controlled controlled = null;
-    Gyrometer gyrometer;
-    Accelerometer accelerometer;
+    ReturnValues returnValues;
+    Controllers controllerConfig = null;
+    ControllersInit controls = null;
+    Variables variables = null;
+    boolean reset_config;
 
-    public RobotDrive(){
+    public RobotDrive() {
         //Constructor
     }
 
     @Override
-    public void init(){
+    public void init() {
         //initializer
-        InitComp initComp = new InitComp(hardwareMap, telemetry);
-        components = initComp.getComponents();
-        if (initComp.initialize().equals(ReturnValues.SUCCESS)){
-            //idk
+        //Check to see if the call to reset from the controller has been called
+        /* didn't work so change to add options to each individual yml file
+        if (gamepad1.start && gamepad1.right_bumper) {
+            telemetry.addData("Reset", "Wipe Configs? A: Confirm; B: Cancel");
+            while (!gamepad1.a || !gamepad1.b) {
+                if (gamepad1.a) {
+                    telemetry.addData("Reset", "Wiping Configs...");
+                    reset_config = true;
+                }
+                telemetry.addData("Reset", "Cancelled");
+                break;
+            }
+        }*/
+
+        //load the components object and check for existence
+        components = new Components(telemetry);
+        if (!components.load()) {
+            components.create();
+        }
+
+        // initialize all the components
+        // and run the checks
+        InitComp initComp = new InitComp(hardwareMap, telemetry, components);
+        if ((returnValues = initComp.initialize()) != ReturnValues.SUCCESS) {
+            if (returnValues == ReturnValues.MOTOR_NOT_INIT) {
+                telemetry.addData("ERROR", "Motors Failed to Initialize");
+            } else if (returnValues == ReturnValues.SERVO_NOT_INIT) {
+                telemetry.addData("ERROR", "Servos Failed to Initialize");
+            } else {
+                telemetry.addData("ERROR", "Something wrong happened!");
+            }
         }
     }
 
     @Override
-    public void start(){
+    public void start() {
         //set default values
-        StartValues startValues = new StartValues(telemetry);
-        controlled = new Controlled(gamepad1, gamepad2, startValues.getVariables(), telemetry);
+        //load the variables object and check for existence
+        variables = new Variables(telemetry);
+        if (!variables.load()) {
+            variables.create();
+        }
 
-        gyrometer = new Gyrometer(hardwareMap.appContext);
-        accelerometer = new Accelerometer(hardwareMap.appContext);
+        //Load all the variables from the configuration
+        StartValues startValues = new StartValues(variables, telemetry);
+        startValues.initialize();
+
+        //load the controller mappins config and check for existence
+        controllerConfig = new Controllers(telemetry);
+        if (!controllerConfig.load()) {
+            controllerConfig.create();
+        }
+
+        //Initialize the controller aliases for dynamic mapping
+        controls = new ControllersInit(gamepad1, gamepad2, controllerConfig);
+        //insert init code here
+        controlled = new Controlled(controls, startValues, telemetry);
+        controls.initialize();
     }
 
     @Override
-    public void loop(){
+    public void loop() {
         //core loop
         controlled.loop();
-        telemetry.addData("GyroX", gyrometer.rawX());
-        telemetry.addData("GyroY", gyrometer.rawY());
-        telemetry.addData("GyroZ", gyrometer.rawZ());
-        telemetry.addData("AccelX", accelerometer.getAcceleration().x);
-        telemetry.addData("AccelY", accelerometer.getAcceleration().y);
-        telemetry.addData("AccelZ", accelerometer.getAcceleration().z);
     }
 
     @Override
-    public void stop(){
+    public void stop() {
         //stop function
+        //run cleanup code and clear everything
+        controlled.cleanup();
+        //plus others
     }
 
 }

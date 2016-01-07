@@ -11,259 +11,217 @@
 # log_cat               = enable logging; checked on init       - digital         - boolean
 gamepad1:
   left_stick_x:
-    enabled: false
     function: null
     inverted: false
-    analog: true
+    digital: false
 
   left_stick_y:
-    enabled: true
     function: drivetrain_left
     inverted: false
-    analog: true
+    digital: false
 
   right_stick_x:
-    enabled: false
     function: null
     inverted: false
-    analog: true
+    digital: false
 
   right_stick_y:
-    enabled: true
     function: drivetrain_right
     inverted: false
-    analog: true
+    digital: false
 
   dpad_up:
-    enabled: false
     function: null
     inverted: false
     digital: true
 
   dpad_down:
-    enabled: false
     function: null
     inverted: false
     digital: true
 
   dpad_left:
-    enabled: false
     function: null
     inverted: false
     digital: true
 
   dpad_right:
-    enabled: false
     function: null
     inverted: false
     digital: true
 
   a_button:
-    enabled: false
     function: null
     inverted: false
     digital: true
 
   b_button:
-    enabled: false
     function: null
     inverted: false
     digital: true
 
   x_button:
-    enabled: false
     function: null
     inverted: false
     digital: true
 
   y_button:
-    enabled: false
     function: null
     inverted: false
     digital: true
 
   guide_button:
-    enabled: false
     function: null
     inverted: false
     digital: true
 
   start_button:
-    enabled: false
     function: null
     inverted: false
     digital: true
 
   back_button:
-    enabled: false
     function: null
     inverted: false
     digital: true
 
   left_bumper:
-    enabled: false
     function: null
     inverted: false
     digital: true
 
   right_bumper:
-    enabled: false
     function: null
     inverted: false
     digital: true
 
   left_stick_button:
-    enabled: false
     function: null
     inverted: false
     digital: true
 
   right_stick_button:
-    enabled: false
     function: null
     inverted: false
     digital: true
 
   left_trigger:
-    enabled: false
     function: null
     inverted: false
-    analog: true
+    digital: false
 
   right_trigger:
-    enabled: false
-    function: null
+    function: trigger_arm
     inverted: false
-    analog: true
+    digital: false
 
 
 
 gamepad2:
   left_stick_x:
-    enabled: false
     function: null
     inverted: false
-    analog: true
+    digital: false
 
   left_stick_y:
-    enabled: true
     function: winch_extend_retract
     inverted: false
-    analog: true
+    digital: false
 
   right_stick_x:
-    enabled: false
     function: null
     inverted: false
-    analog: true
+    digital: false
 
   right_stick_y:
-    enabled: true
     function: winch_angle
     inverted: false
-    analog: true
+    digital: false
 
   dpad_up:
-    enabled: false
     function: null
     inverted: false
     digital: true
 
   dpad_down:
-    enabled: false
     function: null
     inverted: false
     digital: true
 
   dpad_left:
-    enabled: false
     function: null
     inverted: false
     digital: true
 
   dpad_right:
-    enabled: false
     function: null
     inverted: false
     digital: true
 
   a_button:
-    enabled: false
     function: plow
     inverted: false
     digital: true
 
   b_button:
-    enabled: false
     function: null
     inverted: false
     digital: true
 
   x_button:
-    enabled: false
     function: null
     inverted: false
     digital: true
 
   y_button:
-    enabled: false
     function: null
     inverted: false
     digital: true
 
   guide_button:
-    enabled: false
     function: null
     inverted: false
     digital: true
 
   start_button:
-    enabled: false
     function: null
     inverted: false
     digital: true
 
   back_button:
-    enabled: false
     function: null
     inverted: false
     digital: true
 
   left_bumper:
-    enabled: true
     function: winch_preset
     inverted: false
     digital: true
 
   right_bumper:
-    enabled: true
     function: servos_off
     inverted: false
     digital: true
 
   left_stick_button:
-    enabled: false
     function: null
     inverted: false
     digital: true
 
   right_stick_button:
-    enabled: false
     function: null
     inverted: false
     digital: true
 
   left_trigger:
-    enabled: false
     function: null
     inverted: false
-    analog: true
+    digital: false
 
   right_trigger:
-    enabled: true
-    function: trigger_arm
+    function: null
     inverted: false
-    analog: true
+    digital: false
 
 
 

@@ -1,7 +1,5 @@
 package com.qualcomm.ftcrobotcontroller.opmodes.lepamplemousse.components;
 
-import android.hardware.Camera;
-
 import com.qualcomm.robotcore.hardware.AccelerationSensor;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -10,6 +8,8 @@ import com.qualcomm.robotcore.hardware.IrSeekerSensor;
 import com.qualcomm.robotcore.hardware.LightSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
+
+import org.fhs.robotics.ftcteam10771.lepamplemousse.core.sensors.camera.Camera;
 
 /**
  * Core variables with generic names to be aliased later. Since all of the

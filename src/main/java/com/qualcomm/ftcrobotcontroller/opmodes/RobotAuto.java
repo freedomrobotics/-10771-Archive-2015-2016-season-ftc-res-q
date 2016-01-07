@@ -14,7 +14,6 @@ public class RobotAuto extends OpMode {
     @Override
     public void init(){
         //initializer
-
     }
 
     @Override

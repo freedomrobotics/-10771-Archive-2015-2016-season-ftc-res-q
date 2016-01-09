@@ -246,5 +246,11 @@ public class ColorGrid extends Camera{
         public int colorInt(){
             return Color.rgb(r, g, b);
         }
+
+        @Override
+        public String toString(){
+            return "r" + r + ",g" + g + ",b" + b;
+        }
+
     }
 }

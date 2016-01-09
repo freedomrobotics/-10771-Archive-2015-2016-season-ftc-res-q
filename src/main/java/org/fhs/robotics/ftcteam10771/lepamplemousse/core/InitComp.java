@@ -37,6 +37,9 @@ public class InitComp {
 
     List<ReturnValues> failures = new LinkedList<ReturnValues>();
 
+    //shh
+    java.util.regex.Pattern p = java.util.regex.Pattern.compile("[a-zA-Z]");
+
     /**
      * Constructs the Components Initialization Object
      *
@@ -150,7 +153,7 @@ public class InitComp {
                     id++;
                 }
                 if (components.deviceEnabled(device, device, id)) {
-                    Map<String, Object> TcameraObj = components.getSubdevice(device, device, i);
+                    Map<String, Object> TcameraObj = components.getSubdevice(device, device, id);
                     String func = TcameraObj.get("function").toString();
                     if (func.equals("color_grid")){
                         if (TcameraObj.get("extra") == null) continue;
@@ -158,14 +161,17 @@ public class InitComp {
                         int gridX = 0, gridY = 0;
                         float refresh = 0.0f;
                         if (extraParam.get("grid_x") != null && extraParam.get("grid_y") != null){
-                            gridX = (Integer)extraParam.get("grid_x");
-                            gridY = (Integer)extraParam.get("grid_y");
+                            //grid x + y
+                            gridX = returnInt(extraParam.get("grid_x"));
+                            gridY = returnInt(extraParam.get("grid_y"));
                         }
                         if (extraParam.get("grid_side") != null){
-                            gridX = gridY = (Integer)extraParam.get("grid_side");
+                            //grid_size
+                            gridX = gridY = returnInt(extraParam.get("grid_side"));
                         }
                         if (extraParam.get("refresh_rate") != null){
-                            refresh = (Float)extraParam.get("refresh_rate");
+                            //refresh rate
+                            refresh = returnFloat(extraParam.get("refresh_rate"));
                         }
                         if (gridX <= 0 || refresh <= 0.0f){
                             continue;
@@ -184,6 +190,28 @@ public class InitComp {
             return ReturnValues.SUCCESS;
         }
         return ReturnValues.DEVICE_DOES_NOT_EXIST;
+    }
+
+    private Integer returnInt(Object o){
+        java.util.regex.Matcher m = p.matcher(o.toString());
+        if (m.find()) {
+            return 0;
+        }
+        if (o.toString().contains(".")) {
+            return ((Double) o).intValue();
+        }
+        return (Integer) o;
+    }
+
+    private Float returnFloat(Object o){
+        java.util.regex.Matcher m = p.matcher(o.toString());
+        if (m.find()) {
+            return 0.0f;
+        }
+        if (!o.toString().contains(".")) {
+            return ((Integer) o).floatValue();
+        }
+        return ((Double) o).floatValue();
     }
 
     //TODO: 12/14/2015 Change method to case statements or better yet, mappings(Map<Map, String>)(make DYNAMIC return values)

@@ -40,7 +40,28 @@ public class Autonomous {
      * The loop of the autonomous class. Does not contain a loop, since it's expected to be within a loop.
      * It lets the drivers drive.
      */
-    public void loop(){}
+    public void loop(){
+        //To be determined
+        //TODO: Come up with something last minute
+    }
+
+    /**
+     * TODO: javadocs
+     */
+    private void approach(){
+        float offset = Math.abs(values.settings("drivetrain").getSettings("motor_left").getFloat("offset") - values.settings("drivetrain").getSettings("motor_right").getFloat("offset"));
+        if (values.settings("drivetrain").getSettings("motor_left").getFloat("offset") >= values.settings("drivetrain").getSettings("motor_right").getFloat("offset")) {
+            //TODO: The statement below could be(or is) wrong
+            offset = StrictMath.copySign(offset, values.settings("drivetrain").getFloat("motor_max_power"));
+            if (values.settings("drivetrain").getSettings("motor_left").getBool("reversed")) {}
+            if (values.settings("drivetrain").getSettings("motor_right").getBool("reversed")) {}
+        }
+        if (values.settings("drivetrain").getSettings("motor_left").getFloat("offset") < values.settings("drivetrain").getSettings("motor_right").getFloat("offset")) {
+            offset = StrictMath.copySign(offset, values.settings("drivetrain").getFloat("motor_max_power"));
+            if (values.settings("drivetrain").getSettings("motor_right").getBool("reversed")){}
+            if (values.settings("drivetrain").getSettings("motor_left").getBool("reversed")){}
+        }
+    }
 
     /**
      * Sets up the servos

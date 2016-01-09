@@ -192,6 +192,31 @@ public class InitComp {
         return ReturnValues.DEVICE_DOES_NOT_EXIST;
     }
 
+    public void cleanUp(){
+        stopAllCamera();
+    }
+
+    private void stopAllCamera(){
+        String device = "camera";
+        if (components.deviceExists(device)) {
+            for (int i = 0; i < components.count(device, device); i++) {
+                int id = i + 1;
+                int max = components.maxSubdevices(device);
+                while ((!(components.deviceEnabled(device, device, id)) && (id <= max))) {
+                    id++;
+                }
+                if (components.deviceEnabled(device, device, id)) {
+                    Map<String, Object> TcameraObj = components.getSubdevice(device, device, id);
+                    String func = TcameraObj.get("function").toString();
+                    if (func.equals("color_grid")){
+                        ((ColorGrid)Core.camera[i]).closeGrid();
+                        Core.camera[i].stopCamera();
+                    }
+                }
+            }
+        }
+    }
+
     private Integer returnInt(Object o){
         java.util.regex.Matcher m = p.matcher(o.toString());
         if (m.find()) {

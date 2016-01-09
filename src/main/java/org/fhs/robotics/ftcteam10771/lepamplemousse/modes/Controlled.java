@@ -38,6 +38,8 @@ public class Controlled {
         this.telemetry = telemetry;
         lastTime = System.currentTimeMillis();
         servoSetup();
+        //If this is not run, then the plow doesn't get its offset set.
+        togglePlow();
     }
 
     /**
@@ -136,13 +138,13 @@ public class Controlled {
         servo_pos += controls.getAnalog("winch_angle") * (angular.getFloat("max_ang_vel") / range) * ((float) changeTime / 1000.0f);
 
         if (servo_pos > angular.getFloat("max_rotate") / range){
-                servo_pos = angular.getFloat("max_rotate") / range;
+            servo_pos = angular.getFloat("max_rotate") / range;
         }
         if (servo_pos < 0) {
-                servo_pos = 0;
+            servo_pos = 0;
         }
         if (controls.getDigital("winch_preset"))
-                servo_pos = angular.getFloat("preset") / range;
+            servo_pos = angular.getFloat("preset") / range;
         Aliases.servoMap.get("winch_left").setPosition(servo_pos + winch.getSettings("left_servo").getFloat("offset") / range);
         Aliases.servoMap.get("winch_right").setPosition(servo_pos + winch.getSettings("right_servo").getFloat("offset") / range);
     }
@@ -160,7 +162,7 @@ public class Controlled {
      * Moves the arm trigger of the robot
      */
     public void moveArmTrigger(){
-        Aliases.servoMap.get("arm_trigger").setPosition(1 - controls.getAnalog("trigger_arm"));
+        Aliases.servoMap.get("arm_trigger").setPosition(controls.getAnalog("trigger_arm"));
     }
 
     /**
@@ -207,6 +209,11 @@ public class Controlled {
             Aliases.servoMap.get("winch_right").setDirection(Servo.Direction.REVERSE);
         } else {
             Aliases.servoMap.get("winch_right").setDirection(Servo.Direction.FORWARD);
+        }
+        if (values.settings("trigger_arm").getString("side").equals("right")){
+            Aliases.servoMap.get("arm_trigger").setDirection(Servo.Direction.REVERSE);
+        }else{
+            Aliases.servoMap.get("arm_trigger").setDirection(Servo.Direction.FORWARD);
         }
         if (values.settings("plow").getBool("reversed")){
             Aliases.servoMap.get("plow").setDirection(Servo.Direction.REVERSE);

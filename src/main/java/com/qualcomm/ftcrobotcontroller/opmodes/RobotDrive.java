@@ -25,6 +25,7 @@ public class RobotDrive extends OpMode {
     Controllers controllerConfig = null;
     ControllersInit controls = null;
     Variables variables = null;
+    InitComp initComp = null;
     boolean reset_config;
 
     public RobotDrive() {
@@ -56,7 +57,7 @@ public class RobotDrive extends OpMode {
 
         // initialize all the components
         // and run the checks
-        InitComp initComp = new InitComp(hardwareMap, telemetry, components);
+        initComp = new InitComp(hardwareMap, telemetry, components);
         if ((returnValues = initComp.initialize()) != ReturnValues.SUCCESS) {
             if (returnValues == ReturnValues.MOTOR_NOT_INIT) {
                 telemetry.addData("ERROR", "Motors Failed to Initialize");
@@ -106,6 +107,7 @@ public class RobotDrive extends OpMode {
         //run cleanup code and clear everything
         controlled.cleanup();
         //plus others
+        initComp.cleanUp();
     }
 
 }

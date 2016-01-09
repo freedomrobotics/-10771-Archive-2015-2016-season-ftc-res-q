@@ -344,28 +344,6 @@ public class Controllers extends Config {
     }
 
     /**
-     * Check if input is enabled
-     *
-     * @param id    Id of the controller
-     * @param input the input to check
-     * @return Whether or not the input is enabled
-     */
-    public boolean inputEnabled(Integer id, String input) {
-        return getBoolean(id, input, "enabled");
-    }
-
-    /**
-     * Check if analog is enabled
-     *
-     * @param id    Id of the controller
-     * @param input the input to check
-     * @return Whether or not the input is analog
-     */
-    public boolean analogEnabled(Integer id, String input) {
-        return getBoolean(id, input, "analog");
-    }
-
-    /**
      * Check if digital is enabled
      *
      * @param id    Id of the controller
@@ -397,7 +375,9 @@ public class Controllers extends Config {
     public String getFunction(Integer id, String input) {
         Map controller;
         if ((controller = getInput(id, input)) != null) {
-            return controller.get("function").toString();
+            if (controller.get("function") != null) {
+                return controller.get("function").toString();
+            }
         }
         return null;
     }

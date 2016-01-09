@@ -52,7 +52,7 @@ public class ControllersInit {
             while (Gamepad.hasNext()) {
                 Map.Entry button = (Map.Entry) Gamepad.next();
                 String key = button.getKey().toString();
-                if (controllerConfig.inputEnabled(i, key)) {
+                if (controllerConfig.getFunction(i, key) != null) {
                     String functionName = controllerConfig.getFunction(i, key);
                     boolean inverted = controllerConfig.invertedEnabled(i, key);
                     if (controllerConfig.digitalEnabled(i, key)) {
@@ -259,17 +259,18 @@ public class ControllersInit {
             this.id = id;
             this.inverted = inverted;
             this.digital = digital;
+
         }
 
         public boolean getBoolean() {
-            if (digital) {
+            if (digital && (getGamepad(id, name) != null)) {
                 return inverted ^ (Boolean) getGamepad(id, name);
             }
             return false;
         }
 
         public float getFloat() {
-            if (!digital) {
+            if (!digital && (getGamepad(id, name) != null)) {
                 if (inverted) {
                     return -(Float) getGamepad(id, name);
                 }

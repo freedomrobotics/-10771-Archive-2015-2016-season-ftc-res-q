@@ -12,12 +12,13 @@ import com.qualcomm.robotcore.hardware.AccelerationSensor;
  * Allows for polling and provides a listener to "interrupt" using the phone's built-in accelerometer.
  */
 // TODO: 12/23/2015 add a way to construct with a change in orientation. Same with gyroscope.
+// FIXME: 12/28/2015 THIS DOES NOT WORK PROPERLY
 public class Accelerometer extends AccelerationSensor implements SensorEventListener{
 
     SensorManager sensorManager;
     Sensor accelerometer;
 
-    Acceleration acceleration;
+    Acceleration acceleration = new Acceleration();
 
     /**
      * Constructs a accelerometer sensor given the app Context based off of the FTC gyroscope sensor interfaces. Trust me, for the custom sensor classes, you want to manually call close when you're done.

@@ -15,6 +15,8 @@ import com.qualcomm.robotcore.robocol.Telemetry;
 import org.fhs.robotics.ftcteam10771.lepamplemousse.config.Components;
 import org.fhs.robotics.ftcteam10771.lepamplemousse.core.components.Aliases;
 import org.fhs.robotics.ftcteam10771.lepamplemousse.core.components.Core;
+import org.fhs.robotics.ftcteam10771.lepamplemousse.core.sensors.camera.Camera;
+import org.fhs.robotics.ftcteam10771.lepamplemousse.core.sensors.camera.ColorGrid;
 import org.fhs.robotics.ftcteam10771.lepamplemousse.core.vars.ReturnValues;
 
 import java.util.Iterator;
@@ -34,6 +36,9 @@ public class InitComp {
     Telemetry telemetry = null;
 
     List<ReturnValues> failures = new LinkedList<ReturnValues>();
+
+    //shh
+    java.util.regex.Pattern p = java.util.regex.Pattern.compile("[a-zA-Z]");
 
     /**
      * Constructs the Components Initialization Object
@@ -87,12 +92,15 @@ public class InitComp {
         if (objectInit(hardwareMap.accelerationSensor, Core.accelerometer) == ReturnValues.FAIL) {
             failures.add(ReturnValues.ACCELEROMETER_NOT_INIT);
         }
+        Core.camera = new Camera[components.count("camera", "camera")];
+        if (cameraInit(Core.camera) == ReturnValues.FAIL) {
+            failures.add(ReturnValues.CAMERA_NOT_INIT);
+        }
         if (failures.size() > 1) {
             return ReturnValues.MULTI_NOT_INIT;
         } else if (failures.size() == 1) {
             return failures.get(0);
         }
-        // TODO: 12/19/2015 Camera settings
         return ReturnValues.SUCCESS;
     }
 
@@ -126,6 +134,109 @@ public class InitComp {
             return ReturnValues.SUCCESS;
         }
         return ReturnValues.DEVICE_DOES_NOT_EXIST;
+    }
+
+    /**
+     * Initializes camera
+     *
+     * @param devices The array to assign to
+     * @return ReturnValues whether or not the method succeeded
+     */
+    //I'm cheap, don't bother with it. This entire class needs a rewrite.
+    private ReturnValues cameraInit(Object devices[]) {
+        String device = "camera";
+        if (components.deviceExists(device)) {
+            for (int i = 0; i < components.count(device, device); i++) {
+                int id = i + 1;
+                int max = components.maxSubdevices(device);
+                while ((!(components.deviceEnabled(device, device, id)) && (id <= max))) {
+                    id++;
+                }
+                if (components.deviceEnabled(device, device, id)) {
+                    Map<String, Object> TcameraObj = components.getSubdevice(device, device, id);
+                    String func = TcameraObj.get("function").toString();
+                    if (func.equals("color_grid")){
+                        if (TcameraObj.get("extra") == null) continue;
+                        Map<String, Object> extraParam = (Map)TcameraObj.get("extra");
+                        int gridX = 0, gridY = 0;
+                        float refresh = 0.0f;
+                        if (extraParam.get("grid_x") != null && extraParam.get("grid_y") != null){
+                            //grid x + y
+                            gridX = returnInt(extraParam.get("grid_x"));
+                            gridY = returnInt(extraParam.get("grid_y"));
+                        }
+                        if (extraParam.get("grid_side") != null){
+                            //grid_size
+                            gridX = gridY = returnInt(extraParam.get("grid_side"));
+                        }
+                        if (extraParam.get("refresh_rate") != null){
+                            //refresh rate
+                            refresh = returnFloat(extraParam.get("refresh_rate"));
+                        }
+                        if (gridX <= 0 || refresh <= 0.0f){
+                            continue;
+                        }
+                        devices[i] = new ColorGrid(gridX, gridY, refresh, hardwareMap.appContext);
+                    }else{
+                        continue;
+                    }
+                    setAlias(device, i, id);
+                } else {
+                    //Returns FAIL if there are not any existing enabled device keys to initialize the array elements with
+                    return ReturnValues.FAIL;
+
+                }
+            }
+            return ReturnValues.SUCCESS;
+        }
+        return ReturnValues.DEVICE_DOES_NOT_EXIST;
+    }
+
+    public void cleanUp(){
+        stopAllCamera();
+    }
+
+    private void stopAllCamera(){
+        String device = "camera";
+        if (components.deviceExists(device)) {
+            for (int i = 0; i < components.count(device, device); i++) {
+                int id = i + 1;
+                int max = components.maxSubdevices(device);
+                while ((!(components.deviceEnabled(device, device, id)) && (id <= max))) {
+                    id++;
+                }
+                if (components.deviceEnabled(device, device, id)) {
+                    Map<String, Object> TcameraObj = components.getSubdevice(device, device, id);
+                    String func = TcameraObj.get("function").toString();
+                    if (func.equals("color_grid")){
+                        ((ColorGrid)Core.camera[i]).closeGrid();
+                        Core.camera[i].stopCamera();
+                    }
+                }
+            }
+        }
+    }
+
+    private Integer returnInt(Object o){
+        java.util.regex.Matcher m = p.matcher(o.toString());
+        if (m.find()) {
+            return 0;
+        }
+        if (o.toString().contains(".")) {
+            return ((Double) o).intValue();
+        }
+        return (Integer) o;
+    }
+
+    private Float returnFloat(Object o){
+        java.util.regex.Matcher m = p.matcher(o.toString());
+        if (m.find()) {
+            return 0.0f;
+        }
+        if (!o.toString().contains(".")) {
+            return ((Integer) o).floatValue();
+        }
+        return ((Double) o).floatValue();
     }
 
     //TODO: 12/14/2015 Change method to case statements or better yet, mappings(Map<Map, String>)(make DYNAMIC return values)

@@ -1,10 +1,14 @@
 package org.fhs.robotics.ftcteam10771.lepamplemousse.modes;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.robocol.Telemetry;
 
 import org.fhs.robotics.ftcteam10771.lepamplemousse.core.StartValues;
 import org.fhs.robotics.ftcteam10771.lepamplemousse.core.components.Aliases;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Autonomous class
@@ -21,6 +25,8 @@ public class Autonomous {
     boolean plowButton = false;
     long changeTime = 0;
     boolean plowUp = false;
+
+    Map<DcMotor, Integer> lastEncoderPulse = new HashMap<DcMotor, Integer>();
 
 
     /**
@@ -82,6 +88,31 @@ public class Autonomous {
         }else{
             Aliases.servoMap.get("plow").setDirection(Servo.Direction.FORWARD);
         }
+    }
+
+    public double getChangeEncoder(DcMotor dcMotor){
+        int changeEncoder = 0;
+        if (lastEncoderPulse.get(dcMotor) != null) {
+            changeEncoder = dcMotor.getCurrentPosition() - lastEncoderPulse.get(dcMotor);
+            int last = lastEncoderPulse.get(dcMotor) + changeEncoder;
+            lastEncoderPulse.put(dcMotor, last);
+        } else {
+            lastEncoderPulse.put(dcMotor, dcMotor.getCurrentPosition());
+        }
+        return changeEncoder;
+    }
+
+    /**
+     *
+     * @param dcMotor   The motor
+     * @param settings  The motor settings (drivetrain.wheel.diameter)
+     * @return change in distance in millimeters
+     */
+    public double getChangePosition(DcMotor dcMotor, StartValues.Settings settings){
+        float dia = settings.getFloat("diameter");
+        double changeEncoder = getChangeEncoder(dcMotor);
+        int encoderFull = values.settings("encoder").getInt("output_pulses");
+        return Math.PI * dia * (changeEncoder / (float) encoderFull);
     }
 
     public void cleanup(){

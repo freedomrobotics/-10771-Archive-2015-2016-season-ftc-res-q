@@ -1,11 +1,15 @@
 package org.fhs.robotics.ftcteam10771.lepamplemousse.modes;
 
+import android.graphics.Color;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.robocol.Telemetry;
 
 import org.fhs.robotics.ftcteam10771.lepamplemousse.core.StartValues;
 import org.fhs.robotics.ftcteam10771.lepamplemousse.core.components.Aliases;
+import org.fhs.robotics.ftcteam10771.lepamplemousse.core.components.Core;
+import org.fhs.robotics.ftcteam10771.lepamplemousse.core.sensors.camera.ColorGrid;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -67,6 +71,30 @@ public class Autonomous {
             if (values.settings("drivetrain").getSettings("motor_right").getBool("reversed")){}
             if (values.settings("drivetrain").getSettings("motor_left").getBool("reversed")){}
         }
+    }
+
+    //Joel: Completely made wrong, but the rough idea is that compare the grid location of the blue button and the red button
+    // on the color grid.  If the red button's x-coordinate is greater, then it is to the right of blue and vice versa with blue.
+    private boolean sensedColorAtRight(String color){
+        int redcell = 0;
+        int bluecell = 0;
+        ColorGrid colorGrid = (ColorGrid)Aliases.cameraMap.get("camera");
+        Integer maxGridNumber = 3;
+        for (int i=0; i<maxGridNumber; i++){
+            int x = i;
+            for(int i=0; i<maxGridNumber; i++){
+                //zero would not be the right number to compare to I know
+                if (colorGrid.getCell(x, i).red() > 0) {
+                    redcell = x;
+                }
+                if (colorGrid.getCell(x, i).blue() > 0){
+                    bluecell = x;
+                }
+            }
+        }
+        if ((redcell > bluecell) && (color=="red")) return true;
+        else if ((bluecell > redcell) && (color=="blue")) return true;
+        else return false;
     }
 
     /**

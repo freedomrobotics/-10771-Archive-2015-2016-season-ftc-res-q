@@ -40,6 +40,7 @@ winch:
     full_rotate: 180.0
     max_rotate: 90.0
     preset: 15.0
+    start_pos: 80.0
   left_servo:
     reversed: true
     offset: 15.75

@@ -172,11 +172,11 @@ public class Controlled {
      */
     // TODO: 12/28/2015 implement variables from settings.yml
     public void extendWinch(){
-        if (plowUp) {
+        //if (plowUp) {
             Aliases.motorMap.get("winch_motor").setPower(controls.getAnalog("winch_extend_retract"));
-        } else{
-            Aliases.motorMap.get("winch_motor").setPower(0);
-        }
+        //} else{
+        //    Aliases.motorMap.get("winch_motor").setPower(0);
+        //}
     }
 
     /**
@@ -220,6 +220,14 @@ public class Controlled {
         }else{
             Aliases.servoMap.get("plow").setDirection(Servo.Direction.FORWARD);
         }
+
+
+        StartValues.Settings winch = values.settings("winch");
+        StartValues.Settings angular = winch.getSettings("angular_movement");
+        float range = angular.getFloat("full_rotate");
+       servo_pos = angular.getFloat("start_pos") / range;
+        Aliases.servoMap.get("winch_left").setPosition(servo_pos + winch.getSettings("left_servo").getFloat("offset") / range);
+        Aliases.servoMap.get("winch_right").setPosition(servo_pos + winch.getSettings("right_servo").getFloat("offset") / range);
     }
 
     public void cleanup(){

@@ -164,7 +164,7 @@ gamepad2:
     digital: true
 
   b_button:
-    function: null
+    function: color
     inverted: false
     digital: true
 

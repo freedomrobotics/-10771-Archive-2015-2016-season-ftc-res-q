@@ -7,6 +7,7 @@ import org.fhs.robotics.ftcteam10771.lepamplemousse.core.ControllersInit;
 import org.fhs.robotics.ftcteam10771.lepamplemousse.core.StartValues;
 import org.fhs.robotics.ftcteam10771.lepamplemousse.core.components.Aliases;
 import org.fhs.robotics.ftcteam10771.lepamplemousse.core.components.Core;
+import org.fhs.robotics.ftcteam10771.lepamplemousse.core.sensors.camera.ColorGrid;
 
 /**
  * Driver controlled class
@@ -23,6 +24,8 @@ public class Controlled {
     boolean plowButton = false;
     long changeTime = 0;
     boolean plowUp = false;
+    boolean colorButton = false;
+    ColorGrid colorGrid = null;
 
 
     /**
@@ -228,6 +231,14 @@ public class Controlled {
        servo_pos = angular.getFloat("start_pos") / range;
         Aliases.servoMap.get("winch_left").setPosition(servo_pos + winch.getSettings("left_servo").getFloat("offset") / range);
         Aliases.servoMap.get("winch_right").setPosition(servo_pos + winch.getSettings("right_servo").getFloat("offset") / range);
+    }
+
+    //Just a function to check the color grid
+    public void checkColorGrid(){
+        if (controls.getDigital("color")) {
+            colorGrid = (ColorGrid) Aliases.cameraMap.get("camera");
+            telemetry.addData("CAMERA", colorGrid.getCell(1, 1).toString());
+        }
     }
 
     public void cleanup(){

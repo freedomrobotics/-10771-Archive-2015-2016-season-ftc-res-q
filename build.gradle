@@ -27,6 +27,9 @@ android {
         release {
             signingConfig signingConfigs.release
         }
+        debug {
+            signingConfig signingConfigs.release
+        }
     }
 
     //http://ph0b.com/android-studio-gradle-and-ndk-integration/
@@ -34,7 +37,6 @@ android {
         jniLibs.srcDir 'src/main/libs'
         jni.srcDirs = [] //disable automatic ndk-build call
     }
-
 
     def ndkDir = android.ndkDirectory.getAbsolutePath()
 

@@ -12,7 +12,7 @@ public class Static {
     /**
      * Configuration Directory Path relative to /sdcard
      */
-    public static final String configPath = "/GrapefruitConfig";
+    public static final String configPath = "/GrapefruitConfigTest";
 
     /**
      * Configuration File Suffixes.

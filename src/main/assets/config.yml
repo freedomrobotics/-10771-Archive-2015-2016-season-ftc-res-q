@@ -23,7 +23,10 @@ dc_motors:
       - winch_motor
       - motor_winch
   dc_motor4:
-    enabled: false
+    enabled: true
+    map_name: trigger_arm
+    alias:
+      - arm_trigger
 
 # Servos
 servos:
@@ -42,7 +45,7 @@ servos:
       - tape_measure_winch2
       - secondary_winch
   servo3:
-    enabled: true
+    enabled: false
     map_name: trigger_arm
     alias:
       - servo_motor3
@@ -50,7 +53,7 @@ servos:
       - trigger
       - arm
   servo4:
-    enabled: true
+    enabled: false
     map_name: plow
     alias:
       - servo_motor4

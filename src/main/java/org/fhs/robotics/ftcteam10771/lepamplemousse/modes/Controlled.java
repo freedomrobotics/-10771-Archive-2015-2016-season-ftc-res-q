@@ -1,5 +1,7 @@
 package org.fhs.robotics.ftcteam10771.lepamplemousse.modes;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.robocol.Telemetry;
 
@@ -162,7 +164,7 @@ public class Controlled {
      * Moves the arm trigger of the robot
      */
     public void moveArmTrigger(){
-        Aliases.servoMap.get("arm_trigger").setPosition(controls.getAnalog("trigger_arm"));
+        //Aliases.servoMap.get("arm_trigger").setPosition(controls.getAnalog("trigger_arm"));
     }
 
     /**
@@ -211,9 +213,9 @@ public class Controlled {
             Aliases.servoMap.get("winch_right").setDirection(Servo.Direction.FORWARD);
         }
         if (values.settings("trigger_arm").getString("side").equals("right")){
-            Aliases.servoMap.get("arm_trigger").setDirection(Servo.Direction.REVERSE);
+            //Aliases.servoMap.get("arm_trigger").setDirection(Servo.Direction.REVERSE);
         }else{
-            Aliases.servoMap.get("arm_trigger").setDirection(Servo.Direction.FORWARD);
+            //Aliases.servoMap.get("arm_trigger").setDirection(Servo.Direction.FORWARD);
         }
         if (values.settings("plow").getBool("reversed")){
             Aliases.servoMap.get("plow").setDirection(Servo.Direction.REVERSE);
@@ -228,6 +230,12 @@ public class Controlled {
        servo_pos = angular.getFloat("start_pos") / range;
         Aliases.servoMap.get("winch_left").setPosition(servo_pos + winch.getSettings("left_servo").getFloat("offset") / range);
         Aliases.servoMap.get("winch_right").setPosition(servo_pos + winch.getSettings("right_servo").getFloat("offset") / range);
+
+        Aliases.motorMap.get("trigger_arm").setMode(DcMotorController.RunMode.RESET_ENCODERS);
+        Aliases.motorMap.get("trigger_arm").setMode(DcMotorController.RunMode.RUN_TO_POSITION);
+        Aliases.motorMap.get("trigger_arm").setDirection(DcMotor.Direction.REVERSE);
+        Aliases.motorMap.get("trigger_arm").setPower(0.2);
+        Aliases.motorMap.get("trigger_arm").setTargetPosition(values.settings("encoder").getInt("output_pulses") / 4);
     }
 
     public void cleanup(){

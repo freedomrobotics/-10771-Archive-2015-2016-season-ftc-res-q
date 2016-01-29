@@ -52,6 +52,12 @@ winch:
 trigger_arm:
   enabled: true
   side: right
+  # if it's a motor (must be encodered)
+  motor_pow: 0.3
+  # pulses per full rotate (update!)
+  motor_pulses: 1120
+  # wanted range of motor in degrees (set to match inaccurate pulses)
+  motor_range: 140
 
 
 # Plow settings (It's a servo)

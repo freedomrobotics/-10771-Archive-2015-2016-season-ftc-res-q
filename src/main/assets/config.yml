@@ -27,6 +27,8 @@ dc_motors:
     map_name: trigger_arm
     alias:
       - arm_trigger
+      - trigger
+      - arm
 
 # Servos
 servos:
@@ -53,7 +55,7 @@ servos:
       - trigger
       - arm
   servo4:
-    enabled: false
+    enabled: true
     map_name: plow
     alias:
       - servo_motor4

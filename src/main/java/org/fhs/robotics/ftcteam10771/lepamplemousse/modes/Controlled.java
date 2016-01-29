@@ -74,7 +74,7 @@ public class Controlled {
 
             //adjusts winch angle
             winchAngle();
-            moveArmTrigger();
+            if (values.settings("trigger_arm").getBool("enabled")) moveArmTrigger();
             servosOff = false;
         }
 
@@ -165,6 +165,11 @@ public class Controlled {
      */
     public void moveArmTrigger(){
         //Aliases.servoMap.get("arm_trigger").setPosition(controls.getAnalog("trigger_arm"));
+        Aliases.motorMap.get("trigger_arm").setMode(DcMotorController.RunMode.RUN_TO_POSITION);
+        if (values.settings("trigger_arm").getString("side").equalsIgnoreCase("left")) Aliases.motorMap.get("trigger_arm").setDirection(DcMotor.Direction.REVERSE);
+        else Aliases.motorMap.get("trigger_arm").setDirection(DcMotor.Direction.FORWARD);
+        Aliases.motorMap.get("trigger_arm").setPower(values.settings("trigger_arm").getFloat("motor_pow"));
+        Aliases.motorMap.get("trigger_arm").setTargetPosition((int)((values.settings("encoder").getInt("output_pulses") / 360) * controls.getAnalog("trigger_arm") * values.settings("trigger_arm").getFloat("motor_range")));
     }
 
     /**
@@ -231,11 +236,7 @@ public class Controlled {
         Aliases.servoMap.get("winch_left").setPosition(servo_pos + winch.getSettings("left_servo").getFloat("offset") / range);
         Aliases.servoMap.get("winch_right").setPosition(servo_pos + winch.getSettings("right_servo").getFloat("offset") / range);
 
-        Aliases.motorMap.get("trigger_arm").setMode(DcMotorController.RunMode.RESET_ENCODERS);
-        Aliases.motorMap.get("trigger_arm").setMode(DcMotorController.RunMode.RUN_TO_POSITION);
-        Aliases.motorMap.get("trigger_arm").setDirection(DcMotor.Direction.REVERSE);
-        Aliases.motorMap.get("trigger_arm").setPower(0.2);
-        Aliases.motorMap.get("trigger_arm").setTargetPosition(values.settings("encoder").getInt("output_pulses") / 4);
+        //Aliases.motorMap.get("trigger_arm").setMode(DcMotorController.RunMode.RESET_ENCODERS);
     }
 
     public void cleanup(){

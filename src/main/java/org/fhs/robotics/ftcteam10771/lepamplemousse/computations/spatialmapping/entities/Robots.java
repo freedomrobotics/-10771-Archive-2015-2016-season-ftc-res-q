@@ -5,8 +5,8 @@ package org.fhs.robotics.ftcteam10771.lepamplemousse.computations.spatialmapping
  */
 public class Robots implements Entities{
 
-    // TODO: 1/13/2016 convert 18in to mm and fill in
-    private static final float sizeXY = 0.0f;
+    //includes a 3 inch buffer all around the 18 inches. (24 inch)
+    private static final float sizeXY = 609.6f;
 
     public Robots(float posX, float posY, float rotRad){
         rotation.setRadians(rotRad);

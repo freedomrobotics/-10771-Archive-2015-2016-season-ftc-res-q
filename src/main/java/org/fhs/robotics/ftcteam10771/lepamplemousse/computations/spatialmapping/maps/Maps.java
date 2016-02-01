@@ -1,6 +1,7 @@
 package org.fhs.robotics.ftcteam10771.lepamplemousse.computations.spatialmapping.maps;
 
 import org.fhs.robotics.ftcteam10771.lepamplemousse.computations.spatialmapping.entities.Entities;
+import org.fhs.robotics.ftcteam10771.lepamplemousse.computations.spatialmapping.entities.Robots;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,9 +9,9 @@ import java.util.List;
 /**
  * Created by Adam Li on 1/13/2016.
  */
-abstract class Maps {
+public class Maps {
 
-    Type mapType = Type.SQUARE;
+    MapType mapType = MapType.SQUARE;
 
     Coordinate mapSize = new Coordinate();
 
@@ -18,10 +19,37 @@ abstract class Maps {
 
     List<Entities> entities = new ArrayList<Entities>();
 
-    // TODO: 1/31/2016 Insert code.
+    Robots robot;
 
+    public Maps(float sizeX, float sizeY, List<Obstacle> obstacles, List<Entities> entities, Robots robot){
+        mapSize.setX(sizeX);
+        mapSize.setY(sizeY);
+        this.obstacles.addAll(obstacles);
+        this.entities.addAll(entities);
+        this.robot = robot;
+    }
 
-    enum Type{
+    public Coordinate getMapSize(){
+        return mapSize;
+    }
+
+    public MapType getMapType(){
+        return mapType;
+    }
+
+    public List<Obstacle> getObstacles(){
+        return obstacles;
+    }
+
+    public List<Entities> getEntities(){
+        return entities;
+    }
+
+    public Robots getRobot(){
+        return robot;
+    }
+
+    enum MapType{
         SQUARE,     //The only one that matters for now.
         CIRCLE,
         TRIANGLE,

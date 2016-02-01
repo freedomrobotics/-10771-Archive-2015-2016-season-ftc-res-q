@@ -19,7 +19,11 @@ public class Robots implements Entities{
     }
 
     public Robots(float posX, float posY){
-        this(posX, posY, 0.0f);
+        this(posX, posY, 0);
+    }
+
+    public Robots(){
+        this(0, 0, 0);
     }
 
     @Override

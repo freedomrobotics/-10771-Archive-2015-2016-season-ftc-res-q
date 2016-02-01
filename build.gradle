@@ -68,6 +68,7 @@ dependencies {
     compile(name: 'Analytics-release', ext: 'aar')
     compile(name: 'WirelessP2p-release', ext: 'aar')
     compile files('libs/snakeyaml-1.17-SNAPSHOT-android.jar')
+    compile project(':opencv-java')
 }
 
 apply plugin: 'cobertura'

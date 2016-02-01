@@ -9,9 +9,6 @@
 bin/
 gen/
 
-src/main/libs
-src/main/obj
-
 # Local configuration file (sdk path, etc)
 local.properties
 

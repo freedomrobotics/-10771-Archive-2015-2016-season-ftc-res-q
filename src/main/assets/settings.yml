@@ -38,9 +38,9 @@ winch:
   angular_movement:
     max_ang_vel: 20.0
     full_rotate: 180.0
-    max_rotate: 90.0
+    max_rotate: 66.0
     preset: 15.0
-    start_pos: 80.0
+    start_pos: 65.0
   left_servo:
     reversed: true
     offset: 15.75
@@ -53,7 +53,7 @@ trigger_arm:
   enabled: true
   side: right
   # if it's a motor (must be encodered)
-  motor_pow: 0.3
+  motor_pow: 0.4
   # pulses per full rotate (update!)
   motor_pulses: 1120
   # wanted range of motor in degrees (set to match inaccurate pulses)

@@ -28,6 +28,15 @@ public class Maps {
         this.entities.addAll(entities);
         this.robot = robot;
     }
+    public Maps(float sizeX, float sizeY, List<Obstacle> obstacles, List<Entities> entities){
+        this(sizeX, sizeY, obstacles, entities, new Robots());
+    }
+    public Maps(Robots robot){
+        this.robot = robot;
+    }
+    public Maps(){
+        robot = new Robots();
+    }
 
     public Coordinate getMapSize(){
         return mapSize;

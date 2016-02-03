@@ -1,0 +1,25 @@
+# All units in meters
+
+values:
+  size_x: 1.190752
+  size_y: 0.907378
+  map_type: SQUARE
+  rotation: 0.0
+
+
+#obstacles:
+  #field:
+  #  points:
+  #    - [,]
+  #    - [,]
+  #  rotation: 0.0
+    #portal: true
+    #linked_map: fieldmap
+    #Changed to prevent a loop that would cause a robot crash
+  #  portal: false
+  #rung1:
+  #  points:
+  #    - [,]
+  #    - [,]
+  #  rotation: 0.0
+  #  portal: false

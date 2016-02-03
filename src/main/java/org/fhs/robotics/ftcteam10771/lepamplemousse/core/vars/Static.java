@@ -1,8 +1,7 @@
 package org.fhs.robotics.ftcteam10771.lepamplemousse.core.vars;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -57,11 +56,7 @@ public class Static {
 
     public static final String mapsBlueMontFileName = "bluemountain";
 
-    public static final List<String> mapNames = new ArrayList<String>() {{
-        add(mapsFieldFileName);
-        add(mapsRedMontFileName);
-        add(mapsBlueMontFileName);
-    }};
+    public static final List<String> mapNames = new ArrayList<String>(Arrays.asList(mapsFieldFileName, mapsRedMontFileName, mapsBlueMontFileName));
 
     //endregion
 

@@ -15,26 +15,57 @@ public class Maps {
 
     Coordinate mapSize = new Coordinate();
 
+    Rotation rotation = new Rotation();
+
     List<Obstacle> obstacles = new ArrayList<Obstacle>();
 
     List<Entities> entities = new ArrayList<Entities>();
 
     Robots robot;
 
+    public Maps(float sizeX, float sizeY, float rotRad, List<Obstacle> obstacles, List<Entities> entities, Robots robot){
+        initialize(sizeX, sizeY, rotRad, obstacles, entities, robot);
+    }
     public Maps(float sizeX, float sizeY, List<Obstacle> obstacles, List<Entities> entities, Robots robot){
-        mapSize.setX(sizeX);
-        mapSize.setY(sizeY);
-        this.obstacles.addAll(obstacles);
-        this.entities.addAll(entities);
-        this.robot = robot;
+        initialize(sizeX, sizeY, 0, obstacles, entities, robot);
     }
     public Maps(float sizeX, float sizeY, List<Obstacle> obstacles, List<Entities> entities){
-        this(sizeX, sizeY, obstacles, entities, new Robots());
+        initialize(sizeX, sizeY, 0, obstacles, entities, new Robots());
     }
     public Maps(Robots robot){
         this.robot = robot;
     }
     public Maps(){
+        robot = new Robots();
+    }
+
+    protected void initialize(float sizeX, float sizeY, float rotRad, List<Obstacle> obstacles, List<Entities> entities, Robots robot){
+        mapSize.setX(sizeX);
+        mapSize.setY(sizeY);
+        rotation.setRadians(rotRad);
+        this.obstacles.addAll(obstacles);
+        this.entities.addAll(entities);
+        this.robot = robot;
+    }
+    protected void initialize(float sizeX, float sizeY, List<Obstacle> obstacles, List<Entities> entities, Robots robot){
+        initialize(sizeX, sizeY, 0, obstacles, entities, robot);
+    }
+    protected void initialize(float sizeX, float sizeY, List<Obstacle> obstacles, List<Entities> entities){
+        initialize(sizeX, sizeY, 0, obstacles, entities, new Robots());
+    }
+    protected void initialize(float sizeX, float sizeY, List<Obstacle> obstacles, Robots robot){
+        initialize(sizeX, sizeY, 0, obstacles, new ArrayList<Entities>(), robot);
+    }
+    protected void initialize(float sizeX, float sizeY, float rotRad, List<Obstacle> obstacles){
+        initialize(sizeX, sizeY, rotRad, obstacles, new ArrayList<Entities>(), robot);
+    }
+    protected void initialize(float sizeX, float sizeY, List<Obstacle> obstacles){
+        initialize(sizeX, sizeY, 0, obstacles, new ArrayList<Entities>(), new Robots());
+    }
+    protected void initialize(Robots robot){
+        this.robot = robot;
+    }
+    protected void initialize(){
         robot = new Robots();
     }
 
@@ -82,14 +113,32 @@ public class Maps {
             return y;
         }
     }
+
+    public class Rotation{
+        float rot = 0.0f;
+
+        void setDegrees(float rotDegrees){
+            rot = (rotDegrees / 180.0f) * (float)Math.PI;
+        }
+        void setRadians(float rotRadians){
+            rot = rotRadians;
+        }
+
+        float getDegrees(){
+            return (rot / (float)Math.PI) * 180.0f;
+        }
+        float getRadians(){
+            return rot;
+        }
+    }
     class Obstacle {
-        ArrayList<Coordinate> points;
+        public ArrayList<Coordinate> points;
 
-        boolean portal;
+        public boolean portal;
 
-        Maps portalMap;
+        public Maps portalMap;
 
-        Rotation rotation = new Rotation();
+        public Rotation rotation = new Rotation();
 
         public Obstacle(ArrayList<Coordinate> points, float rotRad, boolean portal, Maps portalMap){
             rotation.setRadians(rotRad);
@@ -108,24 +157,6 @@ public class Maps {
 
         public Obstacle(ArrayList<Coordinate> points){
             this(points, 0.0f, false, null);
-        }
-
-        public class Rotation{
-            float rot = 0.0f;
-
-            void setDegrees(float rotDegrees){
-                rot = (rotDegrees / 180.0f) * (float)Math.PI;
-            }
-            void setRadians(float rotRadians){
-                rot = rotRadians;
-            }
-
-            float getDegrees(){
-                return (rot / (float)Math.PI) * 180.0f;
-            }
-            float getRadians(){
-                return rot;
-            }
         }
     }
 }

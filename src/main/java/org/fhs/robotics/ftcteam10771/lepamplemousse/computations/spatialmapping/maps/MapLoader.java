@@ -167,8 +167,7 @@ public class MapLoader extends Maps {
                     }
                     float rotob = ((Double)stuffs.get("rotation")).floatValue();
                     boolean portal = stuffs.get("portal").toString().equals("true");
-                    Maps maaaaaaaap = new MapLoader(stuffs.get("linked_map").toString());
-                    obs.add(new Obstacle(points, rotob, portal, maaaaaaaap));
+                    obs.add(new Obstacle(points, rotob, portal, stuffs.get("linked_map").toString()));
                 }
             }
         }

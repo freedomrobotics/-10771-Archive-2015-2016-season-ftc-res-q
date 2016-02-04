@@ -136,27 +136,27 @@ public class Maps {
 
         public boolean portal;
 
-        public Maps portalMap;
+        public String portalMap;
 
         public Rotation rotation = new Rotation();
 
-        public Obstacle(ArrayList<Coordinate> points, float rotRad, boolean portal, Maps portalMap){
+        public Obstacle(ArrayList<Coordinate> points, float rotRad, boolean portal, String portalMap){
             rotation.setRadians(rotRad);
             this.points = points;
             this.portal = portal;
             this.portalMap = portalMap;
         }
 
-        public Obstacle(ArrayList<Coordinate> points, boolean portal, Maps portalMap){
+        public Obstacle(ArrayList<Coordinate> points, boolean portal, String portalMap){
             this(points, 0.0f, portal, portalMap);
         }
 
         public Obstacle(ArrayList<Coordinate> points, float rotRad){
-            this(points, rotRad, false, null);
+            this(points, rotRad, false, "");
         }
 
         public Obstacle(ArrayList<Coordinate> points){
-            this(points, 0.0f, false, null);
+            this(points, 0.0f, false, "");
         }
     }
 }

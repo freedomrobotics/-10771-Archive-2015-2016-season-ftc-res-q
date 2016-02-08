@@ -64,4 +64,14 @@ plow:
   down_angle: 0.0
   up_angle: 130.0
 
-test: true
+autonomous:
+  red_alliance:
+    starting_pos:
+      x: 10.0
+      y: 10.0
+      rot: 0.0
+  blue_alliance:
+    starting_pos:
+      x: 10.0
+      y: 20.0
+      rot: 0.0

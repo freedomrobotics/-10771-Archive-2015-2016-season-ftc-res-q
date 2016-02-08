@@ -4,6 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 
 import org.fhs.robotics.ftcteam10771.lepamplemousse.computations.AtomFunctions;
+import org.fhs.robotics.ftcteam10771.lepamplemousse.computations.spatialmapping.maps.MapLoader;
+import org.fhs.robotics.ftcteam10771.lepamplemousse.computations.spatialmapping.maps.Maps;
 import org.fhs.robotics.ftcteam10771.lepamplemousse.config.Components;
 import org.fhs.robotics.ftcteam10771.lepamplemousse.config.Controllers;
 import org.fhs.robotics.ftcteam10771.lepamplemousse.config.Variables;
@@ -28,6 +30,8 @@ public class RobotAuto extends OpMode {
     InitComp initComp = null;
     AtomFunctions atomFunctions = null;
     boolean reset_config;
+    boolean run_once;
+    boolean red_alliance = false;
 
     public RobotAuto() {
         //Constructor
@@ -68,6 +72,7 @@ public class RobotAuto extends OpMode {
                 telemetry.addData("ERROR", "Something wrong happened!");
             }
         }
+        run_once = false;
     }
 
     @Override
@@ -99,7 +104,17 @@ public class RobotAuto extends OpMode {
 
     @Override
     public void loop() {
+        if (run_once)
+            return;
+        run_once = true;
         //core loop
+
+        Maps fieldMap = fieldMap();
+        for (int x = 0; fieldMap == null && x < 3; x++){
+            fieldMap = fieldMap();
+        }
+        if (fieldMap != null)
+            telemetry.addData("field_map", fieldMap.toString());
     }
 
     @Override
@@ -110,11 +125,11 @@ public class RobotAuto extends OpMode {
     }
 
 
-    public void rampClimbMid() {
+    public void rampClimbMid(){
 
     }
 
-    public void rampClimbLow() {
+    public void rampClimbLow(){
 
     }
 
@@ -124,6 +139,40 @@ public class RobotAuto extends OpMode {
     }
 
     public void drivePower(float power){
-        
+
+    }
+
+    public void driveToBeacon(Maps fieldMap){
+
+    }
+
+    public void driveToRamp(Maps fieldMap){
+
+    }
+
+    public Maps fieldMap(){
+        Maps fieldMap = new MapLoader("fieldmap");
+        if (!((MapLoader)fieldMap).mapLoaded)
+            return null;
+
+        float robotX, robotY, robotRot;
+
+        red_alliance = false;
+        if (values.settings("trigger_arm").getString("side").equals("right")){
+            //red alliance, left half
+            red_alliance = true;
+        }
+        StartValues.Settings autonomous = values.settings("autonomous").getSettings("blue_alliance");
+        if (red_alliance){
+            autonomous = values.settings("autonomous").getSettings("red_alliance");
+        }
+        robotX = autonomous.getSettings("starting_pos").getFloat("x");
+        robotY = autonomous.getSettings("starting_pos").getFloat("y");
+        robotRot = autonomous.getSettings("starting_pos").getFloat("rot");
+
+        fieldMap.getRobot().getPosition().setX(robotX);
+        fieldMap.getRobot().getPosition().setY(robotY);
+        fieldMap.getRobot().getRotation().setRadians(robotRot);
+        return fieldMap;
     }
 }

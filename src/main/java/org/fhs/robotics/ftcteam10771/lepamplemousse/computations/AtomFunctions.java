@@ -49,6 +49,8 @@ public class AtomFunctions {
         return Math.PI * diameter * (changeEncoder / (float) encoderFull);
     }
 
+    public 
+
 
 
 

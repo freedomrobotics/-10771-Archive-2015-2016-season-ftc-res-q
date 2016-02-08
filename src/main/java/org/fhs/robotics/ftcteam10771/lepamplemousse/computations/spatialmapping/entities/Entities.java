@@ -19,48 +19,48 @@ public interface Entities {
         float x = 0.0f;
         float y = 0.0f;
 
-        void setX(float x){
+        public void setX(float x){
             this.x = x;
         }
-        void setY(float y){
+        public void setY(float y){
             this.y = y;
         }
 
-        float getX(){
+        public float getX(){
             return x;
         }
-        float getY(){
+        public float getY(){
             return y;
         }
     }
     class Position extends Coordinate {
-        void moveX(float x){
+        public void moveX(float x){
             this.x += x;
         }
-        void moveY(float y){
+        public void moveY(float y){
             this.y += y;
         }
-        void moveXY(float x, float y){
+        public void moveXY(float x, float y){
             this.x = x;
             this.y = y;
         }
-        void move(float distance, float angRad){
+        public void move(float distance, float angRad){
             this.x = (float)Math.cos(angRad) * distance;
             this.x = (float)Math.sin(angRad) * distance;
         }
-        void moveDeg(float distance, float angDeg){
+        public void moveDeg(float distance, float angDeg){
             this.x = (float)Math.cos((angDeg / (float)Math.PI) * 180.0f) * distance;
             this.x = (float)Math.sin((angDeg / (float)Math.PI) * 180.0f) * distance;
         }
     }
     class Size extends Coordinate{
-        void scaleX(float x){
+        public void scaleX(float x){
             this.x *= x;
         }
-        void scaleY(float y){
+        public void scaleY(float y){
             this.y *= y;
         }
-        void scale(float scalar){
+        public void scale(float scalar){
             this.x *= scalar;
             this.y *= scalar;
         }
@@ -69,19 +69,19 @@ public interface Entities {
         // nothing yet!
     }
     class Rotation{
-        float rot = 0.0f;
+        public float rot = 0.0f;
 
-        void setDegrees(float rotDegrees){
+        public void setDegrees(float rotDegrees){
             rot = (rotDegrees / 180.0f) * (float)Math.PI;
         }
-        void setRadians(float rotRadians){
+        public void setRadians(float rotRadians){
             rot = rotRadians;
         }
 
-        float getDegrees(){
+        public float getDegrees(){
             return (rot / (float)Math.PI) * 180.0f;
         }
-        float getRadians(){
+        public float getRadians(){
             return rot;
         }
     }

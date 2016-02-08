@@ -89,6 +89,11 @@ public class Maps {
         return robot;
     }
 
+    @Override
+    public String toString(){
+        return "mapx = " + mapSize.getX() + ", mapy = " + mapSize.getY() + ", maprot = " + rotation.getDegrees() + ", robotx = " + robot.getPosition().getX() + ", roboty = " + robot.getPosition().getX() + ", robotrot = " + robot.getRotation().getDegrees();
+    }
+
     enum MapType{
         SQUARE,     //The only one that matters for now.
         CIRCLE,

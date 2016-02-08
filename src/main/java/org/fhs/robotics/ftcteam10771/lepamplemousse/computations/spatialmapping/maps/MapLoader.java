@@ -33,7 +33,7 @@ public class MapLoader extends Maps {
 
     private File mapFile;
 
-    boolean mapLoaded = false;
+    public boolean mapLoaded = false;
 
 
     public MapLoader(String mapName){

@@ -16,7 +16,7 @@ public class Static {
     /**
      * Configuration Directory Path relative to /sdcard
      */
-    public static final String configPath = "/GrapefruitConfig";
+    public static final String configPath = "/GrapefruitConfigAtomTest";
 
     /**
      * Configuration File Suffixes.
@@ -46,7 +46,7 @@ public class Static {
 
     //region Maps
 
-    public static final String mapsPath = "/GrapefruitMaps";
+    public static final String mapsPath = "/GrapefruitMapsAtomTest";
 
     public static final String mapsFileSuffix = ".map";
 

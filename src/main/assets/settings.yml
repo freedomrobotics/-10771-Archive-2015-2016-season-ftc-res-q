@@ -18,11 +18,13 @@ drivetrain:
     map_name: drive_left
     encodered: true
     reversed: false
+    encoder_reversed: true
   motor_right:
     offset: 0.0
     map_name: drive_right
-    encodered: true
+    encodered: false
     reversed: true
+    encoder_reversed: true
   wheel:
     diameter: 101.6 # 4 inches
 
@@ -33,14 +35,13 @@ winch:
     motor_reversed: true
     motor_tape_ratio: 2.5
     mot_max_power: 1
-    max_extend_power: 1
+    max_extend_power: 0.6
     max_retract_power: 1
   angular_movement:
     max_ang_vel: 20.0
     full_rotate: 180.0
-    max_rotate: 66.0
+    max_rotate: 90.0
     preset: 15.0
-    start_pos: 65.0
   left_servo:
     reversed: true
     offset: 15.75
@@ -52,12 +53,6 @@ winch:
 trigger_arm:
   enabled: true
   side: right
-  # if it's a motor (must be encodered)
-  motor_pow: 0.4
-  # pulses per full rotate (update!)
-  motor_pulses: 1120
-  # wanted range of motor in degrees (set to match inaccurate pulses)
-  motor_range: 140
 
 
 # Plow settings (It's a servo)
@@ -68,3 +63,15 @@ plow:
   full_rotate: 180.0
   down_angle: 0.0
   up_angle: 130.0
+
+autonomous:
+  red_alliance:
+    starting_pos:
+      x: 10.0
+      y: 10.0
+      rot: 0.0
+  blue_alliance:
+    starting_pos:
+      x: 10.0
+      y: 20.0
+      rot: 0.0

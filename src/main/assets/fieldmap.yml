@@ -1,0 +1,30 @@
+# All units in meters
+
+values:
+  size_x: 3.6576
+  size_y: 3.6576
+  map_type: SQUARE
+  rotation: 0.0
+
+
+obstacles:
+  blue_mountain:
+    points:
+      - [2.354628,0.391383]
+      - [3.196617,1.233372]
+    rotation: 45.0
+    portal: true
+    linked_map: bluemountain
+  red_mountain:
+    points:
+      - [0.391383,2.354628]
+      - [1.233372,3.196617]
+    rotation: -45.0
+    portal: true
+    linked_map: redmountain
+  field_division:
+    points:
+      - [0.0,0.0]
+      - [3.6576,3.6576]
+    rotation: 0.0
+    portal: false

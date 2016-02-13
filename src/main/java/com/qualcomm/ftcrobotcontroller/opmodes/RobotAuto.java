@@ -2,9 +2,9 @@ package com.qualcomm.ftcrobotcontroller.opmodes;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorController;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.fhs.robotics.ftcteam10771.lepamplemousse.computations.AtomFunctions;
-import org.fhs.robotics.ftcteam10771.lepamplemousse.computations.Vector;
 import org.fhs.robotics.ftcteam10771.lepamplemousse.computations.spatialmapping.maps.MapLoader;
 import org.fhs.robotics.ftcteam10771.lepamplemousse.computations.spatialmapping.maps.Maps;
 import org.fhs.robotics.ftcteam10771.lepamplemousse.config.Components;
@@ -34,6 +34,7 @@ public class RobotAuto extends OpMode {
     boolean red_alliance = false;
 
     private long lastTime;      // The time at the last time check (using System.currentTimeMillis())
+    private float servo_pos;
 
     public RobotAuto() {
         //Constructor
@@ -115,6 +116,44 @@ public class RobotAuto extends OpMode {
         telemetry.addData("field_map", fieldMap.toString());
 
         lastTime = System.currentTimeMillis();
+
+        servoSetup();
+    }
+
+    /**
+     * Sets up the servos
+     */
+    private void servoSetup() {
+        if (values.settings("winch").getSettings("left_servo").getBool("reversed")){
+            Aliases.servoMap.get("winch_left").setDirection(Servo.Direction.REVERSE);
+        }else{
+            Aliases.servoMap.get("winch_left").setDirection(Servo.Direction.FORWARD);
+        }
+        if (values.settings("winch").getSettings("right_servo").getBool("reversed")){
+            Aliases.servoMap.get("winch_right").setDirection(Servo.Direction.REVERSE);
+        } else {
+            Aliases.servoMap.get("winch_right").setDirection(Servo.Direction.FORWARD);
+        }
+        if (values.settings("trigger_arm").getString("side").equals("right")){
+            //Aliases.servoMap.get("arm_trigger").setDirection(Servo.Direction.REVERSE);
+        }else{
+            //Aliases.servoMap.get("arm_trigger").setDirection(Servo.Direction.FORWARD);
+        }
+        //if (values.settings("plow").getBool("reversed")){
+        //    Aliases.servoMap.get("plow").setDirection(Servo.Direction.REVERSE);
+        //}else{
+        //    Aliases.servoMap.get("plow").setDirection(Servo.Direction.FORWARD);
+        //}
+
+
+        StartValues.Settings winch = values.settings("winch");
+        StartValues.Settings angular = winch.getSettings("angular_movement");
+        float range = angular.getFloat("full_rotate");
+        servo_pos = angular.getFloat("start_pos") / range;
+        Aliases.servoMap.get("winch_left").setPosition(servo_pos + winch.getSettings("left_servo").getFloat("offset") / range);
+        Aliases.servoMap.get("winch_right").setPosition(servo_pos + winch.getSettings("right_servo").getFloat("offset") / range);
+
+        //Aliases.motorMap.get("trigger_arm").setMode(DcMotorController.RunMode.RESET_ENCODERS);
     }
 
     @Override
@@ -124,9 +163,32 @@ public class RobotAuto extends OpMode {
         lastTime += changeTime;
 
 
-        atomFunctions.startLoop(changeTime);
+        atomFunctions.startLoop(changeTime, servo_pos);
 
 
+        servo_pos = atomFunctions.getWinchServoPos();
+        updateWinchServos();
+    }
+
+    /**
+     * Adjusts the winch's
+     * projection angle
+     */
+    public void updateWinchServos(){
+        StartValues.Settings winch = values.settings("winch");
+        StartValues.Settings angular = winch.getSettings("angular_movement");
+        float range = angular.getFloat("full_rotate");
+
+        if (servo_pos > angular.getFloat("max_rotate") / range){
+            servo_pos = angular.getFloat("max_rotate") / range;
+        }
+        if (servo_pos < 0) {
+            servo_pos = 0;
+        }
+        if (controls.getDigital("winch_preset"))
+            servo_pos = angular.getFloat("preset") / range;
+        Aliases.servoMap.get("winch_left").setPosition(servo_pos + winch.getSettings("left_servo").getFloat("offset") / range);
+        Aliases.servoMap.get("winch_right").setPosition(servo_pos + winch.getSettings("right_servo").getFloat("offset") / range);
     }
 
     @Override

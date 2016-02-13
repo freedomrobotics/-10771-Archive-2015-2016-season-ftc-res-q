@@ -41,7 +41,7 @@ public class Controlled {
         lastTime = System.currentTimeMillis();
         servoSetup();
         //If this is not run, then the plow doesn't get its offset set.
-        togglePlow();
+        //togglePlow();
     }
 
     /**
@@ -62,21 +62,22 @@ public class Controlled {
             servosOff = true;
         }else if (!controls.getDigital("servos_off")){
 
-            if (controls.getDigital("plow") && !plowButton){
-                plowUp = !plowUp;
-                plowButton = true;
-                //lift or drop the plow
-                togglePlow();
-            }
-            else if (!controls.getDigital("plow")) {
-                plowButton = false;
-            }
+           // if (controls.getDigital("plow") && !plowButton){
+           //     plowUp = !plowUp;
+           //     plowButton = true;
+           //     //lift or drop the plow
+           //     togglePlow();
+           // }
+           // else if (!controls.getDigital("plow")) {
+           //     plowButton = false;
+           // }
 
             //adjusts winch angle
             winchAngle();
-            if (values.settings("trigger_arm").getBool("enabled")) moveArmTrigger();
             servosOff = false;
         }
+
+        if (values.settings("trigger_arm").getBool("enabled")) moveArmTrigger();
 
         //adjust the length of extension of winch
         extendWinch();
@@ -222,11 +223,11 @@ public class Controlled {
         }else{
             //Aliases.servoMap.get("arm_trigger").setDirection(Servo.Direction.FORWARD);
         }
-        if (values.settings("plow").getBool("reversed")){
-            Aliases.servoMap.get("plow").setDirection(Servo.Direction.REVERSE);
-        }else{
-            Aliases.servoMap.get("plow").setDirection(Servo.Direction.FORWARD);
-        }
+        //if (values.settings("plow").getBool("reversed")){
+        //    Aliases.servoMap.get("plow").setDirection(Servo.Direction.REVERSE);
+        //}else{
+        //    Aliases.servoMap.get("plow").setDirection(Servo.Direction.FORWARD);
+        //}
 
 
         StartValues.Settings winch = values.settings("winch");

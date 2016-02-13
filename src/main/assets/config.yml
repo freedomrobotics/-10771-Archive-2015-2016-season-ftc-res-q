@@ -55,7 +55,7 @@ servos:
       - trigger
       - arm
   servo4:
-    enabled: true
+    enabled: false
     map_name: plow
     alias:
       - servo_motor4

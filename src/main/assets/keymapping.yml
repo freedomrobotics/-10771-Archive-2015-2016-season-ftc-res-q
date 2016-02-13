@@ -159,7 +159,7 @@ gamepad2:
     digital: true
 
   a_button:
-    function: plow
+    function: null
     inverted: false
     digital: true
 

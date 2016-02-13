@@ -141,11 +141,11 @@ public class MapLoader extends Maps {
         }
         if (values != null){
             if (values.containsKey("size_x"))
-                sizeX = (Float) values.get("size_x");
+                sizeX = ((Double) values.get("size_x")).floatValue();
             if (values.containsKey("size_y"))
-                sizeY = (Float) values.get("size_y");
+                sizeY = ((Double) values.get("size_y")).floatValue();
             if (values.containsKey("rotation"))
-                rot = (Float) values.get("rotation");
+                rot = ((Double) values.get("rotation")).floatValue();
             if (sizeX == 0 || sizeY == 0){
                 return;
             }
@@ -167,7 +167,10 @@ public class MapLoader extends Maps {
                     }
                     float rotob = ((Double)stuffs.get("rotation")).floatValue();
                     boolean portal = stuffs.get("portal").toString().equals("true");
-                    obs.add(new Obstacle(points, rotob, portal, stuffs.get("linked_map").toString()));
+                    if (portal)
+                        obs.add(new Obstacle(points, rotob, portal, stuffs.get("linked_map").toString()));
+                    else
+                        obs.add(new Obstacle(points, rotob));
                 }
             }
         }

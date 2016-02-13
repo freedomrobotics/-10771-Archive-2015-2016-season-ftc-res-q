@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 
 import org.fhs.robotics.ftcteam10771.lepamplemousse.computations.AtomFunctions;
+import org.fhs.robotics.ftcteam10771.lepamplemousse.computations.Vector;
 import org.fhs.robotics.ftcteam10771.lepamplemousse.computations.spatialmapping.maps.MapLoader;
 import org.fhs.robotics.ftcteam10771.lepamplemousse.computations.spatialmapping.maps.Maps;
 import org.fhs.robotics.ftcteam10771.lepamplemousse.config.Components;
@@ -30,8 +31,9 @@ public class RobotAuto extends OpMode {
     InitComp initComp = null;
     AtomFunctions atomFunctions = null;
     boolean reset_config;
-    boolean run_once;
     boolean red_alliance = false;
+
+    private long lastTime;      // The time at the last time check (using System.currentTimeMillis())
 
     public RobotAuto() {
         //Constructor
@@ -72,7 +74,6 @@ public class RobotAuto extends OpMode {
                 telemetry.addData("ERROR", "Something wrong happened!");
             }
         }
-        run_once = false;
     }
 
     @Override
@@ -98,23 +99,34 @@ public class RobotAuto extends OpMode {
         controls = new ControllersInit(gamepad1, gamepad2, controllerConfig);
         //insert init code here
         controls.initialize();
-        Aliases.motorMap.get("drive_left").setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
-        atomFunctions = new AtomFunctions(values);
-    }
 
-    @Override
-    public void loop() {
-        if (run_once)
-            return;
-        run_once = true;
-        //core loop
+
+
+        Aliases.motorMap.get("drive_left").setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
+
 
         Maps fieldMap = fieldMap();
         for (int x = 0; fieldMap == null && x < 3; x++){
             fieldMap = fieldMap();
         }
-        if (fieldMap != null)
-            telemetry.addData("field_map", fieldMap.toString());
+        if (fieldMap == null)
+            return;
+
+        telemetry.addData("field_map", fieldMap.toString());
+
+        lastTime = System.currentTimeMillis();
+    }
+
+    @Override
+    public void loop() {
+        //for any physics, we have the change in time in milliseconds given by changeTime
+        long changeTime = System.currentTimeMillis() - lastTime;
+        lastTime += changeTime;
+
+
+        atomFunctions.startLoop(changeTime);
+
+
     }
 
     @Override
@@ -125,30 +137,6 @@ public class RobotAuto extends OpMode {
     }
 
 
-    public void rampClimbMid(){
-
-    }
-
-    public void rampClimbLow(){
-
-    }
-
-    //Distance as centimeters
-    public void driveDistance(float distance){
-
-    }
-
-    public void drivePower(float power){
-
-    }
-
-    public void driveToBeacon(Maps fieldMap){
-
-    }
-
-    public void driveToRamp(Maps fieldMap){
-
-    }
 
     public Maps fieldMap(){
         Maps fieldMap = new MapLoader("fieldmap");

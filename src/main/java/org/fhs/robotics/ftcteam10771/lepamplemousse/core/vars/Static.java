@@ -48,7 +48,7 @@ public class Static {
 
     public static final String mapsPath = "/GrapefruitMapsAtomTest";
 
-    public static final String mapsFileSuffix = ".map";
+    public static final String mapsFileSuffix = ".yml";
 
     public static final String mapsFieldFileName = "fieldmap";
 

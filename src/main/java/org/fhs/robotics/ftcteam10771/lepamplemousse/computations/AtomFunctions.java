@@ -77,14 +77,30 @@ public class AtomFunctions {
     /**
      * returns completion of function or not
      */
+    float moveToX, moveToY;
+    boolean moving;
     public boolean move(float distance){
+        if (moving)
+            return move(moveToX, moveToY);
+        float x = fieldMap.getRobot().getPosition().getX();
+        float y = fieldMap.getRobot().getPosition().getY();
+        float rot = fieldMap.getRobot().getRotation().getRadians();
 
-        return false;
+        //WATCH
+        moveToX = x + (float)(Math.cos(rot)*distance);
+        moveToY = y + (float)(Math.sin(rot)*distance);
+        //end watch
+
+        moving = true;
+
+        return move(moveToX, moveToY);
     }
 
     public boolean move(float pointX, float pointY){
+        if (!rotate(pointX, pointY))
+            return false;
 
-        return false;
+        
     }
 
     float degressRotated = 0;
@@ -132,14 +148,18 @@ public class AtomFunctions {
         return false;
     }
 
-    float winchServoTarget = -1.0f;
+    float winchServoTarget = -1000.0f;
     public boolean winchServo(boolean up, float degrees){
-        if(winchServoTarget != -1.0f)
+        if(winchServoTarget != -1000.0f)
             return winchServo(winchServoTarget);
 
         //calculate target
+        if(up)
+            winchServoTarget = winchServoPos + degrees;
+        if(!up)
+            winchServoTarget = winchServoPos - degrees;
 
-        return false;
+        return winchServo(winchServoTarget);
     }
 
     public boolean winchServo(float degrees){
@@ -153,15 +173,18 @@ public class AtomFunctions {
             winchServoPos += (values.settings("winch").getSettings("angular_movement").getFloat("max_ang_vel") / values.settings("winch").getSettings("angular_movement").getFloat("full_rotate")) * ((float) changeTime / 1000.0f);
             if (winchServoPos > degrees){
                 winchServoPos = degrees;
+                winchServoTarget = -1000.0f;
+                return true;
             }
         }
         if (degrees < winchServoPos) {
             winchServoPos -= (values.settings("winch").getSettings("angular_movement").getFloat("max_ang_vel") / values.settings("winch").getSettings("angular_movement").getFloat("full_rotate")) * ((float) changeTime / 1000.0f);
             if (winchServoPos < degrees){
                 winchServoPos = degrees;
+                winchServoTarget = -1000.0f;
+                return true;
             }
         }
-        //LASTPOSITION
         return false;
     }
 

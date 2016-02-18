@@ -99,8 +99,7 @@ public class AtomFunctions {
     public boolean move(float pointX, float pointY){
         if (!rotate(pointX, pointY))
             return false;
-
-        
+        return true;
     }
 
     float degressRotated = 0;

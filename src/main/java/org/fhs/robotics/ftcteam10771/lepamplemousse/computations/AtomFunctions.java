@@ -141,9 +141,9 @@ public class AtomFunctions {
             return true;
         }
         if (in)
-            Aliases.motorMap.get("winch").setPower(1);
-        else
             Aliases.motorMap.get("winch").setPower(-1);
+        else
+            Aliases.motorMap.get("winch").setPower(1);
         return false;
     }
 

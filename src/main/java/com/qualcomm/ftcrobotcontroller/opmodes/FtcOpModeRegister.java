@@ -57,5 +57,6 @@ public class FtcOpModeRegister implements OpModeRegister {
 
       manager.register("Le Pamplemousse DRIVE!", RobotDrive.class);
       manager.register("Autonomous", RobotAutoTake2.class);
+      manager.register("Roughtonomous", AutoOpMode.class);
   }
 }

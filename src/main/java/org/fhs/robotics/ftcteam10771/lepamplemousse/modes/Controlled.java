@@ -132,7 +132,7 @@ public class Controlled {
             armSweep_pos = sweep.getFloat("min_rotate") / range;
         }
         range = vert.getFloat("full_rotate");
-        armVert_pos += controls.getAnalog("arm_vert") * (vert.getFloat("max_ang_vel") / range) * ((float) changeTime / 1000.0f);
+        armVert_pos += controls.getAnalog("winch_extend_retract") * (vert.getFloat("max_ang_vel") / range) * ((float) changeTime / 1000.0f);
 
         if (armVert_pos > vert.getFloat("max_rotate") / range){
             armVert_pos = vert.getFloat("max_rotate") / range;

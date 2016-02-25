@@ -131,7 +131,7 @@ gamepad2:
     digital: false
 
   left_stick_y:
-    function: winch_extend_retract arm_vert
+    function: winch_extend_retract
     inverted: false
     digital: false
 

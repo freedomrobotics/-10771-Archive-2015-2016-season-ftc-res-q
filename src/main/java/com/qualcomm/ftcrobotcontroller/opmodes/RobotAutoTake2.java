@@ -323,6 +323,10 @@ public class RobotAutoTake2 extends LinearOpMode{
             }
             return;
         }
+        if (commandParser.command().equalsIgnoreCase("clear_arm")){
+            atomFunctions.clearArm();
+            return;
+        }
         if (commandParser.command().equalsIgnoreCase("pause")){
             sleep(commandParser.getArgInt(0));
             return;

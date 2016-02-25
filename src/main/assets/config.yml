@@ -47,19 +47,25 @@ servos:
       - tape_measure_winch2
       - secondary_winch
   servo3:
-    enabled: false
-    map_name: trigger_arm
+    enabled: true
+    map_name: arm_up
     alias:
-      - servo_motor3
-      - arm_trigger
-      - trigger
-      - arm
+      - servo_motor6
+      - up_arm
+      - arm_vert
   servo4:
-    enabled: false
-    map_name: plow
+    enabled: true
+    map_name: arm_side
+    alias:
+      - arm_sweep
+      - servo_motor5
+      - side_arm
+  servo5:
+    enabled: true
+    map_name: all_clear
     alias:
       - servo_motor4
-      - plow_lift
+      - allclear
 
 # Touch Sensors
 touch_sensors:

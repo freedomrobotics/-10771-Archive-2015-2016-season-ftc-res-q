@@ -26,6 +26,14 @@ public class Controlled {
     long changeTime = 0;
     boolean plowUp = false;
 
+    float armVert_pos = 0.0f;
+    float armSweep_pos = 0.0f;
+    boolean arm_enabled = false;
+    boolean armPressedFlag = false;
+
+    boolean all_clear = false;
+    boolean allClearPressedFlag = false;
+
 
     /**
      * The constructor for the driver controlled class
@@ -56,6 +64,8 @@ public class Controlled {
         //run the drive function
         drive();
 
+        press();
+
         //functions for the servos
         if (controls.getDigital("servos_off") && !servosOff){
             disableServos();
@@ -82,8 +92,57 @@ public class Controlled {
         //adjust the length of extension of winch
         extendWinch();
 
+        //Control that arm!
+        robotArm();
+
+        //Set that All clear!
+        allClear();
+
         //Telemetry data for the drivers.
         telemetryData();
+    }
+
+    private void allClear() {
+        StartValues.Settings a = values.settings("plow");
+        float fullRange = a.getFloat("full_rotate");
+        float offset = a.getFloat("offset") / fullRange;
+        float up = a.getFloat("up_angle") / fullRange;
+        float down = a.getFloat("down_angle") / fullRange;
+        if (all_clear){
+            Aliases.servoMap.get("allclear").setPosition(down + offset);
+        }else {
+            Aliases.servoMap.get("allclear").setPosition(up + offset);
+        }
+    }
+
+    private void robotArm() {
+        if (!arm_enabled || !values.settings("robot_arm").getBool("enabled"))
+            return;
+
+        StartValues.Settings sweep = values.settings("robot_arm").getSettings("sweep_servo");
+        StartValues.Settings vert = values.settings("robot_arm").getSettings("vert_servo");
+
+        float range = sweep.getFloat("full_rotate");
+        armSweep_pos += controls.getAnalog("arm_sweep") * (sweep.getFloat("max_ang_vel") / range) * ((float) changeTime / 1000.0f);
+
+        if (armSweep_pos > sweep.getFloat("max_rotate") / range){
+            armSweep_pos = sweep.getFloat("max_rotate") / range;
+        }
+        if (armSweep_pos < sweep.getFloat("min_rotate") / range) {
+            armSweep_pos = sweep.getFloat("min_rotate") / range;
+        }
+        range = vert.getFloat("full_rotate");
+        armVert_pos += controls.getAnalog("arm_vert") * (vert.getFloat("max_ang_vel") / range) * ((float) changeTime / 1000.0f);
+
+        if (armVert_pos > vert.getFloat("max_rotate") / range){
+            armVert_pos = vert.getFloat("max_rotate") / range;
+        }
+        if (armVert_pos < vert.getFloat("min_rotate") / range) {
+            armVert_pos = vert.getFloat("min_rotate") / range;
+        }
+
+        Aliases.servoMap.get("arm_up").setPosition(armVert_pos);
+        Aliases.servoMap.get("arm_side").setPosition(armSweep_pos);
     }
 
     private void telemetryData() {
@@ -127,7 +186,31 @@ public class Controlled {
     }
 
     public void press(){
-        //might consider putting button logic here
+        if (controls.getDigital("arm_toggle") && !armPressedFlag){
+            arm_enabled = !arm_enabled;
+            armPressedFlag = true;
+        } if(!controls.getDigital("arm_toggle")){
+            armPressedFlag = false;
+        }
+        if (controls.getDigital("arm_toggle_on")){
+            arm_enabled = true;
+        }
+        if (controls.getDigital("arm_toggle_off")){
+            arm_enabled = false;
+        }
+
+        if (controls.getDigital("all_clear") && !allClearPressedFlag){
+            all_clear = !all_clear;
+            allClearPressedFlag = true;
+        } if(!controls.getDigital("all_clear")){
+            allClearPressedFlag = false;
+        }
+        if (controls.getDigital("all_clear_down")){
+            all_clear = true;
+        }
+        if (controls.getDigital("all_clear_up")){
+            all_clear = false;
+        }
     }
 
     /**
@@ -135,6 +218,8 @@ public class Controlled {
      * projection angle
      */
     public void winchAngle(){
+        if (arm_enabled)
+            return;
         StartValues.Settings winch = values.settings("winch");
         StartValues.Settings angular = winch.getSettings("angular_movement");
         float range = angular.getFloat("full_rotate");
@@ -180,6 +265,8 @@ public class Controlled {
      */
     // TODO: 12/28/2015 implement variables from settings.yml
     public void extendWinch(){
+        if (arm_enabled)
+            return;
         //if (plowUp) {
             Aliases.motorMap.get("winch_motor").setPower(controls.getAnalog("winch_extend_retract"));
         //} else{

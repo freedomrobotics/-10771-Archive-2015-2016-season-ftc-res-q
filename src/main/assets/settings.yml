@@ -60,6 +60,33 @@ trigger_arm:
   motor_range: 140
 
 
+#Robot Arm Settings
+robot_arm:
+  enabled: true
+  sweep_servo:
+    reversed: false
+    max_ang_vel: 60.0
+    full_rotate: 180.0
+    max_rotate: 180.0
+    min_rotate: 0.0
+    start_pos: 0.0
+  vert_servo:
+    reversed: false
+    max_ang_vel: 60.0
+    full_rotate: 180.0
+    max_rotate: 180.0
+    min_rotate: 0.0
+    start_pos: 0.0
+
+#AllClearSettings
+all_clear:
+  enabled: true
+  reversed: false
+  offset: 30.0
+  full_rotate: 180.0
+  down_angle: 0.0
+  up_angle: 130.0
+
 # Plow settings (It's a servo)
 plow:
   enabled: true

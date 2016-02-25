@@ -146,7 +146,7 @@ public class AtomFunctionsTake2 {
         }
         if (degrees < 0) {
             degrees = 0;
-        }
+        }/*
         while (degrees != servo_pos)
         if (degrees > servo_pos) {
             winchServoPos += (values.settings("winch").getSettings("angular_movement").getFloat("max_ang_vel") / values.settings("winch").getSettings("angular_movement").getFloat("full_rotate")) * ((float) changeTime / 1000.0f);
@@ -164,10 +164,14 @@ public class AtomFunctionsTake2 {
                 return true;
             }
         }
-        return false;
+        return false;*/
     }
 
     public void winchServo(boolean up, float degrees){
+
+    }
+
+    public void clearArm(){
 
     }
 

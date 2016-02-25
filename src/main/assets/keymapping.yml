@@ -5,9 +5,16 @@
 # winch_extend_retract  = the winch motor to extend and retract - analog(-1, 1)   - float
 # winch_angle           = the angle of the winch assembly       - analog(-1, 1)   - float
 # trigger_arm           = directly mapped to the trigger arm    - analog(0, 1)    - float
+# arm_vert              = The verticle part of the robot arm    - analog (-1, 1)  - float
+# arm_sweep             = The horizontal part of the robot arm  - analog (-1, 1)  - float
 # winch_preset          = sets the winch angle to the preset    - digital         - boolean
 # servos_off            = turns off the servos                  - digital         - boolean
-# plow                  = lifts or drops the plow               - digital         - boolean
+# arm_toggle            = toggles arm controls                  - digital         - boolean
+# arm_toggle_on         = Single toggle arm controls on         - digital         - boolean
+# arm_toggle_off        = Single toggle arm controls off        - digital         - boolean
+# all_clear             = toggle the all clear servo            - digital         - boolean
+# all_clear_down        = all clear servo down                  - digital         - boolean
+# all_clear_up          = all clear servo up                    - digital         - boolean
 # log_cat               = enable logging; checked on init       - digital         - boolean
 gamepad1:
   left_stick_x:
@@ -51,12 +58,12 @@ gamepad1:
     digital: true
 
   a_button:
-    function: null
+    function: all_clear_down
     inverted: false
     digital: true
 
   b_button:
-    function: null
+    function: all_clear_up
     inverted: false
     digital: true
 
@@ -119,12 +126,12 @@ gamepad1:
 
 gamepad2:
   left_stick_x:
-    function: null
+    function: arm_sweep
     inverted: false
     digital: false
 
   left_stick_y:
-    function: winch_extend_retract
+    function: winch_extend_retract arm_vert
     inverted: false
     digital: false
 
@@ -159,12 +166,12 @@ gamepad2:
     digital: true
 
   a_button:
-    function: null
+    function: arm_toggle_on
     inverted: false
     digital: true
 
   b_button:
-    function: null
+    function: arm_toggle_off
     inverted: false
     digital: true
 

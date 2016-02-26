@@ -1,5 +1,6 @@
 package org.fhs.robotics.ftcteam10771.lepamplemousse.computations;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.fhs.robotics.ftcteam10771.lepamplemousse.computations.spatialmapping.maps.Maps;
@@ -23,10 +24,12 @@ public class AtomFunctionsTake2 {
     Maps fieldMap;
     StartValues values = null;
     float servo_pos;
+    LinearOpMode parent = null;
 
-    public AtomFunctionsTake2(StartValues values, Maps fieldMap){
+    public AtomFunctionsTake2(StartValues values, Maps fieldMap, LinearOpMode parent){
         this.values = values;
         this.fieldMap = fieldMap;
+        this.parent = parent;
     }
 
     public static class CommandParser{
@@ -34,12 +37,15 @@ public class AtomFunctionsTake2 {
         List<Object> arguments = new ArrayList<Object>();
 
         public CommandParser(String command){
-            this.command = command.split(" ", 2)[0];
-            String argumentList = command.split(" ", 2)[1];
-            argumentList = argumentList.replaceAll("\\s","");
-            for(String arg : argumentList.split(",")){
-                arguments.add(arg);
+            if (command.contains(" ")) {
+                this.command = command.split(" ", 2)[0];
+                String argumentList = command.split(" ", 2)[1];
+                argumentList = argumentList.replaceAll("\\s", "");
+                for (String arg : argumentList.split(",")) {
+                    arguments.add(arg);
+                }
             }
+            this.command = command;
         }
 
         public String command(){
@@ -100,36 +106,59 @@ public class AtomFunctionsTake2 {
 
 
     public void drive(float power){
-        Aliases.motorMap.get("drive_left").setPower(power);
-        Aliases.motorMap.get("drive_right").setPower(power);
+        if (values.settings("drivetrain").getSettings("motor_left").getBool("reversed"))
+            Aliases.motorMap.get("drive_left").setPower(-power);
+        else
+            Aliases.motorMap.get("drive_left").setPower(power);
+        if (values.settings("drivetrain").getSettings("motor_right").getBool("reversed"))
+            Aliases.motorMap.get("drive_right").setPower(-power);
+        else
+            Aliases.motorMap.get("drive_right").setPower(power);
     }
 
 
     // TODO: 2/19/2016 Finish and add Map references back in
     // TODO: 2/19/2016 Make sure robot doesn't ram into wall
-    public void move(float distance) {
+    public void move(float distance) throws InterruptedException {
         float wheel_dia = values.settings("drivetrain").getSettings("wheel").getFloat("diameter");
         double startPos = getPosition(Aliases.motorMap.get("drive_left"), wheel_dia);
-        double endPos = startPos + distance;
+        //Signs are not intuitive because the motor is reversed.
+        double endPos = startPos - distance * 10.0f;
+        double travelled;
         while (true){
-            if (endPos >= startPos) {
-                drive(1);
-                if (getPosition(Aliases.motorMap.get("drive_left"), wheel_dia) >= endPos) {
+            if (endPos <= startPos) {
+                drive(-1);
+                if ((travelled = getPosition(Aliases.motorMap.get("drive_left"), wheel_dia)) >= endPos) {
                     break;
                 }
             }else{
-                drive(-1);
-                if (getPosition(Aliases.motorMap.get("drive_left"), wheel_dia) <= endPos) {
+                drive(1);
+                if ((travelled = getPosition(Aliases.motorMap.get("drive_left"), wheel_dia)) <= endPos) {
                     break;
                 }
             }
+            parent.waitForNextHardwareCycle();
         }
         drive(0);
 
+        travelled -= startPos;
+
+        travelled *= 1000.0f;
+
+        float x = fieldMap.getRobot().getPosition().getX();
+        float y = fieldMap.getRobot().getPosition().getY();
+        float rot = fieldMap.getRobot().getRotation().getRadians();
+
+        fieldMap.getRobot().getPosition().setX(x + (float) (Math.cos(rot) * travelled));
+        fieldMap.getRobot().getPosition().setY(y + (float) (Math.sin(rot) * travelled));
     }
 
-    public void move(float pointX, float pointY){
-
+    public void move(float pointX, float pointY) throws InterruptedException {
+        rotate(pointX, pointY);
+        float changeX = pointX - fieldMap.getRobot().getPosition().getX();
+        float changeY = pointY - fieldMap.getRobot().getPosition().getY();
+        float distance = (float)Math.sqrt(changeX*changeX + changeY*changeY);
+        move(distance * 100);
     }
 
     public void rotate(float degrees){

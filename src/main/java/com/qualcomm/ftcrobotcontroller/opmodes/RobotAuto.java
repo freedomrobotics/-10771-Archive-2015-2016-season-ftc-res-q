@@ -36,10 +36,6 @@ public class RobotAuto extends OpMode {
     private long lastTime;      // The time at the last time check (using System.currentTimeMillis())
     private float servo_pos;
 
-    public RobotAuto() {
-        //Constructor
-    }
-
     @Override
     public void init() {
         //initializer

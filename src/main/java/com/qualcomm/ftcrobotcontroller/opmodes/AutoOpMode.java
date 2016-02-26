@@ -16,10 +16,6 @@ import org.fhs.robotics.ftcteam10771.lepamplemousse.core.vars.ReturnValues;
  */
 public class AutoOpMode extends LinearOpMode {
 
-    //empty default constructor
-    AutoOpMode() {
-    }
-
     Components components = null;
     ReturnValues returnValues;
     Variables variables = null;
@@ -29,6 +25,9 @@ public class AutoOpMode extends LinearOpMode {
     boolean park = true;                //TODO: create a config setting for floor vs. mountain
 
     float servo_pos;
+
+    float armVert_pos = 0.0f;
+    float armSweep_pos = 0.0f;
 
     @Override
     /**
@@ -107,8 +106,14 @@ public class AutoOpMode extends LinearOpMode {
         } else {
             power = -1.0;
         }
-        Aliases.motorMap.get("drive_left").setPower(power);
-        Aliases.motorMap.get("drive_right").setPower(power);
+        if (values.settings("drivetrain").getSettings("motor_left").getBool("reversed"))
+            Aliases.motorMap.get("drive_left").setPower(-power);
+        else
+            Aliases.motorMap.get("drive_left").setPower(power);
+        if (values.settings("drivetrain").getSettings("motor_right").getBool("reversed"))
+            Aliases.motorMap.get("drive_right").setPower(-power);
+        else
+            Aliases.motorMap.get("drive_right").setPower(power);
     }
 
     /**
@@ -161,25 +166,27 @@ public class AutoOpMode extends LinearOpMode {
      * Sets up the servos
      */
     private void servoSetup() {
-        if (values.settings("winch").getSettings("left_servo").getBool("reversed")) {
+        if (values.settings("winch").getSettings("left_servo").getBool("reversed")){
             Aliases.servoMap.get("winch_left").setDirection(Servo.Direction.REVERSE);
-        } else {
+        }else{
             Aliases.servoMap.get("winch_left").setDirection(Servo.Direction.FORWARD);
         }
-        if (values.settings("winch").getSettings("right_servo").getBool("reversed")) {
+        if (values.settings("winch").getSettings("right_servo").getBool("reversed")){
             Aliases.servoMap.get("winch_right").setDirection(Servo.Direction.REVERSE);
         } else {
             Aliases.servoMap.get("winch_right").setDirection(Servo.Direction.FORWARD);
         }
-        if (values.settings("trigger_arm").getString("side").equals("right")) {
+        if (values.settings("trigger_arm").getString("side").equals("right")){
             //Aliases.servoMap.get("arm_trigger").setDirection(Servo.Direction.REVERSE);
-        } else {
+        }else{
             //Aliases.servoMap.get("arm_trigger").setDirection(Servo.Direction.FORWARD);
         }
         //if (values.settings("plow").getBool("reversed")){
         //    Aliases.servoMap.get("plow").setDirection(Servo.Direction.REVERSE);
         //}else{
         //    Aliases.servoMap.get("plow").setDirection(Servo.Direction.FORWARD);
+        //}
+
 
         StartValues.Settings winch = values.settings("winch");
         StartValues.Settings angular = winch.getSettings("angular_movement");
@@ -187,5 +194,43 @@ public class AutoOpMode extends LinearOpMode {
         servo_pos = angular.getFloat("start_pos") / range;
         Aliases.servoMap.get("winch_left").setPosition(servo_pos + winch.getSettings("left_servo").getFloat("offset") / range);
         Aliases.servoMap.get("winch_right").setPosition(servo_pos + winch.getSettings("right_servo").getFloat("offset") / range);
+
+
+
+        if (values.settings("robot_arm").getSettings("sweep_servo").getBool("reversed")){
+            Aliases.servoMap.get("arm_side").setDirection(Servo.Direction.REVERSE);
+        } else {
+            Aliases.servoMap.get("arm_side").setDirection(Servo.Direction.FORWARD);
+        }
+        if (values.settings("robot_arm").getSettings("vert_servo").getBool("reversed")){
+            Aliases.servoMap.get("arm_up").setDirection(Servo.Direction.REVERSE);
+        } else {
+            Aliases.servoMap.get("arm_up").setDirection(Servo.Direction.FORWARD);
+        }
+        if (values.settings("all_clear").getBool("reversed")){
+            Aliases.servoMap.get("arm_up").setDirection(Servo.Direction.REVERSE);
+        } else {
+            Aliases.servoMap.get("arm_up").setDirection(Servo.Direction.FORWARD);
+        }
+
+        StartValues.Settings sweep = values.settings("robot_arm").getSettings("sweep_servo");
+        StartValues.Settings vert = values.settings("robot_arm").getSettings("vert_servo");
+
+        range = sweep.getFloat("full_rotate");
+        armSweep_pos = sweep.getFloat("start_pos") / range;
+        range = vert.getFloat("full_rotate");
+        armVert_pos = vert.getFloat("start_pos") / range;
+
+        Aliases.servoMap.get("arm_up").setPosition(armVert_pos);
+        Aliases.servoMap.get("arm_side").setPosition(armSweep_pos);
+
+
+        StartValues.Settings a = values.settings("all_clear");
+        float fullRange = a.getFloat("full_rotate");
+        float offset = a.getFloat("offset") / fullRange;
+        float up = a.getFloat("up_angle") / fullRange;
+        Aliases.servoMap.get("allclear").setPosition(up + offset);
+
+        //Aliases.motorMap.get("trigger_arm").setMode(DcMotorController.RunMode.RESET_ENCODERS);
     }
 }

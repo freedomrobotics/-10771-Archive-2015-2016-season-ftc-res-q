@@ -24,7 +24,7 @@ gamepad1:
 
   left_stick_y:
     function: drivetrain_left
-    inverted: false
+    inverted: true
     digital: false
 
   right_stick_x:
@@ -34,7 +34,7 @@ gamepad1:
 
   right_stick_y:
     function: drivetrain_right
-    inverted: false
+    inverted: true
     digital: false
 
   dpad_up:
@@ -131,7 +131,7 @@ gamepad2:
     digital: false
 
   left_stick_y:
-    function: winch_extend_retract
+    function: winch_extend_retract arm_vert
     inverted: false
     digital: false
 

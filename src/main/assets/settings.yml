@@ -17,12 +17,12 @@ drivetrain:
     offset: 0.0
     map_name: drive_left
     encodered: true
-    reversed: false
+    reversed: true
   motor_right:
     offset: 0.0
     map_name: drive_right
     encodered: true
-    reversed: true
+    reversed: false
   wheel:
     diameter: 101.6 # 4 inches
 
@@ -53,7 +53,7 @@ trigger_arm:
   enabled: true
   side: right
   # if it's a motor (must be encodered)
-  motor_pow: 0.4
+  motor_pow: 0.3
   # pulses per full rotate (update!)
   motor_pulses: 1120
   # wanted range of motor in degrees (set to match inaccurate pulses)
@@ -82,10 +82,10 @@ robot_arm:
 all_clear:
   enabled: true
   reversed: false
-  offset: 30.0
+  offset: 0.0
   full_rotate: 180.0
   down_angle: 0.0
-  up_angle: 130.0
+  up_angle: 140.0
 
 # Plow settings (It's a servo)
 plow:

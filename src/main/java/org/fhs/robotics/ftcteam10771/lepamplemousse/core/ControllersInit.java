@@ -53,15 +53,21 @@ public class ControllersInit {
                 Map.Entry button = (Map.Entry) Gamepad.next();
                 String key = button.getKey().toString();
                 if (controllerConfig.getFunction(i, key) != null) {
-                    String functionName = controllerConfig.getFunction(i, key);
-                    boolean inverted = controllerConfig.invertedEnabled(i, key);
-                    if (controllerConfig.digitalEnabled(i, key)) {
-                        aliasing.put(functionName, new inputMethods(key, i, inverted, true));
-                    } else {
-                        aliasing.put(functionName, new inputMethods(key, i, inverted, false));
-                        //What? Use default? Will do later
-                        // TODO: 12/16/2015 Appropriate return values
-                    }
+                    String functionNames = controllerConfig.getFunction(i, key);
+                    do {
+                        String functionName = functionNames;
+                        if (functionNames.contains(" "))
+                            functionName = functionNames.substring(0, functionNames.indexOf(" "));
+                        functionNames = functionNames.substring(functionNames.indexOf(" ") + 1, functionNames.length());
+                        boolean inverted = controllerConfig.invertedEnabled(i, key);
+                        if (controllerConfig.digitalEnabled(i, key)) {
+                            aliasing.put(functionName, new inputMethods(key, i, inverted, true));
+                        } else {
+                            aliasing.put(functionName, new inputMethods(key, i, inverted, false));
+                            //What? Use default? Will do later
+                            // TODO: 12/16/2015 Appropriate return values
+                        }
+                    } while (functionNames.contains(" "));
                 }
             }
         }
@@ -241,11 +247,15 @@ public class ControllersInit {
     }
 
     public Float getAnalog(String name) {
-        return aliasing.get(name).getFloat();
+        if (aliasing.containsKey(name))
+            return aliasing.get(name).getFloat();
+        return 0.0f;
     }
 
     public Boolean getDigital(String name) {
-        return aliasing.get(name).getBoolean();
+        if (aliasing.containsKey(name))
+            return aliasing.get(name).getBoolean();
+        return false;
     }
 
     class inputMethods {

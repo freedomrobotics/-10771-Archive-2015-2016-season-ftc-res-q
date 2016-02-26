@@ -63,8 +63,14 @@ public class AtomFunctions {
     }
 
     private void drive(float power){
-        Aliases.motorMap.get("drive_left").setPower(power);
-        Aliases.motorMap.get("drive_right").setPower(power);
+        if (values.settings("drivetrain").getSettings("motor_left").getBool("reversed"))
+            Aliases.motorMap.get("drive_left").setPower(-power);
+        else
+            Aliases.motorMap.get("drive_left").setPower(power);
+        if (values.settings("drivetrain").getSettings("motor_right").getBool("reversed"))
+            Aliases.motorMap.get("drive_right").setPower(-power);
+        else
+            Aliases.motorMap.get("drive_right").setPower(power);
     }
 
     public void startLoop(long changeTime, float winchServoPos){

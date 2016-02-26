@@ -85,6 +85,12 @@ public class Controlled {
             //adjusts winch angle
             winchAngle();
             servosOff = false;
+
+            //Control that arm!
+            robotArm();
+
+            //Set that All clear!
+            allClear();
         }
 
         if (values.settings("trigger_arm").getBool("enabled")) moveArmTrigger();
@@ -92,18 +98,12 @@ public class Controlled {
         //adjust the length of extension of winch
         extendWinch();
 
-        //Control that arm!
-        robotArm();
-
-        //Set that All clear!
-        allClear();
-
         //Telemetry data for the drivers.
         telemetryData();
     }
 
     private void allClear() {
-        StartValues.Settings a = values.settings("plow");
+        StartValues.Settings a = values.settings("all_clear");
         float fullRange = a.getFloat("full_rotate");
         float offset = a.getFloat("offset") / fullRange;
         float up = a.getFloat("up_angle") / fullRange;
@@ -116,7 +116,7 @@ public class Controlled {
     }
 
     private void robotArm() {
-        if (!arm_enabled || !values.settings("robot_arm").getBool("enabled"))
+        if (!arm_enabled)
             return;
 
         StartValues.Settings sweep = values.settings("robot_arm").getSettings("sweep_servo");
@@ -132,7 +132,7 @@ public class Controlled {
             armSweep_pos = sweep.getFloat("min_rotate") / range;
         }
         range = vert.getFloat("full_rotate");
-        armVert_pos += controls.getAnalog("winch_extend_retract") * (vert.getFloat("max_ang_vel") / range) * ((float) changeTime / 1000.0f);
+        armVert_pos += controls.getAnalog("arm_vert") * (vert.getFloat("max_ang_vel") / range) * ((float) changeTime / 1000.0f);
 
         if (armVert_pos > vert.getFloat("max_rotate") / range){
             armVert_pos = vert.getFloat("max_rotate") / range;
@@ -147,6 +147,13 @@ public class Controlled {
 
     private void telemetryData() {
         telemetry.addData("Winch Angle", servo_pos * values.settings("winch").getSettings("angular_movement").getFloat("full_rotate"));
+
+        //debug
+        telemetry.addData("Arm vert", armVert_pos * values.settings("robot_arm").getSettings("sweep_servo").getFloat("full_rotate"));
+        telemetry.addData("Arm sweep", armVert_pos * values.settings("robot_arm").getSettings("vert_servo").getFloat("full_rotate"));
+        telemetry.addData("Arm", arm_enabled);
+
+        telemetry.addData("All Clear", all_clear);
     }
 
     // TODO: 12/24/2015 figure out how to use acutual map_name
@@ -320,10 +327,38 @@ public class Controlled {
         StartValues.Settings winch = values.settings("winch");
         StartValues.Settings angular = winch.getSettings("angular_movement");
         float range = angular.getFloat("full_rotate");
-       servo_pos = angular.getFloat("start_pos") / range;
+        servo_pos = angular.getFloat("start_pos") / range;
         Aliases.servoMap.get("winch_left").setPosition(servo_pos + winch.getSettings("left_servo").getFloat("offset") / range);
         Aliases.servoMap.get("winch_right").setPosition(servo_pos + winch.getSettings("right_servo").getFloat("offset") / range);
 
+
+
+        if (values.settings("robot_arm").getSettings("sweep_servo").getBool("reversed")){
+            Aliases.servoMap.get("arm_side").setDirection(Servo.Direction.REVERSE);
+        } else {
+            Aliases.servoMap.get("arm_side").setDirection(Servo.Direction.FORWARD);
+        }
+        if (values.settings("robot_arm").getSettings("vert_servo").getBool("reversed")){
+            Aliases.servoMap.get("arm_up").setDirection(Servo.Direction.REVERSE);
+        } else {
+            Aliases.servoMap.get("arm_up").setDirection(Servo.Direction.FORWARD);
+        }
+        if (values.settings("all_clear").getBool("reversed")){
+            Aliases.servoMap.get("arm_up").setDirection(Servo.Direction.REVERSE);
+        } else {
+            Aliases.servoMap.get("arm_up").setDirection(Servo.Direction.FORWARD);
+        }
+
+        StartValues.Settings sweep = values.settings("robot_arm").getSettings("sweep_servo");
+        StartValues.Settings vert = values.settings("robot_arm").getSettings("vert_servo");
+
+        range = sweep.getFloat("full_rotate");
+        armSweep_pos = sweep.getFloat("start_pos") / range;
+        range = vert.getFloat("full_rotate");
+        armVert_pos = vert.getFloat("start_pos") / range;
+
+        Aliases.servoMap.get("arm_up").setPosition(armVert_pos);
+        Aliases.servoMap.get("arm_side").setPosition(armSweep_pos);
         //Aliases.motorMap.get("trigger_arm").setMode(DcMotorController.RunMode.RESET_ENCODERS);
     }
 

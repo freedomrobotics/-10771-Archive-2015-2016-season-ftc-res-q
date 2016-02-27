@@ -57,6 +57,8 @@ public class RobotAutoTake2 extends LinearOpMode{
             }
         }
 
+        sleep(500);
+
         //set default values
         //load the variables object and check for existence
         variables = new Variables(telemetry);
@@ -68,7 +70,7 @@ public class RobotAutoTake2 extends LinearOpMode{
         values = new StartValues(variables, telemetry);
         values.initialize();
 
-        Aliases.motorMap.get("drive_left").setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
+        sleep(500);
 
 
         Maps fieldMap = fieldMap();
@@ -78,7 +80,7 @@ public class RobotAutoTake2 extends LinearOpMode{
         if (fieldMap == null)
             return;
 
-        atomFunctions = new AtomFunctionsTake2(values, fieldMap, this);
+        atomFunctions = new AtomFunctionsTake2(values, fieldMap, this, telemetry);
 
         telemetry.addData("field_map", fieldMap.toString());
 
@@ -163,6 +165,7 @@ public class RobotAutoTake2 extends LinearOpMode{
                 else
                     Aliases.motorMap.get("winch").setPower(1);
                 sleep(commandParser.getArgInt(1));
+                Aliases.motorMap.get("winch").setPower(0);
             }
             return;
         }

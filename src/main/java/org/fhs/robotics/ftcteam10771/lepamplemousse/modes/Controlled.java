@@ -359,7 +359,6 @@ public class Controlled {
 
         Aliases.servoMap.get("arm_up").setPosition(armVert_pos);
         Aliases.servoMap.get("arm_side").setPosition(armSweep_pos);
-        //Aliases.motorMap.get("trigger_arm").setMode(DcMotorController.RunMode.RESET_ENCODERS);
     }
 
     public void cleanup(){

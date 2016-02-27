@@ -91,7 +91,7 @@ public class Maps {
 
     @Override
     public String toString(){
-        return "mapx = " + mapSize.getX() + ", mapy = " + mapSize.getY() + ", maprot = " + rotation.getDegrees() + ", robotx = " + robot.getPosition().getX() + ", roboty = " + robot.getPosition().getX() + ", robotrot = " + robot.getRotation().getDegrees();
+        return "mapx = " + mapSize.getX() + ", mapy = " + mapSize.getY() + ", maprot = " + rotation.getDegrees() + ", robotx = " + robot.getPosition().getX() + ", roboty = " + robot.getPosition().getY() + ", robotrot = " + robot.getRotation().getDegrees();
     }
 
     enum MapType{

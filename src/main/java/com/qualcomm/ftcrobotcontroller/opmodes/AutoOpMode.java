@@ -208,9 +208,9 @@ public class AutoOpMode extends LinearOpMode {
             Aliases.servoMap.get("arm_up").setDirection(Servo.Direction.FORWARD);
         }
         if (values.settings("all_clear").getBool("reversed")){
-            Aliases.servoMap.get("arm_up").setDirection(Servo.Direction.REVERSE);
+            Aliases.servoMap.get("all_clear").setDirection(Servo.Direction.REVERSE);
         } else {
-            Aliases.servoMap.get("arm_up").setDirection(Servo.Direction.FORWARD);
+            Aliases.servoMap.get("all_clear").setDirection(Servo.Direction.FORWARD);
         }
 
         StartValues.Settings sweep = values.settings("robot_arm").getSettings("sweep_servo");

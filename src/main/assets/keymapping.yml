@@ -166,12 +166,12 @@ gamepad2:
     digital: true
 
   a_button:
-    function: arm_toggle_on
+    function: null
     inverted: false
     digital: true
 
   b_button:
-    function: arm_toggle_off
+    function: null
     inverted: false
     digital: true
 

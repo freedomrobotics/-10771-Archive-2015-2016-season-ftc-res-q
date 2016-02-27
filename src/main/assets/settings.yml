@@ -5,8 +5,9 @@
 # Unit of rotation is degrees (angular velocity is in degrees per second)
 
 # Encoder pulses per full revolution http://ftcforum.usfirst.org/archive/index.php/t-5189.html
+# update https://www.reddit.com/r/FTC/comments/3qhfvj/help_with_encoders/
 encoder:
-  output_pulses: 1120
+  output_pulses: 1440
   encoder_pulses: 28
 
 # The drivetrain's settings.
@@ -64,19 +65,19 @@ trigger_arm:
 robot_arm:
   enabled: true
   sweep_servo:
-    reversed: false
-    max_ang_vel: 60.0
+    reversed: true
+    max_ang_vel: 200.0
     full_rotate: 180.0
     max_rotate: 180.0
     min_rotate: 0.0
-    start_pos: 0.0
+    start_pos: 40.0
   vert_servo:
     reversed: false
-    max_ang_vel: 60.0
+    max_ang_vel: 180.0
     full_rotate: 180.0
     max_rotate: 180.0
     min_rotate: 0.0
-    start_pos: 0.0
+    start_pos: 170.0
 
 #AllClearSettings
 all_clear:
@@ -85,7 +86,7 @@ all_clear:
   offset: 0.0
   full_rotate: 180.0
   down_angle: 0.0
-  up_angle: 140.0
+  up_angle: 162.0
 
 # Plow settings (It's a servo)
 plow:
@@ -160,6 +161,9 @@ autonomous:
     - move -1000
     - climb_mountain_low near
     - stop
+
+  # Time to rotate 5 circles in millis
+  rotate_s: 33000
 
   # The below define the other commands that aren't alliance specific (make up your own if you want)
   drop_off_people:

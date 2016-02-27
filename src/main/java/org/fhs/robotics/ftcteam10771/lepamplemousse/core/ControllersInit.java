@@ -54,11 +54,7 @@ public class ControllersInit {
                 String key = button.getKey().toString();
                 if (controllerConfig.getFunction(i, key) != null) {
                     String functionNames = controllerConfig.getFunction(i, key);
-                    do {
-                        String functionName = functionNames;
-                        if (functionNames.contains(" "))
-                            functionName = functionNames.substring(0, functionNames.indexOf(" "));
-                        functionNames = functionNames.substring(functionNames.indexOf(" ") + 1, functionNames.length());
+                    for(String functionName : functionNames.split(" ")){
                         boolean inverted = controllerConfig.invertedEnabled(i, key);
                         if (controllerConfig.digitalEnabled(i, key)) {
                             aliasing.put(functionName, new inputMethods(key, i, inverted, true));
@@ -67,7 +63,7 @@ public class ControllersInit {
                             //What? Use default? Will do later
                             // TODO: 12/16/2015 Appropriate return values
                         }
-                    } while (functionNames.contains(" "));
+                    }
                 }
             }
         }
